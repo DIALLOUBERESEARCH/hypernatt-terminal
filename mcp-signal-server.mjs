@@ -111,7 +111,7 @@ const sessionPayments = new Map();
 /** sessionId -> active MCP transport */
 const transports = new Map();
 
-function createMcpServer() {
+export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
         version: "2.2.0",

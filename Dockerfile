@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY server.js mcp-signal-server.mjs mcp-free-tools.mjs mcp-growth-tools.mjs base-tokens.mjs \
+COPY server.js stdio.mjs mcp-signal-server.mjs mcp-free-tools.mjs mcp-growth-tools.mjs base-tokens.mjs \
     x402-signal.mjs x402-mm-hunt.mjs x402-similarity.mjs server-card.json server.json ./
 
 ENV NODE_ENV=production

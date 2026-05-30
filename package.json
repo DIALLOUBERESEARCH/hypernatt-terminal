@@ -12,6 +12,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
+    "start:stdio": "node stdio.mjs",
     "docker:build": "docker build -t hypernatt-terminal .",
     "docker:run": "docker run --rm -p 8011:8011 hypernatt-terminal"
   },

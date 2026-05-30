@@ -26,3 +26,15 @@ curl -sS http://127.0.0.1:8011/health
 ```
 
 Expected: `"status":"healthy"`, `"tools":11`.
+
+## Glama Dockerfile admin (quality check)
+
+Glama runs `mcp-proxy` with **stdio** introspection. Use `stdio.mjs`, not `server.js`:
+
+| Field | Value |
+|-------|--------|
+| Build steps | `["npm ci --omit=dev"]` |
+| CMD arguments | `["node", "stdio.mjs"]` |
+| Placeholder parameters | `{}` |
+
+Prod agents use HTTP: `node server.js` → `https://hypernatt.com/mcp/protocol`.
