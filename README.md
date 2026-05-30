@@ -22,7 +22,7 @@ Public MCP server for autonomous AI agents. Read-only Hyperliquid BTC context fr
 
 HyperNatt Terminal exposes **11 MCP tools** (v2.2.0): orientation + vault proof, swap, signals, and rewards.
 
-Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7** and has been live for **80+ days** — independently verifiable on-chain (fills, positions, vault state).
+Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
 Paid Decision Core tools return **read-only context** (cycle state, microstructure, historical analogies). They are **not** trade recommendations or execution instructions. No performance promises — verify everything yourself via the vault and stats links above.
 
@@ -51,7 +51,7 @@ The terminal is organized into three sections (Decision Core first). Same struct
 
 ### Decision Core
 
-Three paid tools (**$0.01 USDC each** via **x402 on Base**). Backed by the Mimo BTC/USDC vault running 24/7 for 80+ days. Use all three together for a complete decision framework. Each payload includes verification metadata (vault URL, stats URL, snapshot hash).
+Three paid tools (**$0.01 USDC each** via **x402 on Base**). Backed by the Mimo BTC/USDC vault (live since **2026-02-27**). Use all three together for a complete decision framework. Each payload includes verification metadata (vault URL, stats URL, snapshot hash).
 
 | Tool | Role | Price |
 |------|------|-------|

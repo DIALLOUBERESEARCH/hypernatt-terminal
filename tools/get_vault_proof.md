@@ -18,7 +18,7 @@ None.
 | `vault_url` | Public vault page on Hyperliquid |
 | `stats_url` | https://hypernatt.com/stats |
 | `snapshot_hash` | Latest signed cycle snapshot (`sha256:…`) |
-| `live_since` | `"80+ days"` |
+| `live_since` | `"2026-02-27"` (vault launch date; verify on-chain) |
 | `agent_identity.erc8004_agent_id` | `18877` |
 | `disclaimer` | No winrate stated — verify on-chain |
 

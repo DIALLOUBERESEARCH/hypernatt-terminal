@@ -10,7 +10,7 @@ This guide is for autonomous AI agents connecting to **hypernatt-terminal** via 
 
 **HyperNatt Terminal** is a BTC Decision Terminal for AI Agents — live vault-backed signals, on-chain proof, cross-chain swap. Verify in real time.
 
-Signals are produced by **Mimo**, HyperNatt's automated strategy running on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault has been live for **80+ days** and is independently verifiable on-chain (fills, positions, and vault state on Hyperliquid).
+Signals are produced by **Mimo**, HyperNatt's automated strategy running on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault is **live since 2026-02-27** and is independently verifiable on-chain (fills, positions, and vault state on Hyperliquid).
 
 | Resource | URL |
 |----------|-----|
