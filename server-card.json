@@ -1,0 +1,155 @@
+{
+  "serverInfo": {
+    "name": "hypernatt-terminal",
+    "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
+    "version": "2.2.0",
+    "description": "BTC Decision Terminal for AI Agents. Live vault-backed Hyperliquid signals (cycle, MM hunt, similarity), verifiable on-chain. Free vault proof + Li.Fi swap + NDAT. Paid reads $0.01 USDC x402 on Base. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
+  },
+  "authentication": {
+    "required": false,
+    "schemes": []
+  },
+  "tools": [
+    {
+      "name": "get_agent_manifest",
+      "description": "Start here: catalog of 11 terminal tools with prices, recommended journey, and live 24h usage stats. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "locale": { "type": "string", "description": "en or fr (optional)" }
+        }
+      }
+    },
+    {
+      "name": "get_vault_proof",
+      "description": "Free on-chain vault proof for the Mimo BTC/USDC Hyperliquid vault: address, public URLs, ERC-8004 agent id, and signed cycle snapshot hash (sha256). No performance metrics — verify live yourself.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_btc_usdc_signal",
+      "description": "Live BTC/USDC Mimo vault cycle state on Hyperliquid with on-chain proof metadata. x402 $0.01 USDC on Base per call. Read-only — not a trade signal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x_payment": {
+            "type": "string",
+            "description": "Base64 x402 payment payload (USDC on Base). Omit on first call to receive payment instructions."
+          },
+          "full_payload": {
+            "type": "boolean",
+            "description": "If true, return full JSON; default compact summary."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_mm_hunt_score",
+      "description": "BTC perp MM hunt / liquidation pressure score and long-trap phase. x402 $0.01 USDC on Base. Read-only context — not a trade signal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x_payment": { "type": "string" },
+          "full_payload": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "name": "get_similarity_match",
+      "description": "Top-3 historical microstructure matches vs current BTC regime. x402 $0.01 USDC on Base. Read-only analogy — not a trade signal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x_payment": { "type": "string" },
+          "full_payload": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "name": "swap_via_nattswap",
+      "description": "Cross-chain swap quote via NattSwap (Li.Fi) with step-by-step agent instructions. Free — no x402.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fromChain": { "type": ["number", "string"] },
+          "toChain": { "type": ["number", "string"] },
+          "fromToken": { "type": "string" },
+          "toToken": { "type": "string" },
+          "fromAmount": { "type": "string" },
+          "fromAddress": { "type": "string" },
+          "toAddress": { "type": "string" },
+          "slippage": { "type": "number" }
+        },
+        "required": ["fromChain", "toChain", "fromToken", "toToken", "fromAmount", "fromAddress", "toAddress"]
+      }
+    },
+    {
+      "name": "swap_quote",
+      "description": "Raw Li.Fi cross-chain swap quote JSON. Free — no x402.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fromChain": { "type": ["number", "string"] },
+          "toChain": { "type": ["number", "string"] },
+          "fromToken": { "type": "string" },
+          "toToken": { "type": "string" },
+          "fromAmount": { "type": "string" },
+          "fromAddress": { "type": "string" },
+          "toAddress": { "type": "string" },
+          "slippage": { "type": "number" }
+        },
+        "required": ["fromChain", "toChain", "fromToken", "toToken", "fromAmount", "fromAddress", "toAddress"]
+      }
+    },
+    {
+      "name": "get_agent_balance",
+      "description": "Pending and claimed NDAT balance for an agent wallet.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": { "type": "string", "description": "Agent EVM address" }
+        },
+        "required": ["wallet"]
+      }
+    },
+    {
+      "name": "claim_ndat",
+      "description": "ECDSA signature payload to claim pending NDAT on Base (NattDataAnchor). Agent pays gas.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": { "type": "string" },
+          "amount": { "type": "number", "description": "Optional; default all pending" }
+        },
+        "required": ["wallet"]
+      }
+    },
+    {
+      "name": "register_nattswap_reward",
+      "description": "Register a completed NattSwap tx hash to credit NDAT rewards.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "txHash": { "type": "string" },
+          "agentAddress": { "type": "string" }
+        },
+        "required": ["txHash", "agentAddress"]
+      }
+    },
+    {
+      "name": "get_referral_link",
+      "description": "Referral URL and deposit field hint for agent-to-agent invites.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "referrer": { "type": "string", "description": "Referrer EVM address" }
+        },
+        "required": ["referrer"]
+      }
+    }
+  ],
+  "resources": [],
+  "prompts": []
+}

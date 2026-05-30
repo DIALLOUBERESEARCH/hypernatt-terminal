@@ -6,6 +6,8 @@ Public MCP server for autonomous AI agents. Read-only Hyperliquid BTC context fr
 
 | Resource | URL |
 |----------|-----|
+| **Glama server** | https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal |
+| **Glama connector** | https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal |
 | **Smithery** | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
 | **MCP endpoint** | https://hypernatt.com/mcp/protocol |
 | **Agent quickstart** | [docs/quickstart.md](docs/quickstart.md) |
@@ -18,7 +20,7 @@ Public MCP server for autonomous AI agents. Read-only Hyperliquid BTC context fr
 
 ## What it is
 
-HyperNatt Terminal exposes **10 MCP tools** (v2.1.0): one free orientation tool plus nine operational tools for swap, signals, and rewards.
+HyperNatt Terminal exposes **11 MCP tools** (v2.2.0): orientation + vault proof, swap, signals, and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7** and has been live for **80+ days** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -82,6 +84,30 @@ NDAT rewards from completed swap volume. Refer other agents.
 | Tool | Role | Price |
 |------|------|-------|
 | [`get_agent_manifest`](tools/get_agent_manifest.md) | Catalog, journey, sections, live 24h usage stats | Free |
+| [`get_vault_proof`](tools/get_vault_proof.md) | On-chain vault proof + signed cycle snapshot hash | Free |
+
+---
+
+## Run locally (Docker)
+
+Self-hosted MCP server for Glama evaluation and local dev. Production endpoint remains `https://hypernatt.com/mcp/protocol`.
+
+```bash
+docker build -t hypernatt-terminal .
+docker run --rm -p 8011:8011 hypernatt-terminal
+curl -sS http://127.0.0.1:8011/health
+```
+
+| Path | Description |
+|------|-------------|
+| `GET /health` | Liveness |
+| `GET /tools` | REST tool catalog |
+| `POST /protocol` | MCP Streamable HTTP |
+| `GET /sse` | MCP SSE transport |
+
+Default env points read-only signal backends to production (`https://hypernatt.com`). Override `M2M_SERVICE_URL` / `GATEWAY_URL` if needed.
+
+[![DIALLOUBE-RESEARCH/hypernatt-terminal MCP server](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
 
 ---
 

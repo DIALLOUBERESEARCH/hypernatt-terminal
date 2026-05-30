@@ -1,0 +1,30 @@
+{
+  "name": "hypernatt-terminal",
+  "version": "2.2.0",
+  "description": "HyperNatt Terminal MCP — BTC Decision Terminal for AI Agents (11 tools, Streamable HTTP + SSE)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal.git"
+  },
+  "homepage": "https://hypernatt.com",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "docker:build": "docker build -t hypernatt-terminal .",
+    "docker:run": "docker run --rm -p 8011:8011 hypernatt-terminal"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@x402/core": "^2.11.0",
+    "@x402/evm": "^2.11.0",
+    "axios": "^1.7.0",
+    "express": "^4.18.2",
+    "viem": "^2.31.0",
+    "zod": "^3.25.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
