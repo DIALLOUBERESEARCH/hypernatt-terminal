@@ -25,7 +25,7 @@ docker run --rm -p 8011:8011 hypernatt-terminal
 curl -sS http://127.0.0.1:8011/health
 ```
 
-Expected: `"status":"healthy"`, `"tools":11`.
+Expected: `"status":"healthy"`, `"version":"2.3.0"`, `"tools":12` (incl. `get_natt_performance`).
 
 ## Glama Dockerfile admin (quality check)
 
