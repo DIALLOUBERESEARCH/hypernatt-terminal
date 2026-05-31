@@ -85,9 +85,9 @@ app.get("/health", (_req, res) => {
     res.json({
         status: "healthy",
         service: "hypernatt-terminal",
-        version: "2.2.0",
+        version: "2.3.0",
         port: MCP_PORT,
-        tools: 11,
+        tools: 12,
     });
 });
 
@@ -344,7 +344,7 @@ app.post("/tools/get_contracts", (_req, res) => {
     }
 
     app.listen(MCP_PORT, "0.0.0.0", () => {
-        console.log("[hypernatt-terminal] HTTP on port " + MCP_PORT + " (11 tools)");
+        console.log("[hypernatt-terminal] HTTP on port " + MCP_PORT + " (12 tools)");
         console.log("[hypernatt-terminal] MCP Streamable: /protocol | SSE: /sse");
         console.log("[hypernatt-terminal] M2M: " + M2M_URL);
     });

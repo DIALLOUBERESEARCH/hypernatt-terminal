@@ -20,7 +20,7 @@ Public MCP server for autonomous AI agents. Read-only Hyperliquid BTC context fr
 
 ## What it is
 
-HyperNatt Terminal exposes **11 MCP tools** (v2.2.0): orientation + vault proof, swap, signals, and rewards.
+HyperNatt Terminal exposes **12 MCP tools** (v2.3.0): orientation + vault proof, Natt agent performance, swap, signals, and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -47,7 +47,7 @@ Start with the free tool **`get_agent_manifest`** — it returns the full catalo
 
 ## Manifest sections
 
-The terminal is organized into three sections (Decision Core first). Same structure via MCP `get_agent_manifest` or `GET https://hypernatt.com/api/m2m/agent/manifest`.
+The terminal is organized into four sections (Decision Core first). Same structure via MCP `get_agent_manifest` or `GET https://hypernatt.com/api/m2m/agent/manifest`.
 
 ### Decision Core
 
@@ -58,6 +58,14 @@ Three paid tools (**$0.01 USDC each** via **x402 on Base**). Backed by the Mimo 
 | [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | $0.01 x402 |
 | [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | $0.01 x402 |
 | [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | $0.01 x402 |
+
+### Proof & Performance
+
+On-chain verifiable metrics for **Natt**, HyperNatt's reference trading agent on Base (CDP wallet).
+
+| Tool | Role | Price |
+|------|------|-------|
+| [`get_natt_performance`](tools/get_natt_performance.md) | Live trading performance of Natt, our reference agent — PnL, winrate, APR, verifiable on-chain | Free |
 
 ### Execution
 
@@ -114,10 +122,11 @@ Default env points read-only signal backends to production (`https://hypernatt.c
 ## Suggested agent journey
 
 1. **`get_agent_manifest`** — discover tools and pricing (free).
-2. **`swap_via_nattswap`** — test a free cross-chain quote.
-3. **Decision Core** — when you need vault-backed BTC context ($0.01 USDC each via x402).
-4. **`register_nattswap_reward`** → **`get_agent_balance`** → **`claim_ndat`** — rewards loop after a completed swap.
-5. **`get_referral_link`** — grow your agent network.
+2. **`get_natt_performance`** — see live Natt agent PnL / winrate (free, on-chain).
+3. **`swap_via_nattswap`** — test a free cross-chain quote.
+4. **Decision Core** — when you need vault-backed BTC context ($0.01 USDC each via x402).
+5. **`register_nattswap_reward`** → **`get_agent_balance`** → **`claim_ndat`** — rewards loop after a completed swap.
+6. **`get_referral_link`** — grow your agent network.
 
 Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 
@@ -129,6 +138,7 @@ Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 |----------|-------------|
 | `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
 | `GET /api/m2m/stats/usage` | Public 24h usage counters |
+| `GET /api/m2m/natt/performance` | Natt agent performance (internal secret required) |
 | `GET /api/m2m/signal` | Paid signal (x402) |
 | `GET /api/m2m/mm-hunt` | Paid MM hunt (x402) |
 | `GET /api/m2m/similarity-match` | Paid similarity (x402) |
@@ -141,6 +151,7 @@ Base URL: `https://hypernatt.com`
 
 - **Vault:** https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8
 - **Track record:** https://hypernatt.com/stats
+- **Natt agent:** use `get_natt_performance` → `wallet_basescan_url`
 
 Every paid signal payload includes proof links so you can reconcile JSON with public Hyperliquid data yourself.
 

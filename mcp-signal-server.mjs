@@ -46,6 +46,7 @@ import {
     registerTerminalCommerceTools,
     registerTerminalSwapTools,
     registerVaultProofTool,
+    registerNattPerformanceTool,
 } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
 
@@ -114,7 +115,7 @@ const transports = new Map();
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.2.0",
+        version: "2.3.0",
     });
 
     const freeCtx = {
@@ -124,6 +125,7 @@ export function createMcpServer() {
     };
     registerGrowthTools(server, freeCtx);
     registerVaultProofTool(server, freeCtx);
+    registerNattPerformanceTool(server, freeCtx);
     registerTerminalSwapTools(server, freeCtx);
 
     server.registerTool(
@@ -543,14 +545,39 @@ export function mountMcpSignalRoutes(app) {
         res.status(404).json({ error: "server-card not configured" });
     });
 
+    app.post("/internal/x402/create-payment", async (req, res) => {
+        const secret =
+            req.headers["x-m2m-internal-secret"] ||
+            req.headers["X-M2M-Internal-Secret"];
+        if (!INTERNAL_SECRET || secret !== INTERNAL_SECRET) {
+            res.status(401).json({ error: "unauthorized" });
+            return;
+        }
+        try {
+            const { createX402PaymentPayload } = await import("./x402-buyer.mjs");
+            const body = req.body?.paymentRequired ?? req.body;
+            if (!body?.accepts?.length) {
+                res.status(400).json({ error: "missing accepts[] in paymentRequired" });
+                return;
+            }
+            const paymentPayload = await createX402PaymentPayload(body);
+            res.json({ ok: true, paymentPayload });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            console.error("[x402-buyer] create-payment failed:", message);
+            res.status(500).json({ ok: false, error: message });
+        }
+    });
+
     app.get("/signal/info", (_req, res) => {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.2.0",
+            version: "2.3.0",
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
+                "get_natt_performance",
                 "get_btc_usdc_signal",
                 "get_mm_hunt_score",
                 "get_similarity_match",
@@ -666,7 +693,7 @@ export function mountMcpSignalRoutes(app) {
         await transport.handlePostMessage(req, res, req.body);
     });
 
-    console.log("[MCP Terminal] hypernatt-terminal v2.0.0 — 9 tools");
+    console.log("[MCP Terminal] hypernatt-terminal v2.3.0 — 12 tools");
     console.log(
         `[MCP Terminal] x402 get_btc_usdc_signal @ $${SIGNAL_PRICE_USDC} → ${SIGNAL_PAYTO}`,
     );

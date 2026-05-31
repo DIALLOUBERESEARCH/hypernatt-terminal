@@ -2,8 +2,8 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.2.0",
-    "description": "BTC Decision Terminal for AI Agents. Live vault-backed Hyperliquid signals (cycle, MM hunt, similarity), verifiable on-chain. Free vault proof + Li.Fi swap + NDAT. Paid reads $0.01 USDC x402 on Base. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
+    "version": "2.3.0",
+    "description": "BTC Decision Terminal for AI Agents. Live vault-backed Hyperliquid signals (cycle, MM hunt, similarity), verifiable on-chain. Free vault proof + Natt performance + Li.Fi swap + NDAT. Paid reads $0.01 USDC x402 on Base. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
   },
   "authentication": {
     "required": false,
@@ -12,7 +12,7 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 11 terminal tools with prices, recommended journey, and live 24h usage stats. Free.",
+      "description": "Start here: catalog of 12 terminal tools with prices, recommended journey, and live 24h usage stats. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -23,6 +23,14 @@
     {
       "name": "get_vault_proof",
       "description": "Free on-chain vault proof for the Mimo BTC/USDC Hyperliquid vault: address, public URLs, ERC-8004 agent id, and signed cycle snapshot hash (sha256). No performance metrics — verify live yourself.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_natt_performance",
+      "description": "Free live trading performance for the Natt CDP agent on Base: capital, PnL, win rate, estimated APR, signal costs, best/worst/last trade — verifiable on BaseScan.",
       "inputSchema": {
         "type": "object",
         "properties": {}

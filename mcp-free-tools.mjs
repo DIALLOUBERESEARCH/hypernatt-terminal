@@ -273,3 +273,47 @@ export function registerVaultProofTool(server, ctx) {
         },
     );
 }
+
+/**
+ * Register free Natt agent performance tool (Proof & Performance).
+ */
+export function registerNattPerformanceTool(server, ctx) {
+    const { m2mUrl, internalSecret } = ctx;
+    const base = () => m2mUrl.replace(/\/$/, "");
+
+    server.registerTool(
+        "get_natt_performance",
+        {
+            description:
+                "Free live trading performance for the Natt CDP agent on Base: capital, PnL, win rate, estimated APR, signal costs, best/worst/last trade — aggregated from episodic trade_decision memory and on-chain wallet balances. Verifiable via BaseScan.",
+            inputSchema: {},
+        },
+        async () => {
+            if (!internalSecret) {
+                return toolTextResult({ error: "MCP missing internal secret" }, true);
+            }
+            try {
+                const response = await axios.get(
+                    `${base()}/api/m2m/internal/natt/performance`,
+                    {
+                        headers: m2mHeaders(internalSecret),
+                        timeout: 20000,
+                    },
+                );
+                return toolTextResult({
+                    ok: true,
+                    source: "hypernatt-terminal",
+                    data: response.data,
+                });
+            } catch (err) {
+                const message = err instanceof Error ? err.message : String(err);
+                const status = err.response?.status;
+                const body = err.response?.data;
+                return toolTextResult(
+                    { error: "natt_performance_failed", status, message, body },
+                    true,
+                );
+            }
+        },
+    );
+}

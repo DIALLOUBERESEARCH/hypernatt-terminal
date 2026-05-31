@@ -1,31 +1,23 @@
 {
-  "name": "hypernatt-terminal",
-  "version": "2.2.0",
-  "description": "HyperNatt Terminal MCP — BTC Decision Terminal for AI Agents (11 tools, Streamable HTTP + SSE)",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal.git"
-  },
-  "homepage": "https://hypernatt.com",
-  "main": "server.js",
-  "type": "commonjs",
-  "scripts": {
-    "start": "node server.js",
-    "start:stdio": "node stdio.mjs",
-    "docker:build": "docker build -t hypernatt-terminal .",
-    "docker:run": "docker run --rm -p 8011:8011 hypernatt-terminal"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "@x402/core": "^2.11.0",
-    "@x402/evm": "^2.11.0",
-    "axios": "^1.7.0",
-    "express": "^4.18.2",
-    "viem": "^2.31.0",
-    "zod": "^3.25.0"
-  },
-  "engines": {
-    "node": ">=20"
-  }
+    "name": "natt-node-mcp",
+    "version": "2.3.0",
+    "description": "HyperNatt MCP — NattSwap REST + get_btc_usdc_signal (x402 SSE)",
+    "main": "server.js",
+    "type": "commonjs",
+    "scripts": {
+        "start": "node server.js",
+        "start:stdio": "node stdio.mjs",
+        "test": "node --test test/*.test.mjs"
+    },
+    "dependencies": {
+        "@coinbase/cdp-sdk": "^1.51.0",
+        "@coinbase/x402": "^2.1.0",
+        "@modelcontextprotocol/sdk": "^1.12.1",
+        "@x402/core": "^2.11.0",
+        "@x402/evm": "^2.11.0",
+        "axios": "^1.7.0",
+        "express": "^4.18.2",
+        "viem": "^2.31.0",
+        "zod": "^3.25.0"
+    }
 }

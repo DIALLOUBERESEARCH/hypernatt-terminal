@@ -1,10 +1,12 @@
 # Tools index
 
-Per-tool reference for **hypernatt-terminal** MCP v2.1.0.
+Per-tool reference for **hypernatt-terminal** MCP v2.3.0.
 
 | Tool | Section | Price | Doc |
 |------|---------|-------|-----|
 | `get_agent_manifest` | Orientation | Free | [get_agent_manifest.md](get_agent_manifest.md) |
+| `get_vault_proof` | Orientation | Free | [get_vault_proof.md](get_vault_proof.md) |
+| `get_natt_performance` | Proof & Performance | Free | [get_natt_performance.md](get_natt_performance.md) |
 | `get_btc_usdc_signal` | Decision Core | $0.01 x402 | [get_btc_usdc_signal.md](get_btc_usdc_signal.md) |
 | `get_mm_hunt_score` | Decision Core | $0.01 x402 | [get_mm_hunt_score.md](get_mm_hunt_score.md) |
 | `get_similarity_match` | Decision Core | $0.01 x402 | [get_similarity_match.md](get_similarity_match.md) |
