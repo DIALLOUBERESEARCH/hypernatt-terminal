@@ -9,6 +9,8 @@
  */
 const express = require("express");
 const axios = require("axios");
+const pkg = require("./package.json");
+const serverCard = require("./server-card.json");
 
 const app = express();
 app.use(express.json());
@@ -81,35 +83,45 @@ const ONCHAIN_PROOF = {
 
 // ==================== HEALTH ====================
 
+const MCP_TOOL_NAMES = new Set([
+    "get_agent_manifest",
+    "get_vault_proof",
+    "get_natt_performance",
+    "get_btc_usdc_signal",
+    "get_mm_hunt_score",
+    "get_similarity_match",
+    "get_liq_radar",
+    "get_mm_trap_state",
+]);
+
+function terminalToolsFromCard() {
+    return serverCard.tools.map((tool) => ({
+        name: tool.name,
+        method: MCP_TOOL_NAMES.has(tool.name) ? "MCP" : "POST",
+        path: MCP_TOOL_NAMES.has(tool.name)
+            ? "/mcp/protocol"
+            : `/tools/${tool.name}`,
+        description: tool.description,
+    }));
+}
+
 app.get("/health", (_req, res) => {
     res.json({
         status: "healthy",
         service: "hypernatt-terminal",
-        version: "2.3.0",
+        version: serverCard.serverInfo.version || pkg.version,
         port: MCP_PORT,
-        tools: 12,
+        tools: serverCard.tools.length,
     });
 });
 
 // ==================== LIST TOOLS ====================
 
-const TERMINAL_TOOLS = [
-    { name: "swap_via_nattswap", method: "POST", path: "/tools/swap_via_nattswap", description: "Cross-chain swap quote via Li.Fi + instructions (free)" },
-    { name: "swap_quote", method: "POST", path: "/tools/swap_quote", description: "Raw Li.Fi swap quote JSON (free)" },
-    { name: "get_btc_usdc_signal", method: "MCP", path: "/mcp/protocol", description: "Mimo vault cycle state ($0.01 x402)" },
-    { name: "get_mm_hunt_score", method: "MCP", path: "/mcp/protocol", description: "MM hunt score ($0.01 x402)" },
-    { name: "get_similarity_match", method: "MCP", path: "/mcp/protocol", description: "Similarity top-3 ($0.01 x402)" },
-    { name: "get_agent_balance", method: "POST", path: "/tools/get_agent_balance", description: "NDAT pending/claimed balance" },
-    { name: "claim_ndat", method: "POST", path: "/tools/claim_ndat", description: "Claim NDAT signature for Base tx" },
-    { name: "register_nattswap_reward", method: "POST", path: "/tools/register_nattswap_reward", description: "Register swap for NDAT rewards" },
-    { name: "get_referral_link", method: "POST", path: "/tools/get_referral_link", description: "Agent referral link" },
-];
-
 app.get("/tools", (_req, res) => {
     res.json({
         server: "hypernatt-terminal",
-        version: "2.0.0",
-        tools: TERMINAL_TOOLS,
+        version: serverCard.serverInfo.version || pkg.version,
+        tools: terminalToolsFromCard(),
         verification: ONCHAIN_PROOF,
         mcp: { streamable_http: "/mcp/protocol", sse: "/mcp/sse" },
     });

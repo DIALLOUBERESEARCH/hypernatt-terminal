@@ -25,13 +25,17 @@ docker run --rm -p 8011:8011 hypernatt-terminal
 curl -sS http://127.0.0.1:8011/health
 ```
 
-Expected: `"status":"healthy"`, `"version":"2.4.0"`, **14 tools** (incl. `get_liq_radar`, `get_mm_trap_state`).
+Expected after rebuild: `"version":"2.4.0"`, `"tools":14` on `GET /health` (reads `server-card.json`).
 
-## Re-sync after version bump
+## Re-sync after version bump (BLOQUANT)
 
-1. Push `main` on this repo (runtime + docs).
-2. Glama admin → **Repository** → **Sync Server** (https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/admin/repository).
-3. Hard refresh the public server page after ~5 min.
+Glama rebuild le Docker + introspection `stdio.mjs` (`tools/list`). README seul ne suffit pas si `/health` est stale.
+
+1. Sync monorepo -> `hypernatt-terminal` (`sync-hypernatt-terminal-repo.ps1`).
+2. `git push origin main`.
+3. Glama admin -> **Repository** -> **Sync Server**.
+4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = 14 entries.
+5. Hard refresh (Ctrl+F5) page publique.
 
 ## Glama Dockerfile admin (quality check)
 
