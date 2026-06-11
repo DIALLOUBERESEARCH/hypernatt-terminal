@@ -17,6 +17,7 @@ import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import {
     buildPaymentRequired,
+    buildPaymentRequirements,
     fetchSignalPayload,
     parsePaymentHeader,
     summarizeCyclePayload,
@@ -26,6 +27,7 @@ import {
 } from "./x402-signal.mjs";
 import {
     buildPaymentRequired as buildMmHuntPaymentRequired,
+    buildPaymentRequirements as buildMmHuntPaymentRequirements,
     fetchMmHuntPayload,
     parsePaymentHeader as parseMmHuntPaymentHeader,
     summarizeMmHuntPayload,
@@ -35,6 +37,7 @@ import {
 } from "./x402-mm-hunt.mjs";
 import {
     buildPaymentRequired as buildSimilarityPaymentRequired,
+    buildPaymentRequirements as buildSimilarityPaymentRequirements,
     fetchSimilarityPayload,
     parsePaymentHeader as parseSimilarityPaymentHeader,
     summarizeSimilarityPayload,
@@ -42,6 +45,12 @@ import {
     SIMILARITY_PAYTO,
     SIMILARITY_PRICE_USDC,
 } from "./x402-similarity.mjs";
+import {
+    LIQ_RADAR_X402,
+    MM_TRAP_STATE_X402,
+} from "./x402-data-products.mjs";
+import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
+import { extractPayerWallet, recordX402Event } from "./x402-telemetry.mjs";
 import {
     registerTerminalCommerceTools,
     registerTerminalSwapTools,
@@ -62,6 +71,12 @@ const PUBLIC_MM_HUNT_URL =
 const PUBLIC_SIMILARITY_MATCH_URL =
     process.env.PUBLIC_SIMILARITY_MATCH_URL ||
     "https://hypernatt.com/api/m2m/similarity-match";
+const PUBLIC_LIQ_RADAR_URL =
+    process.env.PUBLIC_LIQ_RADAR_URL ||
+    "https://hypernatt.com/api/m2m/liq-radar";
+const PUBLIC_MM_TRAP_STATE_URL =
+    process.env.PUBLIC_MM_TRAP_STATE_URL ||
+    "https://hypernatt.com/api/m2m/mm-trap-state";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let SERVER_CARD = null;
@@ -90,6 +105,18 @@ const SIMILARITY_TOOL_DESCRIPTION =
     "liq_radar snapshots (~15m cadence). Returns cosine similarity %, match context, and observed ~4h " +
     "BTC price outcomes. Pay-per-call: $0.01 USDC on Base via x402. Read-only analogy for agents — not a trade signal.";
 
+const LIQ_RADAR_TOOL_DESCRIPTION =
+    "Fetch the raw BTC liquidation radar snapshot from HyperNatt microstructure stack: magnet score, " +
+    "OI build-up, long/short ratio, liquidation clusters above/below price, real liquidations 1h/24h. " +
+    "The full upstream data the mm_hunt score is derived from. Pay-per-call: $0.01 USDC on Base via x402. " +
+    "Read-only JSON for agent market context — not a trade signal.";
+
+const MM_TRAP_STATE_TOOL_DESCRIPTION =
+    "Fetch the live BTC market-maker trap state from HyperNatt: trap active/idle, hunt direction " +
+    "(DOWN_HUNT_LONGS / UP_HUNT_SHORTS), latched liquidation cluster, sweep zone bounds, and " +
+    "math-verified sweep/reclaim verdicts. Pay-per-call: $0.01 USDC on Base via x402. " +
+    "Read-only manipulation weather for agents — not a trade signal.";
+
 const SERVER_TITLE =
     "HyperNatt Terminal — BTC Decision Terminal for AI Agents";
 
@@ -112,10 +139,110 @@ const sessionPayments = new Map();
 /** sessionId -> active MCP transport */
 const transports = new Map();
 
+function jsonToolResult(value, isError = false) {
+    return {
+        content: [{ type: "text", text: JSON.stringify(value, null, 2) }],
+        ...(isError ? { isError: true } : {}),
+    };
+}
+
+/**
+ * F#32N — shared payment phase for paid tools: telemetry on every funnel
+ * step (402_shown / payment_invalid / payment_verified / payment_settled)
+ * and on-chain settlement (the MCP path used to verify but NEVER settle).
+ *
+ * Returns { errorResult } to short-circuit, or { ok: true } to proceed.
+ */
+async function processPaidToolPayment({
+    tool,
+    priceUsdc,
+    paymentRaw,
+    parse,
+    verify,
+    buildRequired,
+    buildRequirements: buildReqs,
+}) {
+    if (!paymentRaw) {
+        recordX402Event({
+            event_type: "402_shown",
+            tool,
+            price_usdc: priceUsdc,
+        });
+        return { errorResult: jsonToolResult(buildRequired(), true) };
+    }
+
+    let paymentPayload;
+    try {
+        paymentPayload = parse(paymentRaw);
+    } catch {
+        recordX402Event({
+            event_type: "402_shown",
+            tool,
+            price_usdc: priceUsdc,
+            detail: "invalid x_payment format",
+        });
+        return {
+            errorResult: jsonToolResult(
+                buildRequired("Invalid x_payment format"),
+                true,
+            ),
+        };
+    }
+
+    const verification = await verify(paymentPayload);
+    if (!verification.isValid) {
+        recordX402Event({
+            event_type: "payment_invalid",
+            tool,
+            agent_id: extractPayerWallet(paymentPayload),
+            price_usdc: priceUsdc,
+            detail: String(verification.error || "").slice(0, 500),
+        });
+        return {
+            errorResult: jsonToolResult(
+                buildRequired(`Payment invalid: ${verification.error}`),
+                true,
+            ),
+        };
+    }
+
+    const wallet = extractPayerWallet(paymentPayload);
+    recordX402Event({
+        event_type: "payment_verified",
+        tool,
+        agent_id: wallet,
+        price_usdc: priceUsdc,
+    });
+
+    settlePaymentWithFacilitator(
+        paymentPayload,
+        paymentPayload?.accepted ?? buildReqs(),
+    ).then((result) => {
+        if (result.success) {
+            console.log(
+                `[F#32N] 💰 ${tool} settled: ${result.txHash || "simulated"}`,
+            );
+            recordX402Event({
+                event_type: "payment_settled",
+                tool,
+                agent_id: wallet,
+                price_usdc: priceUsdc,
+                tx_hash: result.txHash || null,
+            });
+        } else {
+            console.warn(
+                `[F#32N] ⚠️ ${tool} settle failed: ${result.error || "unknown"}`,
+            );
+        }
+    });
+
+    return { ok: true };
+}
+
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.3.0",
+        version: "2.4.0",
     });
 
     const freeCtx = {
@@ -151,54 +278,17 @@ export function createMcpServer() {
                 paymentRaw = sessionPayments.get(extra.sessionId);
             }
 
-            if (!paymentRaw) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(buildPaymentRequired(), null, 2),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            let paymentPayload;
-            try {
-                paymentPayload = parsePaymentHeader(paymentRaw);
-            } catch {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildPaymentRequired("Invalid x_payment format"),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            const verification = await verifyPayment(paymentPayload);
-            if (!verification.isValid) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildPaymentRequired(
-                                    `Payment invalid: ${verification.error}`,
-                                ),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
+            const payment = await processPaidToolPayment({
+                tool: "get_btc_usdc_signal",
+                priceUsdc: SIGNAL_PRICE_USDC,
+                paymentRaw,
+                parse: parsePaymentHeader,
+                verify: verifyPayment,
+                buildRequired: buildPaymentRequired,
+                buildRequirements: buildPaymentRequirements,
+            });
+            if (payment.errorResult) {
+                return payment.errorResult;
             }
 
             if (!INTERNAL_SECRET) {
@@ -276,54 +366,17 @@ export function createMcpServer() {
                 paymentRaw = sessionPayments.get(extra.sessionId);
             }
 
-            if (!paymentRaw) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(buildMmHuntPaymentRequired(), null, 2),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            let paymentPayload;
-            try {
-                paymentPayload = parseMmHuntPaymentHeader(paymentRaw);
-            } catch {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildMmHuntPaymentRequired("Invalid x_payment format"),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            const verification = await verifyMmHuntPayment(paymentPayload);
-            if (!verification.isValid) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildMmHuntPaymentRequired(
-                                    `Payment invalid: ${verification.error}`,
-                                ),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
+            const payment = await processPaidToolPayment({
+                tool: "get_mm_hunt_score",
+                priceUsdc: MM_HUNT_PRICE_USDC,
+                paymentRaw,
+                parse: parseMmHuntPaymentHeader,
+                verify: verifyMmHuntPayment,
+                buildRequired: buildMmHuntPaymentRequired,
+                buildRequirements: buildMmHuntPaymentRequirements,
+            });
+            if (payment.errorResult) {
+                return payment.errorResult;
             }
 
             if (!INTERNAL_SECRET) {
@@ -407,60 +460,17 @@ export function createMcpServer() {
                 paymentRaw = sessionPayments.get(extra.sessionId);
             }
 
-            if (!paymentRaw) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildSimilarityPaymentRequired(),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            let paymentPayload;
-            try {
-                paymentPayload = parseSimilarityPaymentHeader(paymentRaw);
-            } catch {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildSimilarityPaymentRequired(
-                                    "Invalid x_payment format",
-                                ),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            const verification = await verifySimilarityPayment(paymentPayload);
-            if (!verification.isValid) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                buildSimilarityPaymentRequired(
-                                    `Payment invalid: ${verification.error}`,
-                                ),
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                    isError: true,
-                };
+            const payment = await processPaidToolPayment({
+                tool: "get_similarity_match",
+                priceUsdc: SIMILARITY_PRICE_USDC,
+                paymentRaw,
+                parse: parseSimilarityPaymentHeader,
+                verify: verifySimilarityPayment,
+                buildRequired: buildSimilarityPaymentRequired,
+                buildRequirements: buildSimilarityPaymentRequirements,
+            });
+            if (payment.errorResult) {
+                return payment.errorResult;
             }
 
             if (!INTERNAL_SECRET) {
@@ -521,6 +531,81 @@ export function createMcpServer() {
         },
     );
 
+    // F#33N — paid data products (liq radar + MM trap state)
+    const registerDataProductTool = (toolName, description, x402, sourceTag, publicUrl) => {
+        server.registerTool(
+            toolName,
+            {
+                description,
+                inputSchema: {
+                    x_payment: z
+                        .string()
+                        .optional()
+                        .describe(
+                            "Optional x402 payment payload (base64 JSON). Omit to receive 402 payment instructions.",
+                        ),
+                },
+            },
+            async ({ x_payment }, extra) => {
+                let paymentRaw = x_payment;
+                if (!paymentRaw && extra?.sessionId) {
+                    paymentRaw = sessionPayments.get(extra.sessionId);
+                }
+
+                const payment = await processPaidToolPayment({
+                    tool: toolName,
+                    priceUsdc: x402.priceUsdc,
+                    paymentRaw,
+                    parse: x402.parsePaymentHeader,
+                    verify: x402.verifyPayment,
+                    buildRequired: x402.buildPaymentRequired,
+                    buildRequirements: x402.buildPaymentRequirements,
+                });
+                if (payment.errorResult) {
+                    return payment.errorResult;
+                }
+
+                if (!INTERNAL_SECRET) {
+                    return jsonToolResult(
+                        { error: "MCP server missing NATTSQUARE_INTERNAL_SECRET" },
+                        true,
+                    );
+                }
+
+                try {
+                    const payload = await x402.fetchPayload(M2M_URL, INTERNAL_SECRET);
+                    return jsonToolResult({
+                        ok: true,
+                        source: sourceTag,
+                        public_url: publicUrl,
+                        data: payload,
+                    });
+                } catch (err) {
+                    const message = err instanceof Error ? err.message : String(err);
+                    return jsonToolResult(
+                        { error: `${toolName}_fetch_failed`, message },
+                        true,
+                    );
+                }
+            },
+        );
+    };
+
+    registerDataProductTool(
+        "get_liq_radar",
+        LIQ_RADAR_TOOL_DESCRIPTION,
+        LIQ_RADAR_X402,
+        "hypernatt_liq_radar_v1",
+        PUBLIC_LIQ_RADAR_URL,
+    );
+    registerDataProductTool(
+        "get_mm_trap_state",
+        MM_TRAP_STATE_TOOL_DESCRIPTION,
+        MM_TRAP_STATE_X402,
+        "hypernatt_mm_trap_state_v1",
+        PUBLIC_MM_TRAP_STATE_URL,
+    );
+
     registerTerminalCommerceTools(server, freeCtx);
 
     return server;
@@ -573,7 +658,7 @@ export function mountMcpSignalRoutes(app) {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.3.0",
+            version: "2.4.0",
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
@@ -581,6 +666,8 @@ export function mountMcpSignalRoutes(app) {
                 "get_btc_usdc_signal",
                 "get_mm_hunt_score",
                 "get_similarity_match",
+                "get_liq_radar",
+                "get_mm_trap_state",
                 "swap_via_nattswap",
                 "swap_quote",
                 "get_agent_balance",
@@ -609,6 +696,16 @@ export function mountMcpSignalRoutes(app) {
                     pay_to: SIMILARITY_PAYTO,
                     public_url: PUBLIC_SIMILARITY_MATCH_URL,
                 },
+                liq_radar: {
+                    price_usdc: LIQ_RADAR_X402.priceUsdc,
+                    pay_to: LIQ_RADAR_X402.payTo,
+                    public_url: PUBLIC_LIQ_RADAR_URL,
+                },
+                mm_trap_state: {
+                    price_usdc: MM_TRAP_STATE_X402.priceUsdc,
+                    pay_to: MM_TRAP_STATE_X402.payTo,
+                    public_url: PUBLIC_MM_TRAP_STATE_URL,
+                },
                 network: "eip155:8453",
             },
             stats_url: "https://hypernatt.com/stats",
@@ -616,6 +713,8 @@ export function mountMcpSignalRoutes(app) {
                 "hypernatt_mimo_cycle_state_v1",
                 "hypernatt_mm_hunt_score_v1",
                 "hypernatt_similarity_match_v1",
+                "hypernatt_liq_radar_v1",
+                "hypernatt_mm_trap_state_v1",
             ],
         });
     });
@@ -639,6 +738,13 @@ export function mountMcpSignalRoutes(app) {
             }
 
             if (req.method === "POST" && isInitializeRequest(req.body)) {
+                recordX402Event({
+                    event_type: "discovery",
+                    tool: "_server",
+                    detail: String(
+                        req.body?.params?.clientInfo?.name || "unknown-client",
+                    ).slice(0, 200),
+                });
                 const transport = new StreamableHTTPServerTransport({
                     sessionIdGenerator: () => crypto.randomUUID(),
                     onsessioninitialized: (id) => {
@@ -672,6 +778,11 @@ export function mountMcpSignalRoutes(app) {
 
     // Legacy SSE (public path /mcp/messages for client POST)
     app.get("/sse", async (req, res) => {
+        recordX402Event({
+            event_type: "discovery",
+            tool: "_server",
+            detail: `sse:${String(req.headers["user-agent"] || "").slice(0, 180)}`,
+        });
         const server = createMcpServer();
         const transport = new SSEServerTransport("/mcp/messages", res);
         transports.set(transport.sessionId, transport);
@@ -693,7 +804,13 @@ export function mountMcpSignalRoutes(app) {
         await transport.handlePostMessage(req, res, req.body);
     });
 
-    console.log("[MCP Terminal] hypernatt-terminal v2.3.0 — 12 tools");
+    console.log("[MCP Terminal] hypernatt-terminal v2.4.0 — 14 tools");
+    console.log(
+        `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,
+    );
+    console.log(
+        `[MCP Terminal] x402 get_mm_trap_state @ $${MM_TRAP_STATE_X402.priceUsdc} → ${MM_TRAP_STATE_X402.payTo}`,
+    );
     console.log(
         `[MCP Terminal] x402 get_btc_usdc_signal @ $${SIGNAL_PRICE_USDC} → ${SIGNAL_PAYTO}`,
     );

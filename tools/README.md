@@ -1,6 +1,6 @@
 # Tools index
 
-Per-tool reference for **hypernatt-terminal** MCP v2.3.0.
+Per-tool reference for **hypernatt-terminal** MCP v2.4.0.
 
 | Tool | Section | Price | Doc |
 |------|---------|-------|-----|
@@ -10,6 +10,8 @@ Per-tool reference for **hypernatt-terminal** MCP v2.3.0.
 | `get_btc_usdc_signal` | Decision Core | $0.01 x402 | [get_btc_usdc_signal.md](get_btc_usdc_signal.md) |
 | `get_mm_hunt_score` | Decision Core | $0.01 x402 | [get_mm_hunt_score.md](get_mm_hunt_score.md) |
 | `get_similarity_match` | Decision Core | $0.01 x402 | [get_similarity_match.md](get_similarity_match.md) |
+| `get_liq_radar` | Decision Core | $0.01 x402 | [get_liq_radar.md](get_liq_radar.md) |
+| `get_mm_trap_state` | Decision Core | $0.01 x402 | [get_mm_trap_state.md](get_mm_trap_state.md) |
 | `swap_via_nattswap` | Execution | Free | [swap_via_nattswap.md](swap_via_nattswap.md) |
 | `swap_quote` | Execution | Free | [swap_quote.md](swap_quote.md) |
 | `get_agent_balance` | Rewards & Referral | Free | [get_agent_balance.md](get_agent_balance.md) |

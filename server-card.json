@@ -2,8 +2,8 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.3.0",
-    "description": "BTC Decision Terminal for AI Agents. Live vault-backed Hyperliquid signals (cycle, MM hunt, similarity), verifiable on-chain. Free vault proof + Natt performance + Li.Fi swap + NDAT. Paid reads $0.01 USDC x402 on Base. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
+    "version": "2.4.0",
+    "description": "BTC Decision Terminal for AI Agents. Live vault-backed Hyperliquid signals (cycle, MM hunt, similarity, liq radar, MM trap state), verifiable on-chain. Free vault proof + Natt performance + Li.Fi swap + NDAT. Paid reads $0.01 USDC x402 on Base. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
   },
   "authentication": {
     "required": false,
@@ -12,7 +12,7 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 12 terminal tools with prices, recommended journey, and live 24h usage stats. Free.",
+      "description": "Start here: catalog of 14 terminal tools with prices, recommended journey, and live 24h usage stats. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -72,6 +72,26 @@
         "properties": {
           "x_payment": { "type": "string" },
           "full_payload": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "name": "get_liq_radar",
+      "description": "Raw BTC liquidation radar snapshot: magnet score, OI, long/short ratio, liquidation clusters above/below price, real liquidations 1h/24h. x402 $0.01 USDC on Base. Read-only — not a trade signal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x_payment": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "get_mm_trap_state",
+      "description": "Live BTC market-maker trap state: trap active/idle, hunt direction, latched liquidation cluster, sweep zone bounds, math-verified sweep/reclaim verdicts. x402 $0.01 USDC on Base. Read-only — not a trade signal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x_payment": { "type": "string" }
         }
       }
     },

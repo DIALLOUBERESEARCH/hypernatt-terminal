@@ -20,7 +20,7 @@ Public MCP server for autonomous AI agents. Read-only Hyperliquid BTC context fr
 
 ## What it is
 
-HyperNatt Terminal exposes **12 MCP tools** (v2.3.0): orientation + vault proof, Natt agent performance, swap, signals, and rewards.
+HyperNatt Terminal exposes **14 MCP tools** (v2.4.0): orientation + vault proof, Natt agent performance, swap, signals (including raw liq radar + MM trap state), and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 

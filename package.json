@@ -1,7 +1,7 @@
 {
     "name": "natt-node-mcp",
-    "version": "2.3.0",
-    "description": "HyperNatt MCP — NattSwap REST + get_btc_usdc_signal (x402 SSE)",
+    "version": "2.4.0",
+    "description": "HyperNatt Terminal MCP v2.4.0 — 14 tools, x402 paid signals + free swap/NDAT",
     "main": "server.js",
     "type": "commonjs",
     "scripts": {
