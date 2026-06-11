@@ -10,14 +10,15 @@ This guide is for autonomous AI agents connecting to **hypernatt-terminal** via 
 
 **HyperNatt Terminal** is a BTC Decision Terminal for AI Agents — live vault-backed signals, on-chain proof, cross-chain swap. Verify in real time.
 
-Signals are produced by **Mimo**, HyperNatt's automated strategy running on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault is **live since 2026-02-27** and is independently verifiable on-chain (fills, positions, and vault state on Hyperliquid).
+Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid (**live since 2026-02-27**).
 
 | Resource | URL |
 |----------|-----|
 | App | https://hypernatt.com |
 | Public track record | https://hypernatt.com/stats |
 | Hyperliquid vault | https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8 |
-| Smithery listing | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
+| Smithery | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
+| Glama server | https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Documentation repo | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 
 ### How to connect (MCP)
@@ -29,176 +30,111 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy running on the 
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **10 MCP tools**: one orientation tool (`get_agent_manifest`) plus nine operational tools (swap, signals, NDAT, referral).
+The terminal exposes **14 MCP tools** (v2.4.0): orientation, proof, swap, five paid Decision Core reads, and NDAT rewards.
 
-**Important:** Paid signal tools return **read-only context** (cycle state, microstructure, historical analogies). They are **not** trade recommendations or execution instructions.
+**Important:** Paid tools return **read-only context**. They are **not** trade recommendations or execution instructions.
 
 ---
 
 ## Step 1 — Discover what's available (free)
 
-Start with the manifest. It costs nothing and tells you how the terminal is organized.
-
-### MCP
-
-Call the tool:
-
-```text
-get_agent_manifest
-```
-
-Optional input: `{ "locale": "en" }` (default `en`).
-
-### REST (same payload)
-
-```http
-GET https://hypernatt.com/api/m2m/agent/manifest
-```
-
-### Response structure
-
-The manifest is grouped into **sections** (Decision Core is listed first):
+Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input: `{ "locale": "en" }`.
 
 | Section | Pricing | Purpose |
 |---------|---------|---------|
-| **Decision Core** | $0.01 USD per call (x402 on Base) | Vault-backed BTC context — use all three together for a full decision framework |
-| **Execution** | Free | Cross-chain swap quotes via Li.Fi (NattSwap) |
-| **Rewards & Referral** | Free | NDAT rewards and agent referral |
+| **Decision Core** | $0.01 USD per call (x402 on Base) | Vault-backed BTC context — five paid tools |
+| **Proof & Performance** | Free | Natt agent on-chain metrics |
+| **Execution** | Free | Li.Fi swap quotes (NattSwap) |
+| **Rewards & Referral** | Free | NDAT + referral |
 
-The **Decision Core** section may include a `usage` block with aggregate 24h metrics (swaps, signals sold, active agents). These are public counters for social proof, not performance claims.
-
-### Decision Core — three paid tools
+### Decision Core — five paid tools
 
 | Tool | Role |
 |------|------|
-| `get_btc_usdc_signal` | Cycle direction and conviction context (**LONG** / **SHORT** / **HOLD**) from the live Mimo vault |
-| `get_mm_hunt_score` | Microstructure pressure and liquidation-hunt context |
-| `get_similarity_match` | Top-3 historical regime matches and observed ~4h BTC outcomes |
+| `get_btc_usdc_signal` | Cycle direction (**LONG** / **SHORT** / **HOLD**) from the live vault |
+| `get_mm_hunt_score` | Microstructure pressure & liquidation-hunt context |
+| `get_similarity_match` | Top-3 historical regime matches & ~4h outcomes |
+| `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs |
+| `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) |
 
-Each paid read costs **$0.01 USDC** via **x402** on **Base** (`eip155:8453`).
+Each costs **$0.01 USDC** via **x402** on **Base** (`eip155:8453`).
 
 ---
 
 ## Step 2 — Test the free swap
 
-Execution tools are free at the MCP layer (no x402 on swap quotes).
-
 | Tool | When to use |
 |------|-------------|
-| `swap_via_nattswap` | Li.Fi quote **plus** step-by-step execution instructions for your agent wallet |
-| `swap_quote` | Raw Li.Fi quote JSON only (no marketing wrapper) |
+| `swap_via_nattswap` | Li.Fi quote + step-by-step execution instructions |
+| `swap_quote` | Raw Li.Fi quote JSON only |
 
-### Why swap is free for agents
-
-Swaps route through **Li.Fi** with HyperNatt as integrator. Revenue comes from **integrator fees on the swap route**, not from an x402 paywall on the quote tools. You pay gas and bridge costs on-chain as usual; the MCP quote itself is free.
-
-### Example flow (`swap_via_nattswap`)
-
-1. Call with swap parameters (`fromChain`, `toChain`, `fromToken`, `toToken`, `fromAmount`, `fromAddress`, `toAddress`, optional `slippage`).
-2. Receive a quote payload and `instructions` (approve, send `transactionRequest`, register for NDAT after confirmation).
-3. Execute the transaction on-chain from **your** wallet (no custody by HyperNatt).
-
-### `recommended_action` (upsell hint)
-
-On a successful quote, `swap_via_nattswap` may include a sibling field:
-
-```json
-"recommended_action": {
-  "tool": "get_btc_usdc_signal",
-  "price_usdc": 0.01,
-  "urgency": "high",
-  "reason": "...",
-  "context": { "cycle_direction": "LONG", ... },
-  "social_proof": { ... }
-}
-```
-
-This is an optional nudge toward Decision Core after you received free value (the quote). It is rate-limited (at most once per agent wallet per hour). **`swap_quote` does not include this field.**
+Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes.
 
 ---
 
-## Step 3 — Buy your first signal ($0.01)
+## Step 3 — Buy Decision Core context ($0.01 each)
 
-Paid tools use **x402 micropayments** in **USDC on Base**.
+1. Call without payment → x402 instructions (402 on REST).
+2. Pay **$0.01 USDC** on Base.
+3. Retry with `x_payment` / `X-Payment`.
 
-### Typical x402 flow
+Suggested order for a full picture:
 
-1. Call a paid tool **without** payment → response includes payment instructions (HTTP 402 on REST; MCP returns x402 guidance in the tool result).
-2. Pay **$0.01 USDC** on Base to the stated treasury address.
-3. Retry with the `x_payment` header / MCP payment payload attached.
+1. `get_btc_usdc_signal` — vault cycle now
+2. `get_mm_hunt_score` — hunt / trap pressure
+3. `get_similarity_match` — historical analogies
+4. `get_liq_radar` — raw microstructure block
+5. `get_mm_trap_state` — manipulation weather (redacted)
 
-### `get_btc_usdc_signal`
-
-Returns live **Mimo BTC/USDC cycle state** on Hyperliquid: active cycle context, direction, legs metadata, and **proof** links (vault URL, stats URL, snapshot hash). Read-only — not a trade signal.
-
-### Combine for a full decision framework
-
-Use all three Decision Core tools in sequence (or parallel):
-
-1. **`get_btc_usdc_signal`** — What is the vault doing now (cycle / direction)?
-2. **`get_mm_hunt_score`** — What does microstructure pressure suggest about hunt / trap risk?
-3. **`get_similarity_match`** — What happened in the closest historical regimes?
-
-Cross-check outputs against public proof:
-
-- Vault: https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8  
-- Stats: https://hypernatt.com/stats  
-
-Every paid payload includes verification metadata so you can reconcile JSON with on-chain and public stats yourself.
+Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 
 ---
 
-## Next steps
-
-After swap and signals, use the free **Rewards & Referral** tools:
+## Step 4 — Rewards loop (free)
 
 | Tool | Action |
 |------|--------|
-| `register_nattswap_reward` | After a **completed** swap, register the tx hash to credit **NDAT** rewards |
-| `get_agent_balance` | Check pending and claimed NDAT for your wallet |
-| `claim_ndat` | Get an ECDSA claim payload to withdraw pending NDAT on Base (you pay gas) |
-| `get_referral_link` | Generate a referral link to invite other agents |
-
-Suggested order:
-
-1. Swap (free quote → on-chain execution).  
-2. `register_nattswap_reward` with `agentAddress` + `txHash`.  
-3. Decision Core reads when you need vault-backed context ($0.01 each).  
-4. `get_agent_balance` → `claim_ndat` when you want to withdraw NDAT.  
-5. `get_referral_link` to grow your agent network.
+| `register_nattswap_reward` | Credit NDAT after completed swap tx |
+| `get_agent_balance` | Pending / claimed NDAT |
+| `claim_ndat` | ECDSA claim payload (you pay gas) |
+| `get_referral_link` | Agent referral URL |
 
 ---
 
-## Reference — all MCP tools
+## Reference — all 14 MCP tools
 
 | # | Tool | Price |
 |---|------|-------|
-| 0 | `get_agent_manifest` | Free |
-| 1 | `swap_via_nattswap` | Free |
-| 2 | `swap_quote` | Free |
-| 3 | `get_btc_usdc_signal` | $0.01 x402 |
-| 4 | `get_mm_hunt_score` | $0.01 x402 |
-| 5 | `get_similarity_match` | $0.01 x402 |
-| 6 | `get_agent_balance` | Free |
-| 7 | `claim_ndat` | Free |
-| 8 | `register_nattswap_reward` | Free |
-| 9 | `get_referral_link` | Free |
+| 1 | `get_agent_manifest` | Free |
+| 2 | `get_vault_proof` | Free |
+| 3 | `get_natt_performance` | Free |
+| 4 | `get_btc_usdc_signal` | $0.01 x402 |
+| 5 | `get_mm_hunt_score` | $0.01 x402 |
+| 6 | `get_similarity_match` | $0.01 x402 |
+| 7 | `get_liq_radar` | $0.01 x402 |
+| 8 | `get_mm_trap_state` | $0.01 x402 |
+| 9 | `swap_via_nattswap` | Free |
+| 10 | `swap_quote` | Free |
+| 11 | `get_agent_balance` | Free |
+| 12 | `claim_ndat` | Free |
+| 13 | `register_nattswap_reward` | Free |
+| 14 | `get_referral_link` | Free |
 
 Per-tool docs: [../tools/](../tools/)
 
 ---
 
-## REST endpoints (optional)
-
-Agents that do not speak MCP can still read public metadata:
+## REST endpoints (non-MCP agents)
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/m2m/agent/manifest` | Same structure as `get_agent_manifest` |
+| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
 | `GET /api/m2m/stats/usage` | Public 24h usage counters |
-| `GET /api/m2m/signal` | Paid signal (x402) — mirror of MCP tool |
+| `GET /api/m2m/signal` | Paid signal (x402) |
 | `GET /api/m2m/mm-hunt` | Paid MM hunt (x402) |
 | `GET /api/m2m/similarity-match` | Paid similarity (x402) |
+| `GET /api/m2m/liq-radar` | Paid liq radar (x402) |
+| `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402) |
 
 Base URL: `https://hypernatt.com`
 
@@ -210,8 +146,6 @@ Base URL: `https://hypernatt.com`
 npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 ```
 
-Or open: https://smithery.ai/servers/hypernatt/hypernatt-terminal
-
 ---
 
-*Document version: aligned with hypernatt-terminal MCP v2.1.0 (10 tools).*
+*Document version: hypernatt-terminal MCP v2.4.0 (14 tools).*

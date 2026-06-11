@@ -48,4 +48,4 @@ curl -sS "https://hypernatt.com/api/m2m/mm-hunt"
 
 ## Notes
 
-**Read-only context — not a trade signal.** Pair with `get_btc_usdc_signal` and `get_similarity_match` for a full Decision Core picture.
+**Read-only context — not a trade signal.** Pair with `get_btc_usdc_signal`, `get_similarity_match`, `get_liq_radar`, and `get_mm_trap_state` for the full Decision Core picture (5 paid tools).

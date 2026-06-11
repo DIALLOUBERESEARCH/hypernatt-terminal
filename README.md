@@ -24,7 +24,7 @@ HyperNatt Terminal exposes **14 MCP tools** (v2.4.0): orientation + vault proof,
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
-Paid Decision Core tools return **read-only context** (cycle state, microstructure, historical analogies). They are **not** trade recommendations or execution instructions. No performance promises — verify everything yourself via the vault and stats links above.
+Paid Decision Core tools return **read-only context** (cycle state, microstructure, historical analogies, raw liq radar, MM trap/sweep state). They are **not** trade recommendations or execution instructions. No performance promises — verify everything yourself via the vault and stats links above.
 
 ---
 
@@ -51,13 +51,15 @@ The terminal is organized into four sections (Decision Core first). Same structu
 
 ### Decision Core
 
-Three paid tools (**$0.01 USDC each** via **x402 on Base**). Backed by the Mimo BTC/USDC vault (live since **2026-02-27**). Use all three together for a complete decision framework. Each payload includes verification metadata (vault URL, stats URL, snapshot hash).
+Five paid tools (**$0.01 USDC each** via **x402 on Base**). Backed by the Mimo BTC/USDC vault (live since **2026-02-27**). Use them together for a complete decision framework. Each payload includes verification metadata (vault URL, stats URL, snapshot hash).
 
 | Tool | Role | Price |
 |------|------|-------|
 | [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | $0.01 x402 |
 | [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | $0.01 x402 |
 | [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | $0.01 x402 |
+| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar: magnet score, OI, clusters, real liquidations | $0.01 x402 |
+| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | Live MM trap state: hunt direction, sweep zones, verdicts (redacted) | $0.01 x402 |
 
 ### Proof & Performance
 
@@ -124,7 +126,7 @@ Default env points read-only signal backends to production (`https://hypernatt.c
 1. **`get_agent_manifest`** — discover tools and pricing (free).
 2. **`get_natt_performance`** — see live Natt agent PnL / winrate (free, on-chain).
 3. **`swap_via_nattswap`** — test a free cross-chain quote.
-4. **Decision Core** — when you need vault-backed BTC context ($0.01 USDC each via x402).
+4. **Decision Core** — five paid reads when you need vault-backed BTC context ($0.01 USDC each via x402).
 5. **`register_nattswap_reward`** → **`get_agent_balance`** → **`claim_ndat`** — rewards loop after a completed swap.
 6. **`get_referral_link`** — grow your agent network.
 
@@ -142,6 +144,8 @@ Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 | `GET /api/m2m/signal` | Paid signal (x402) |
 | `GET /api/m2m/mm-hunt` | Paid MM hunt (x402) |
 | `GET /api/m2m/similarity-match` | Paid similarity (x402) |
+| `GET /api/m2m/liq-radar` | Paid liq radar (x402) |
+| `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402) |
 
 Base URL: `https://hypernatt.com`
 

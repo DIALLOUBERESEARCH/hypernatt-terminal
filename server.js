@@ -344,7 +344,14 @@ app.post("/tools/get_contracts", (_req, res) => {
     }
 
     app.listen(MCP_PORT, "0.0.0.0", () => {
-        console.log("[hypernatt-terminal] HTTP on port " + MCP_PORT + " (12 tools)");
+        const pkg = require("./package.json");
+        console.log(
+            "[hypernatt-terminal] HTTP on port " +
+                MCP_PORT +
+                " (v" +
+                pkg.version +
+                ", 14 tools)",
+        );
         console.log("[hypernatt-terminal] MCP Streamable: /protocol | SSE: /sse");
         console.log("[hypernatt-terminal] M2M: " + M2M_URL);
     });

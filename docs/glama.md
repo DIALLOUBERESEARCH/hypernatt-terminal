@@ -25,7 +25,13 @@ docker run --rm -p 8011:8011 hypernatt-terminal
 curl -sS http://127.0.0.1:8011/health
 ```
 
-Expected: `"status":"healthy"`, `"version":"2.3.0"`, `"tools":12` (incl. `get_natt_performance`).
+Expected: `"status":"healthy"`, `"version":"2.4.0"`, **14 tools** (incl. `get_liq_radar`, `get_mm_trap_state`).
+
+## Re-sync after version bump
+
+1. Push `main` on this repo (runtime + docs).
+2. Glama admin → **Repository** → **Sync Server** (https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/admin/repository).
+3. Hard refresh the public server page after ~5 min.
 
 ## Glama Dockerfile admin (quality check)
 

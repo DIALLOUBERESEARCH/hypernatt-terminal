@@ -2,6 +2,7 @@
  * F#24b — x402 helpers for MCP get_similarity_match.
  */
 import axios from "axios";
+import { verifyPaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -20,12 +21,15 @@ export const SIMILARITY_PRICE_USDC = parseFloat(
 export const SIMILARITY_PAYTO = (
     process.env.SIMILARITY_MATCH_X402_PAYTO ||
     process.env.MIMO_SIGNAL_X402_PAYTO ||
-    process.env.NATT_AGENT_WALLET ||
-    "0x467179313f81ff63fde6fc6ebb5188eddbeedf3b"
+    process.env.NATT_X402_TREASURY ||
+    "0x5a78ACE5DD133316c8aaf7E156FBfc57E1209Cf9"
 ).toLowerCase();
 
 const SIMILARITY_DESCRIPTION =
     "HyperNatt BTC historical microstructure similarity TOP3 with observed ~4h outcomes via MCP (read-only)";
+// F#32N — resource must be the URL (Bazaar indexing key), not a description.
+const SIMILARITY_RESOURCE_URL =
+    process.env.PUBLIC_MCP_URL || "https://hypernatt.com/mcp/protocol";
 
 function usdcAtomic(priceUsdc) {
     return String(Math.round(priceUsdc * 10 ** USDC_DECIMALS));
@@ -40,8 +44,8 @@ export function buildPaymentRequirements() {
         payTo: SIMILARITY_PAYTO,
         maxTimeoutSeconds: 60,
         asset: USDC_ADDRESS,
-        extra: { name: "USDC", version: "2", decimals: USDC_DECIMALS },
-        resource: SIMILARITY_DESCRIPTION,
+        extra: { name: "USD Coin", version: "2", decimals: USDC_DECIMALS },
+        resource: SIMILARITY_RESOURCE_URL,
         description: `Pay ${priceLabel} USDC on Base to access: ${SIMILARITY_DESCRIPTION}`,
         mimeType: "application/json",
     };
@@ -78,28 +82,10 @@ export function parsePaymentHeader(raw) {
 }
 
 export async function verifyPayment(paymentPayload) {
-    const paymentRequirements = buildPaymentRequirements();
-    const sim = paymentPayload;
-    if (sim && typeof sim.receipt === "string" && sim.receipt.startsWith("X402-VRP-")) {
-        return { isValid: true };
-    }
-    try {
-        const response = await axios.post(
-            `${CDP_FACILITATOR_URL}/verify`,
-            { x402Version: 2, paymentPayload, paymentRequirements },
-            { headers: { "Content-Type": "application/json" }, timeout: 10000 },
-        );
-        if (response.data?.isValid) {
-            return { isValid: true };
-        }
-        return {
-            isValid: false,
-            error: response.data?.invalidReason || "Payment verification failed",
-        };
-    } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        return { isValid: false, error: message };
-    }
+    return verifyPaymentWithFacilitator(
+        paymentPayload,
+        paymentPayload?.accepted ?? buildPaymentRequirements(),
+    );
 }
 
 export async function fetchSimilarityPayload(m2mBaseUrl, internalSecret, fullPayload = false) {

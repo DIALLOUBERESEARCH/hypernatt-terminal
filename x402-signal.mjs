@@ -2,6 +2,7 @@
  * F#22 — x402 helpers for MCP get_btc_usdc_signal (CDP facilitator, same as m2m middleware).
  */
 import axios from "axios";
+import { verifyPaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -17,12 +18,16 @@ export const SIGNAL_PRICE_USDC = parseFloat(
 
 export const SIGNAL_PAYTO = (
     process.env.MIMO_SIGNAL_X402_PAYTO ||
-    process.env.NATT_AGENT_WALLET ||
-    "0x467179313f81ff63fde6fc6ebb5188eddbeedf3b"
+    process.env.NATT_X402_TREASURY ||
+    "0x5a78ACE5DD133316c8aaf7E156FBfc57E1209Cf9"
 ).toLowerCase();
 
 const SIGNAL_DESCRIPTION =
     "HyperNatt Mimo BTC/USDC live cycle state via MCP (verifiable, not a trade signal)";
+// F#32N — Bazaar/Agentic.Market indexes via paymentPayload.resource at settle
+// time: it MUST be the resource URL, not a description.
+const SIGNAL_RESOURCE_URL =
+    process.env.PUBLIC_MCP_URL || "https://hypernatt.com/mcp/protocol";
 
 function usdcAtomic(priceUsdc) {
     return String(Math.round(priceUsdc * 10 ** USDC_DECIMALS));
@@ -34,11 +39,12 @@ export function buildPaymentRequirements() {
         scheme: "exact",
         network: BASE_MAINNET,
         maxAmountRequired: usdcAtomic(SIGNAL_PRICE_USDC),
+        amount: usdcAtomic(SIGNAL_PRICE_USDC),
         payTo: SIGNAL_PAYTO,
         maxTimeoutSeconds: 60,
         asset: USDC_ADDRESS,
-        extra: { name: "USDC", version: "2", decimals: USDC_DECIMALS },
-        resource: SIGNAL_DESCRIPTION,
+        extra: { name: "USD Coin", version: "2", decimals: USDC_DECIMALS, assetTransferMethod: "eip3009" },
+        resource: SIGNAL_RESOURCE_URL,
         description: `Pay ${priceLabel} USDC on Base to access: ${SIGNAL_DESCRIPTION}`,
         mimeType: "application/json",
     };
@@ -75,28 +81,10 @@ export function parsePaymentHeader(raw) {
 }
 
 export async function verifyPayment(paymentPayload) {
-    const paymentRequirements = buildPaymentRequirements();
-    const sim = paymentPayload;
-    if (sim && typeof sim.receipt === "string" && sim.receipt.startsWith("X402-VRP-")) {
-        return { isValid: true };
-    }
-    try {
-        const response = await axios.post(
-            `${CDP_FACILITATOR_URL}/verify`,
-            { x402Version: 2, paymentPayload, paymentRequirements },
-            { headers: { "Content-Type": "application/json" }, timeout: 10000 },
-        );
-        if (response.data?.isValid) {
-            return { isValid: true };
-        }
-        return {
-            isValid: false,
-            error: response.data?.invalidReason || "Payment verification failed",
-        };
-    } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        return { isValid: false, error: message };
-    }
+    return verifyPaymentWithFacilitator(
+        paymentPayload,
+        paymentPayload?.accepted ?? buildPaymentRequirements(),
+    );
 }
 
 export async function fetchSignalPayload(m2mBaseUrl, internalSecret) {

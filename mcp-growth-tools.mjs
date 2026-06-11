@@ -19,7 +19,7 @@ export function registerGrowthTools(server, ctx) {
         "get_agent_manifest",
         {
             description:
-                "Start here: ordered catalog of all 9 HyperNatt Terminal tools with prices, journey, and live usage stats. Free.",
+                "Start here: ordered catalog of all 14 HyperNatt Terminal tools with prices, journey, and live usage stats. Free.",
             inputSchema: {
                 locale: z
                     .string()
