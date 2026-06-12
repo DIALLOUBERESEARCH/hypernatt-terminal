@@ -56,11 +56,11 @@ Five Decision Core tools (**$0.01 USDC each** via **x402 on Base**, or **free** 
 
 | Tool | Role | Price |
 |------|------|-------|
-| [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | $0.01 x402 |
-| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | $0.01 x402 |
-| [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | $0.01 x402 |
-| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar: magnet score, OI, clusters, real liquidations | $0.01 x402 |
-| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | Live MM trap state: hunt direction, sweep zones, verdicts (redacted) | $0.01 x402 |
+| [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | $0.01 x402 (beta free) |
+| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | $0.01 x402 (beta free) |
+| [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | $0.01 x402 (beta free) |
+| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar: magnet score, OI, clusters, real liquidations | $0.01 x402 (beta free) |
+| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | Live MM trap state: hunt direction, sweep zones, verdicts (redacted) | $0.01 x402 (beta free) |
 
 ### Proof & Performance
 
@@ -139,7 +139,8 @@ Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
+| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` (includes `beta_program`) |
+| `GET /api/m2m/beta/status` | Beta slots remaining + enroll window (public) |
 | `GET /api/m2m/stats/usage` | Public 24h usage counters |
 | `GET /api/m2m/natt/performance` | Natt agent performance (internal secret required) |
 | `GET /api/m2m/signal` | Paid signal (x402) |
