@@ -1,17 +1,17 @@
 # Tools index
 
-Per-tool reference for **hypernatt-terminal** MCP v2.4.0.
+Per-tool reference for **hypernatt-terminal** MCP v2.5.0 (beta grandfather live).
 
 | Tool | Section | Price | Doc |
 |------|---------|-------|-----|
 | `get_agent_manifest` | Orientation | Free | [get_agent_manifest.md](get_agent_manifest.md) |
 | `get_vault_proof` | Orientation | Free | [get_vault_proof.md](get_vault_proof.md) |
 | `get_natt_performance` | Proof & Performance | Free | [get_natt_performance.md](get_natt_performance.md) |
-| `get_btc_usdc_signal` | Decision Core | $0.01 x402 | [get_btc_usdc_signal.md](get_btc_usdc_signal.md) |
-| `get_mm_hunt_score` | Decision Core | $0.01 x402 | [get_mm_hunt_score.md](get_mm_hunt_score.md) |
-| `get_similarity_match` | Decision Core | $0.01 x402 | [get_similarity_match.md](get_similarity_match.md) |
-| `get_liq_radar` | Decision Core | $0.01 x402 | [get_liq_radar.md](get_liq_radar.md) |
-| `get_mm_trap_state` | Decision Core | $0.01 x402 | [get_mm_trap_state.md](get_mm_trap_state.md) |
+| `get_btc_usdc_signal` | Decision Core | $0.01 x402 (beta free) | [get_btc_usdc_signal.md](get_btc_usdc_signal.md) |
+| `get_mm_hunt_score` | Decision Core | $0.01 x402 (beta free) | [get_mm_hunt_score.md](get_mm_hunt_score.md) |
+| `get_similarity_match` | Decision Core | $0.01 x402 (beta free) | [get_similarity_match.md](get_similarity_match.md) |
+| `get_liq_radar` | Decision Core | $0.01 x402 (beta free) | [get_liq_radar.md](get_liq_radar.md) |
+| `get_mm_trap_state` | Decision Core | $0.01 x402 (beta free) | [get_mm_trap_state.md](get_mm_trap_state.md) |
 | `swap_via_nattswap` | Execution | Free | [swap_via_nattswap.md](swap_via_nattswap.md) |
 | `swap_quote` | Execution | Free | [swap_quote.md](swap_quote.md) |
 | `get_agent_balance` | Rewards & Referral | Free | [get_agent_balance.md](get_agent_balance.md) |

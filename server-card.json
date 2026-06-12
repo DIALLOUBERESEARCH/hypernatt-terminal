@@ -2,12 +2,18 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.4.0",
-    "description": "The only BTC decision terminal backed by a live, verifiable trading vault. 1800+ cycles, verifiable win rate. Free proof of performance + paid signals ($0.01 USDC x402 on Base). Your edge in BTC — verified on-chain. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
+    "version": "2.5.0",
+    "description": "BTC Decision Terminal for AI Agents — live vault-backed signals, on-chain proof. BETA: first 100 external wallets get Decision Core free for life (https://hypernatt.com/api/m2m/beta/status). Public price $0.01 USDC/call via x402 on Base after beta. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
   },
   "authentication": {
     "required": false,
     "schemes": []
+  },
+  "privacy_note": "Tool usage (wallet address, tool name, timestamp, market context) is logged to improve HyperNatt Terminal. No prompt content. No resale. Beta wallets are public on-chain by nature.",
+  "beta_program": {
+    "status_url": "https://hypernatt.com/api/m2m/beta/status",
+    "slots": 100,
+    "note": "First 100 external wallets: Decision Core free for life. Public price $0.01/call after beta closes."
   },
   "tools": [
     {
@@ -38,13 +44,17 @@
     },
     {
       "name": "get_btc_usdc_signal",
-      "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. Verifiable on-chain. x402 $0.01 USDC on Base.",
+      "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. Beta: free for grandfathered wallets (pass agent_wallet). Else x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "x_payment": {
             "type": "string",
             "description": "Base64 x402 payment payload (USDC on Base). Omit on first call to receive payment instructions."
+          },
+          "agent_wallet": {
+            "type": "string",
+            "description": "EVM wallet 0x… — beta-grandfathered wallets skip x402 payment."
           },
           "full_payload": {
             "type": "boolean",
@@ -55,43 +65,47 @@
     },
     {
       "name": "get_mm_hunt_score",
-      "description": "Is the Market Maker hunting your position? Live liquidation pressure score and trap phase detection. Avoid being exit liquidity. x402 $0.01 USDC on Base.",
+      "description": "Is the Market Maker hunting your position? Live liquidation pressure score and trap phase detection. Beta: free with agent_wallet if grandfathered. Else x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "x_payment": { "type": "string" },
+          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — beta bypass if enrolled." },
           "full_payload": { "type": "boolean" }
         }
       }
     },
     {
       "name": "get_similarity_match",
-      "description": "What happened last time BTC looked like this? Top-3 historical microstructure matches with outcomes. Learn from history. x402 $0.01 USDC on Base.",
+      "description": "What happened last time BTC looked like this? Top-3 historical microstructure matches with outcomes. Beta: free with agent_wallet if grandfathered. Else x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "x_payment": { "type": "string" },
+          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — beta bypass if enrolled." },
           "full_payload": { "type": "boolean" }
         }
       }
     },
     {
       "name": "get_liq_radar",
-      "description": "Where will the next BTC liquidation cascade hit? Raw cluster data: magnet score, OI, long/short ratio, real liquidations 1h/24h. x402 $0.01 USDC on Base.",
+      "description": "Where will the next BTC liquidation cascade hit? Raw cluster data: magnet score, OI, long/short ratio, real liquidations 1h/24h. Beta: free with agent_wallet if grandfathered. Else x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "x_payment": { "type": "string" }
+          "x_payment": { "type": "string" },
+          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — beta bypass if enrolled." }
         }
       }
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Live Market Maker manipulation weather: trap active/idle, hunt direction, sweep zones. Know when the shark is hunting before it bites. x402 $0.01 USDC on Base.",
+      "description": "Live Market Maker manipulation weather: trap active/idle, hunt direction, sweep zones. Beta: free with agent_wallet if grandfathered. Else x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "x_payment": { "type": "string" }
+          "x_payment": { "type": "string" },
+          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — beta bypass if enrolled." }
         }
       }
     },

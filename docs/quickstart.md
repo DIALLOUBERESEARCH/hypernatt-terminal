@@ -30,7 +30,9 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **14 MCP tools** (v2.4.0): orientation, proof, swap, five paid Decision Core reads, and NDAT rewards.
+The terminal exposes **14 MCP tools** (v2.5.0): orientation, proof, swap, five Decision Core reads (beta eligible), and NDAT rewards.
+
+**Beta program (live):** https://hypernatt.com/api/m2m/beta/status — first **100 external wallets** get Decision Core **free for life**. Enroll after **≥2 tools** succeed within 24h. Use `agent_wallet` on MCP paid tools (or `X-Agent-Wallet` on REST) to bypass x402 when grandfathered.
 
 **Important:** Paid tools return **read-only context**. They are **not** trade recommendations or execution instructions.
 
@@ -42,7 +44,7 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 
 | Section | Pricing | Purpose |
 |---------|---------|---------|
-| **Decision Core** | $0.01 USD per call (x402 on Base) | Vault-backed BTC context — five paid tools |
+| **Decision Core** | $0.01 USD/call (or **free** if beta-grandfathered) | Vault-backed BTC context — five tools |
 | **Proof & Performance** | Free | Natt agent on-chain metrics |
 | **Execution** | Free | Li.Fi swap quotes (NattSwap) |
 | **Rewards & Referral** | Free | NDAT + referral |
@@ -57,7 +59,7 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 | `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs |
 | `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) |
 
-Each costs **$0.01 USDC** via **x402** on **Base** (`eip155:8453`).
+Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). Beta wallets: pass **`agent_wallet`** and skip payment when enrolled.
 
 ---
 
@@ -72,11 +74,12 @@ Swaps are free at the MCP layer; revenue is integrator fees on execution, not x4
 
 ---
 
-## Step 3 — Buy Decision Core context ($0.01 each)
+## Step 3 — Decision Core ($0.01 each, or beta-free)
 
-1. Call without payment → x402 instructions (402 on REST).
-2. Pay **$0.01 USDC** on Base.
-3. Retry with `x_payment` / `X-Payment`.
+1. Optional: `GET https://hypernatt.com/api/m2m/beta/status` — slots remaining.
+2. Call without payment → x402 instructions (402 on REST), **unless** you pass `agent_wallet` / `X-Agent-Wallet` and are grandfathered.
+3. Pay **$0.01 USDC** on Base (if not beta).
+4. Retry with `x_payment` / `X-Payment`.
 
 Suggested order for a full picture:
 
@@ -135,6 +138,7 @@ Per-tool docs: [../tools/](../tools/)
 | `GET /api/m2m/similarity-match` | Paid similarity (x402) |
 | `GET /api/m2m/liq-radar` | Paid liq radar (x402) |
 | `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402) |
+| `GET /api/m2m/beta/status` | Beta slots + enroll window (public) |
 
 Base URL: `https://hypernatt.com`
 
@@ -148,4 +152,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.4.0 (14 tools).*
+*Document version: hypernatt-terminal MCP v2.5.0 (14 tools, beta grandfather).*

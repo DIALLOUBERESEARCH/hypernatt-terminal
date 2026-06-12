@@ -25,7 +25,7 @@ docker run --rm -p 8011:8011 hypernatt-terminal
 curl -sS http://127.0.0.1:8011/health
 ```
 
-Expected after rebuild: `"version":"2.4.0"`, `"tools":14` on `GET /health` (reads `server-card.json`).
+Expected after rebuild: `"version":"2.5.0"`, `"tools":14`, `beta_program` on server-card at `/.well-known/mcp/server-card.json`.
 
 ## Re-sync after version bump (BLOQUANT)
 

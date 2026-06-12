@@ -1,6 +1,6 @@
 # HyperNatt Terminal
 
-**The only BTC decision terminal backed by a live, verifiable trading vault.** 1800+ closed cycles, verifiable win rate. Free proof of performance + paid signals ($0.01 USDC x402 on Base). Your edge in BTC — verified on-chain.
+**The only BTC decision terminal backed by a live, verifiable trading vault.** 1800+ closed cycles, verifiable win rate. **BETA (live):** first **100 external wallets** get all 5 Decision Core tools **free for life** — [check slots](https://hypernatt.com/api/m2m/beta/status). Public price after beta: $0.01 USDC/call via x402 on Base.
 
 Public MCP server for autonomous AI agents. Free tools include **`proof_of_edge`** (track record + last MM trap detected). Paid Decision Core reads from the live Mimo vault — no custody, not trade advice.
 
@@ -14,13 +14,14 @@ Public MCP server for autonomous AI agents. Free tools include **`proof_of_edge`
 | **Tool reference** | [tools/](tools/) |
 | **HyperNatt app** | https://hypernatt.com |
 | **Public stats** | https://hypernatt.com/stats |
+| **Beta status** | https://hypernatt.com/api/m2m/beta/status |
 | **Hyperliquid vault** | https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8 |
 
 ---
 
 ## What it is
 
-HyperNatt Terminal exposes **14 MCP tools** (v2.4.0): orientation + vault proof, Natt agent performance, swap, signals (including raw liq radar + MM trap state), and rewards.
+HyperNatt Terminal exposes **14 MCP tools** (v2.5.0): orientation + vault proof, Natt agent performance, swap, five Decision Core reads (beta grandfather eligible), and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -51,7 +52,7 @@ The terminal is organized into four sections (Decision Core first). Same structu
 
 ### Decision Core
 
-Five paid tools (**$0.01 USDC each** via **x402 on Base**). Backed by the Mimo BTC/USDC vault (live since **2026-02-27**). Use them together for a complete decision framework. Each payload includes verification metadata (vault URL, stats URL, snapshot hash).
+Five Decision Core tools (**$0.01 USDC each** via **x402 on Base**, or **free** if your wallet is [beta-grandfathered](https://hypernatt.com/api/m2m/beta/status)). Pass **`agent_wallet`** (MCP) or header **`X-Agent-Wallet`** (HTTP) to skip payment when enrolled. Enroll automatically after **≥2 distinct tools** used successfully within 24h (external wallets only). Backed by the Mimo BTC/USDC vault (live since **2026-02-27**).
 
 | Tool | Role | Price |
 |------|------|-------|
@@ -126,7 +127,7 @@ Default env points read-only signal backends to production (`https://hypernatt.c
 1. **`get_agent_manifest`** — discover tools and pricing (free).
 2. **`get_natt_performance`** — see live Natt agent PnL / winrate (free, on-chain).
 3. **`swap_via_nattswap`** — test a free cross-chain quote.
-4. **Decision Core** — five paid reads when you need vault-backed BTC context ($0.01 USDC each via x402).
+4. **Decision Core** — five vault-backed reads ($0.01 USDC each, or **free for beta wallets** — see beta status URL).
 5. **`register_nattswap_reward`** → **`get_agent_balance`** → **`claim_ndat`** — rewards loop after a completed swap.
 6. **`get_referral_link`** — grow your agent network.
 
