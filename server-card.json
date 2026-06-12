@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
     "version": "2.4.0",
-    "description": "BTC Decision Terminal for AI Agents. Live vault-backed Hyperliquid signals (cycle, MM hunt, similarity, liq radar, MM trap state), verifiable on-chain. Free vault proof + Natt performance + Li.Fi swap + NDAT. Paid reads $0.01 USDC x402 on Base. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
+    "description": "The only BTC decision terminal backed by a live, verifiable trading vault. 1800+ cycles, verifiable win rate. Free proof of performance + paid signals ($0.01 USDC x402 on Base). Your edge in BTC — verified on-chain. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
   },
   "authentication": {
     "required": false,
@@ -12,7 +12,7 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 14 terminal tools with prices, recommended journey, and live 24h usage stats. Free.",
+      "description": "Start here: catalog of 14 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -22,7 +22,7 @@
     },
     {
       "name": "get_vault_proof",
-      "description": "Free on-chain vault proof for the Mimo BTC/USDC Hyperliquid vault: address, public URLs, ERC-8004 agent id, and signed cycle snapshot hash (sha256). No performance metrics — verify live yourself.",
+      "description": "Free proof we eat our own cooking: on-chain vault address, public URLs, signed cycle hash. Verify our live BTC trades yourself.",
       "inputSchema": {
         "type": "object",
         "properties": {}
@@ -30,7 +30,7 @@
     },
     {
       "name": "get_natt_performance",
-      "description": "Free live trading performance for the Natt CDP agent on Base: capital, PnL, win rate, estimated APR, signal costs, best/worst/last trade — verifiable on BaseScan.",
+      "description": "Free live P&L, win rate, and estimated APR from our trading agent Natt. Real capital, real results — verifiable on BaseScan.",
       "inputSchema": {
         "type": "object",
         "properties": {}
@@ -38,7 +38,7 @@
     },
     {
       "name": "get_btc_usdc_signal",
-      "description": "Live BTC/USDC Mimo vault cycle state on Hyperliquid with on-chain proof metadata. x402 $0.01 USDC on Base per call. Read-only — not a trade signal.",
+      "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. Verifiable on-chain. x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -55,7 +55,7 @@
     },
     {
       "name": "get_mm_hunt_score",
-      "description": "BTC perp MM hunt / liquidation pressure score and long-trap phase. x402 $0.01 USDC on Base. Read-only context — not a trade signal.",
+      "description": "Is the Market Maker hunting your position? Live liquidation pressure score and trap phase detection. Avoid being exit liquidity. x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -66,7 +66,7 @@
     },
     {
       "name": "get_similarity_match",
-      "description": "Top-3 historical microstructure matches vs current BTC regime. x402 $0.01 USDC on Base. Read-only analogy — not a trade signal.",
+      "description": "What happened last time BTC looked like this? Top-3 historical microstructure matches with outcomes. Learn from history. x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -77,7 +77,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Raw BTC liquidation radar snapshot: magnet score, OI, long/short ratio, liquidation clusters above/below price, real liquidations 1h/24h. x402 $0.01 USDC on Base. Read-only — not a trade signal.",
+      "description": "Where will the next BTC liquidation cascade hit? Raw cluster data: magnet score, OI, long/short ratio, real liquidations 1h/24h. x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -87,7 +87,7 @@
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Live BTC market-maker trap state: trap active/idle, hunt direction, latched liquidation cluster, sweep zone bounds, math-verified sweep/reclaim verdicts. x402 $0.01 USDC on Base. Read-only — not a trade signal.",
+      "description": "Live Market Maker manipulation weather: trap active/idle, hunt direction, sweep zones. Know when the shark is hunting before it bites. x402 $0.01 USDC on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -97,7 +97,7 @@
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain swap quote via NattSwap (Li.Fi) with step-by-step agent instructions. Free — no x402.",
+      "description": "BTC/USDC swap on Base via NattSwap (Li.Fi) with step-by-step agent instructions. Free — your gateway to BTC trading.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -115,7 +115,7 @@
     },
     {
       "name": "swap_quote",
-      "description": "Raw Li.Fi cross-chain swap quote JSON. Free — no x402.",
+      "description": "Raw Li.Fi swap quote for BTC/USDC on Base. Free — no x402 needed.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -133,7 +133,7 @@
     },
     {
       "name": "get_agent_balance",
-      "description": "Pending and claimed NDAT balance for an agent wallet.",
+      "description": "Your NDAT token balance: pending and claimed. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -144,7 +144,7 @@
     },
     {
       "name": "claim_ndat",
-      "description": "ECDSA signature payload to claim pending NDAT on Base (NattDataAnchor). Agent pays gas.",
+      "description": "Claim your pending NDAT rewards on Base. Agent pays gas. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -156,7 +156,7 @@
     },
     {
       "name": "register_nattswap_reward",
-      "description": "Register a completed NattSwap tx hash to credit NDAT rewards.",
+      "description": "Register a completed swap to earn NDAT rewards. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -168,7 +168,7 @@
     },
     {
       "name": "get_referral_link",
-      "description": "Referral URL and deposit field hint for agent-to-agent invites.",
+      "description": "Get your referral link to invite other agents and earn rewards. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {

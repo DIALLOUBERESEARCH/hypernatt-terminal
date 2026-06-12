@@ -5,6 +5,23 @@ import axios from "axios";
 import { z } from "zod";
 import { validateTerminalSwap } from "./base-tokens.mjs";
 
+/** F#34N — Fetch proof-of-edge from m2m internal (fail-open, never blocking). */
+async function fetchProofOfEdge(m2mUrl, internalSecret) {
+    try {
+        const base = m2mUrl.replace(/\/$/, "");
+        const resp = await axios.get(`${base}/api/m2m/internal/proof-of-edge`, {
+            headers: { "X-M2M-Internal-Secret": internalSecret },
+            timeout: 4000,
+        });
+        if (resp.data?.ok && resp.data?.proof_of_edge) {
+            return resp.data.proof_of_edge;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
 const swapParamsSchema = {
     fromChain: z.union([z.number(), z.string()]).describe("Source chain id"),
     toChain: z.union([z.number(), z.string()]).describe("Destination chain id"),
@@ -58,7 +75,7 @@ export function registerTerminalSwapTools(server, ctx) {
         "swap_via_nattswap",
         {
             description:
-                "BTC/USDC swap quote on Base (USDC ↔ WBTC/cbBTC) via NattSwap (Li.Fi). Free — no x402.",
+                "BTC/USDC swap on Base via NattSwap (Li.Fi) with step-by-step agent instructions. Free — your gateway to BTC trading.",
             inputSchema: swapParamsSchema,
         },
         async (params) => {
@@ -94,7 +111,7 @@ export function registerTerminalSwapTools(server, ctx) {
         "swap_quote",
         {
             description:
-                "Raw Li.Fi swap quote on Base for BTC/USDC only (USDC ↔ WBTC/cbBTC). Free — no x402.",
+                "Raw Li.Fi swap quote for BTC/USDC on Base. Free — no x402 needed.",
             inputSchema: swapParamsSchema,
         },
         async (params) => {
@@ -124,7 +141,7 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "get_agent_balance",
         {
-            description: "Pending and claimed NDAT balance for an agent wallet (m2m Postgres ledger).",
+            description: "Your NDAT token balance: pending and claimed. Free.",
             inputSchema: {
                 wallet: z.string().describe("Agent EVM address"),
             },
@@ -151,7 +168,7 @@ export function registerTerminalCommerceTools(server, ctx) {
         "claim_ndat",
         {
             description:
-                "Generate ECDSA signature to claim pending NDAT on Base (NattDataAnchor). Agent pays gas.",
+                "Claim your pending NDAT rewards on Base. Agent pays gas. Free.",
             inputSchema: {
                 wallet: z.string().describe("Agent EVM address"),
                 amount: z.number().optional().describe("NDAT amount; omit to claim all pending"),
@@ -181,7 +198,7 @@ export function registerTerminalCommerceTools(server, ctx) {
         "register_nattswap_reward",
         {
             description:
-                "Register a completed NattSwap transaction hash to credit NDAT rewards.",
+                "Register a completed swap to earn NDAT rewards. Free.",
             inputSchema: {
                 txHash: z.string().describe("Source chain transaction hash"),
                 agentAddress: z.string().describe("Agent wallet that executed the swap"),
@@ -209,7 +226,7 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "get_referral_link",
         {
-            description: "Referral link and deposit hint for agent-to-agent invites.",
+            description: "Get your referral link to invite other agents and earn rewards. Free.",
             inputSchema: {
                 referrer: z.string().describe("Referrer agent EVM address"),
             },
@@ -244,7 +261,7 @@ export function registerVaultProofTool(server, ctx) {
         "get_vault_proof",
         {
             description:
-                "Free on-chain vault proof for the Mimo BTC/USDC Hyperliquid vault: address, public URLs, ERC-8004 agent id, and signed cycle snapshot hash (sha256). No performance metrics — verify live yourself.",
+                "Free proof we eat our own cooking: on-chain vault address, public URLs, signed cycle hash. Verify our live BTC trades yourself.",
             inputSchema: {},
         },
         async () => {
@@ -260,6 +277,7 @@ export function registerVaultProofTool(server, ctx) {
                     ok: true,
                     source: "hypernatt-terminal",
                     data: response.data,
+                    proof_of_edge: await fetchProofOfEdge(m2mUrl, internalSecret),
                 });
             } catch (err) {
                 const message = err instanceof Error ? err.message : String(err);
@@ -285,7 +303,7 @@ export function registerNattPerformanceTool(server, ctx) {
         "get_natt_performance",
         {
             description:
-                "Free live trading performance for the Natt CDP agent on Base: capital, PnL, win rate, estimated APR, signal costs, best/worst/last trade — aggregated from episodic trade_decision memory and on-chain wallet balances. Verifiable via BaseScan.",
+                "Free live P&L, win rate, and estimated APR from our trading agent Natt. Real capital, real results — verifiable on BaseScan.",
             inputSchema: {},
         },
         async () => {
@@ -304,6 +322,7 @@ export function registerNattPerformanceTool(server, ctx) {
                     ok: true,
                     source: "hypernatt-terminal",
                     data: response.data,
+                    proof_of_edge: await fetchProofOfEdge(m2mUrl, internalSecret),
                 });
             } catch (err) {
                 const message = err instanceof Error ? err.message : String(err);

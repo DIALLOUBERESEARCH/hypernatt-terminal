@@ -26,7 +26,7 @@ export const MM_HUNT_PAYTO = (
 ).toLowerCase();
 
 const MM_HUNT_DESCRIPTION =
-    "HyperNatt BTC MM hunt / liquidation pressure score via MCP (read-only microstructure)";
+    "Is the Market Maker hunting your position? Live liquidation pressure score — avoid being exit liquidity";
 // F#32N — resource must be the URL (Bazaar indexing key), not a description.
 const MM_HUNT_RESOURCE_URL =
     process.env.PUBLIC_MCP_URL || "https://hypernatt.com/mcp/protocol";

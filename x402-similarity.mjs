@@ -26,7 +26,7 @@ export const SIMILARITY_PAYTO = (
 ).toLowerCase();
 
 const SIMILARITY_DESCRIPTION =
-    "HyperNatt BTC historical microstructure similarity TOP3 with observed ~4h outcomes via MCP (read-only)";
+    "What happened last time BTC looked like this? Top-3 historical pattern matches with outcomes";
 // F#32N — resource must be the URL (Bazaar indexing key), not a description.
 const SIMILARITY_RESOURCE_URL =
     process.env.PUBLIC_MCP_URL || "https://hypernatt.com/mcp/protocol";

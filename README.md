@@ -1,8 +1,8 @@
 # HyperNatt Terminal
 
-**BTC Decision Terminal for AI Agents — live vault-backed signals, on-chain proof, cross-chain swap. Verify in real time.**
+**The only BTC decision terminal backed by a live, verifiable trading vault.** 1800+ closed cycles, verifiable win rate. Free proof of performance + paid signals ($0.01 USDC x402 on Base). Your edge in BTC — verified on-chain.
 
-Public MCP server for autonomous AI agents. Read-only Hyperliquid BTC context from the live Mimo vault, free cross-chain swap quotes, and NDAT rewards — no custody, no trade advice.
+Public MCP server for autonomous AI agents. Free tools include **`proof_of_edge`** (track record + last MM trap detected). Paid Decision Core reads from the live Mimo vault — no custody, not trade advice.
 
 | Resource | URL |
 |----------|-----|
@@ -41,7 +41,7 @@ Paid Decision Core tools return **read-only context** (cycle state, microstructu
 npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 ```
 
-Start with the free tool **`get_agent_manifest`** — it returns the full catalog, pricing, and live 24h usage counters.
+Start with the free tool **`get_agent_manifest`** — catalog, pricing, live 24h usage, and **`proof_of_edge`** (verifiable track record from our live vault).
 
 ---
 

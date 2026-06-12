@@ -121,7 +121,7 @@ export const LIQ_RADAR_X402 = createDataProductX402({
     priceEnv: "LIQ_RADAR_X402_PRICE_USDC",
     payToEnv: "LIQ_RADAR_X402_PAYTO",
     description:
-        "HyperNatt BTC liquidation radar — raw microstructure snapshot via MCP (read-only)",
+        "Where will the next BTC liquidation cascade hit? Raw cluster data via MCP",
     internalPath: "/api/m2m/internal/liq-radar",
 });
 
@@ -130,6 +130,6 @@ export const MM_TRAP_STATE_X402 = createDataProductX402({
     priceEnv: "MM_TRAP_STATE_X402_PRICE_USDC",
     payToEnv: "MM_TRAP_STATE_X402_PAYTO",
     description:
-        "HyperNatt BTC MM trap state — live manipulation weather via MCP (read-only, redacted)",
+        "Live Market Maker manipulation weather — trap/sweep/reclaim detection via MCP",
     internalPath: "/api/m2m/internal/mm-trap-state",
 });

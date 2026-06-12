@@ -23,7 +23,7 @@ export const SIGNAL_PAYTO = (
 ).toLowerCase();
 
 const SIGNAL_DESCRIPTION =
-    "HyperNatt Mimo BTC/USDC live cycle state via MCP (verifiable, not a trade signal)";
+    "Should I enter BTC now? Real-time cycle state from a live Hyperliquid vault — verified on-chain";
 // F#32N — Bazaar/Agentic.Market indexes via paymentPayload.resource at settle
 // time: it MUST be the resource URL, not a description.
 const SIGNAL_RESOURCE_URL =
