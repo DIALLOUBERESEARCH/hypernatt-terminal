@@ -1,4 +1,9 @@
 {
   "$schema": "https://glama.ai/mcp/schemas/server.json",
-  "maintainers": ["Heladj1977", "DIALLOUBE-RESEARCH"]
+  "maintainers": ["Heladj1977", "DIALLOUBE-RESEARCH"],
+  "displayName": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
+  "description": "14-tool BTC decision terminal for AI agents: live vault-backed signals, MM microstructure, x402 pay-per-call on Base. BETA: first 100 wallets get Decision Core free for life.",
+  "category": "finance",
+  "homepage": "https://hypernatt.com/stats",
+  "repository": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
 }

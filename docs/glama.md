@@ -37,14 +37,24 @@ Glama rebuild le Docker + introspection `stdio.mjs` (`tools/list`). README seul 
 4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = 14 entries.
 5. Hard refresh (Ctrl+F5) page publique.
 
-## Glama Dockerfile admin (quality check)
+## Glama Dockerfile admin (quality check) — BLOQUANT
 
-Glama runs `mcp-proxy` with **stdio** introspection. Use `stdio.mjs`, not `server.js`:
+Glama indexes tools via `mcp-proxy` + **stdio** (`tools/list`). If CMD = `server.js`, you get a **stale subset (~11 tools)**.
+
+**Admin → Server → Dockerfile settings** (must match exactly):
 
 | Field | Value |
 |-------|--------|
-| Build steps | `["npm ci --omit=dev"]` |
-| CMD arguments | `["node", "stdio.mjs"]` |
+| Dockerfile path | `./Dockerfile` |
+| Build steps | *(leave empty — Dockerfile runs `npm ci`)* |
+| **CMD arguments** | **`["node", "stdio.mjs"]`** |
 | Placeholder parameters | `{}` |
+
+Dockerfile `CMD ["node", "server.js"]` is for **HTTP healthcheck only**; Glama admin CMD overrides introspection to stdio.
+
+After **Sync Server**, onglet **Tools** must show **14** entries including:
+`get_natt_performance`, `get_liq_radar`, `get_mm_trap_state`.
+
+If still 11 tools: hard refresh (Ctrl+F5) → re-Sync → wait build **Succeeded** (~30 min).
 
 Prod agents use HTTP: `node server.js` → `https://hypernatt.com/mcp/protocol`.

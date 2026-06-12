@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.0",
+    "version": "2.5.1",
     "description": "BTC Decision Terminal for AI Agents — live vault-backed signals, on-chain proof. BETA: first 100 external wallets get Decision Core free for life (https://hypernatt.com/api/m2m/beta/status). Public price $0.01 USDC/call via x402 on Base after beta. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
   },
   "authentication": {
