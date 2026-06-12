@@ -30,11 +30,11 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **14 MCP tools** (v2.5.0): orientation, proof, swap, five Decision Core reads (beta eligible), and NDAT rewards.
+The terminal exposes **14 MCP tools** (v2.5.1): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
 
-**Beta program (live):** https://hypernatt.com/api/m2m/beta/status — first **100 external wallets** get Decision Core **free for life**. Enroll after **≥2 tools** succeed within 24h. Use `agent_wallet` on MCP paid tools (or `X-Agent-Wallet` on REST) to bypass x402 when grandfathered.
+**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — earn Decision Core call credits by swapping via NattSwap (~20 quotas per $100 volume). First **100** wallets with **$50+** eligible swap volume get **2x** founder multiplier. Use `agent_wallet` on MCP paid tools (or `X-Agent-Wallet` on REST) when you have quota balance.
 
-**Important:** Paid tools return **read-only context**. They are **not** trade recommendations or execution instructions.
+**Important:** Paid tools return **read-only BTC/USDC context**. They are **not** trade recommendations or execution instructions.
 
 ---
 
@@ -44,9 +44,9 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 
 | Section | Pricing | Purpose |
 |---------|---------|---------|
-| **Decision Core** | $0.01 USD/call (or **free** if beta-grandfathered) | Vault-backed BTC context — five tools |
+| **Decision Core** | $0.01 USD/call (or **quota bypass**) | Vault-backed BTC context — five tools |
 | **Proof & Performance** | Free | Natt agent on-chain metrics |
-| **Execution** | Free | Li.Fi swap quotes (NattSwap) |
+| **Execution** | Free | Li.Fi cross-chain swap quotes (NattSwap) |
 | **Rewards & Referral** | Free | NDAT + referral |
 
 ### Decision Core — five paid tools
@@ -59,26 +59,26 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 | `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs |
 | `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) |
 
-Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). Beta wallets: pass **`agent_wallet`** and skip payment when enrolled.
+Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). With quota balance: pass **`agent_wallet`** and skip payment.
 
 ---
 
-## Step 2 — Test the free swap
+## Step 2 — Test the free cross-chain swap
 
 | Tool | When to use |
 |------|-------------|
-| `swap_via_nattswap` | Li.Fi quote + step-by-step execution instructions |
+| `swap_via_nattswap` | Li.Fi quote + step-by-step execution instructions (any Li.Fi-routed chain pair) |
 | `swap_quote` | Raw Li.Fi quote JSON only |
 
-Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes.
+Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes. After on-chain completion: **`register_nattswap_reward`** to earn quotas + NDAT.
 
 ---
 
-## Step 3 — Decision Core ($0.01 each, or beta-free)
+## Step 3 — Decision Core ($0.01 each, or quota)
 
-1. Optional: `GET https://hypernatt.com/api/m2m/beta/status` — slots remaining.
-2. Call without payment → x402 instructions (402 on REST), **unless** you pass `agent_wallet` / `X-Agent-Wallet` and are grandfathered.
-3. Pay **$0.01 USDC** on Base (if not beta).
+1. Check `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…` — remaining credits.
+2. Call without payment → x402 instructions (402 on REST), **unless** quota balance covers the tool weight.
+3. Pay **$0.01 USDC** on Base (if no quota).
 4. Retry with `x_payment` / `X-Payment`.
 
 Suggested order for a full picture:
@@ -97,7 +97,7 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 
 | Tool | Action |
 |------|--------|
-| `register_nattswap_reward` | Credit NDAT after completed swap tx |
+| `register_nattswap_reward` | Credit NDAT + quotas after completed swap tx |
 | `get_agent_balance` | Pending / claimed NDAT |
 | `claim_ndat` | ECDSA claim payload (you pay gas) |
 | `get_referral_link` | Agent referral URL |
@@ -111,11 +111,11 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 | 1 | `get_agent_manifest` | Free |
 | 2 | `get_vault_proof` | Free |
 | 3 | `get_natt_performance` | Free |
-| 4 | `get_btc_usdc_signal` | $0.01 x402 |
-| 5 | `get_mm_hunt_score` | $0.01 x402 |
-| 6 | `get_similarity_match` | $0.01 x402 |
-| 7 | `get_liq_radar` | $0.01 x402 |
-| 8 | `get_mm_trap_state` | $0.01 x402 |
+| 4 | `get_btc_usdc_signal` | $0.01 x402 or quota |
+| 5 | `get_mm_hunt_score` | $0.01 x402 or quota |
+| 6 | `get_similarity_match` | $0.01 x402 or quota |
+| 7 | `get_liq_radar` | $0.01 x402 or quota |
+| 8 | `get_mm_trap_state` | $0.01 x402 or quota |
 | 9 | `swap_via_nattswap` | Free |
 | 10 | `swap_quote` | Free |
 | 11 | `get_agent_balance` | Free |
@@ -132,13 +132,14 @@ Per-tool docs: [../tools/](../tools/)
 | Endpoint | Description |
 |----------|-------------|
 | `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
+| `GET /api/m2m/quota/status` | Quota program params (public) |
+| `GET /api/m2m/quota/balance` | Wallet quota balance (public) |
 | `GET /api/m2m/stats/usage` | Public 24h usage counters |
-| `GET /api/m2m/signal` | Paid signal (x402) |
-| `GET /api/m2m/mm-hunt` | Paid MM hunt (x402) |
-| `GET /api/m2m/similarity-match` | Paid similarity (x402) |
-| `GET /api/m2m/liq-radar` | Paid liq radar (x402) |
-| `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402) |
-| `GET /api/m2m/beta/status` | Beta slots + enroll window (public) |
+| `GET /api/m2m/signal` | Paid signal (x402 or quota) |
+| `GET /api/m2m/mm-hunt` | Paid MM hunt (x402 or quota) |
+| `GET /api/m2m/similarity-match` | Paid similarity (x402 or quota) |
+| `GET /api/m2m/liq-radar` | Paid liq radar (x402 or quota) |
+| `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402 or quota) |
 
 Base URL: `https://hypernatt.com`
 
@@ -152,4 +153,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.0 (14 tools, beta grandfather).*
+*Document version: hypernatt-terminal MCP v2.5.1 (14 tools, quota program + Li.Fi cross-chain).*

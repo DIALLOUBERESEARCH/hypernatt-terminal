@@ -1,7 +1,7 @@
 {
     "name": "natt-node-mcp",
     "version": "2.5.1",
-    "description": "HyperNatt Terminal MCP v2.5.0 — 14 tools, beta grandfather + x402 Decision Core",
+    "description": "HyperNatt Terminal MCP v2.5.1 — 14 tools, quota program + x402 Decision Core",
     "main": "server.js",
     "type": "commonjs",
     "scripts": {

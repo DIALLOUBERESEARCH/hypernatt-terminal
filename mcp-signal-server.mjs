@@ -52,6 +52,7 @@ import {
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 import { extractPayerWallet, recordX402Event } from "./x402-telemetry.mjs";
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
+import { checkQuotaBypass } from "./x402-quota.mjs";
 import {
     registerTerminalCommerceTools,
     registerTerminalSwapTools,
@@ -144,13 +145,18 @@ function onToolCallRecorded({
     priceUsdc,
     sessionId,
     betaBypass = false,
+    quotaBypass = false,
 }) {
     if (!wallet) return;
     recordBetaPostCall({
         wallet,
         tool,
-        outcome: betaBypass ? "beta_bypass" : "ok",
-        price_usdc: betaBypass ? 0 : priceUsdc,
+        outcome: quotaBypass
+            ? "quota_bypass"
+            : betaBypass
+              ? "beta_bypass"
+              : "ok",
+        price_usdc: betaBypass || quotaBypass ? 0 : priceUsdc,
         session_id: sessionId || null,
     });
 }
@@ -167,6 +173,11 @@ async function processPaidToolPayment({
     buildRequirements: buildReqs,
 }) {
     const headerWallet = normalizeAgentWallet(agent_wallet);
+    if (headerWallet && (await checkQuotaBypass(headerWallet, tool))) {
+        console.log(`[F#38N] quota bypass MCP: ${headerWallet} → ${tool}`);
+        return { ok: true, wallet: headerWallet, quotaBypass: true };
+    }
+
     if (headerWallet && (await checkBetaBypass(headerWallet, tool))) {
         console.log(`[F#36N] beta bypass MCP: ${headerWallet} → ${tool}`);
         return { ok: true, wallet: headerWallet, betaBypass: true };
@@ -339,6 +350,7 @@ export function createMcpServer() {
                     priceUsdc: SIGNAL_PRICE_USDC,
                     sessionId: extra?.sessionId,
                     betaBypass: payment.betaBypass,
+                    quotaBypass: payment.quotaBypass,
                 });
                 return {
                     content: [
@@ -447,6 +459,7 @@ export function createMcpServer() {
                     priceUsdc: MM_HUNT_PRICE_USDC,
                     sessionId: extra?.sessionId,
                     betaBypass: payment.betaBypass,
+                    quotaBypass: payment.quotaBypass,
                 });
                 return {
                     content: [
@@ -559,6 +572,7 @@ export function createMcpServer() {
                     priceUsdc: SIMILARITY_PRICE_USDC,
                     sessionId: extra?.sessionId,
                     betaBypass: payment.betaBypass,
+                    quotaBypass: payment.quotaBypass,
                 });
                 return {
                     content: [
@@ -652,6 +666,7 @@ export function createMcpServer() {
                         priceUsdc: x402.priceUsdc,
                         sessionId: extra?.sessionId,
                         betaBypass: payment.betaBypass,
+                    quotaBypass: payment.quotaBypass,
                     });
                     return jsonToolResult({
                         ok: true,

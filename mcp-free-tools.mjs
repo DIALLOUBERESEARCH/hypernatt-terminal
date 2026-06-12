@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 import { z } from "zod";
-import { validateTerminalSwap } from "./base-tokens.mjs";
+import { validateTerminalSwap, terminalSwapPolicyMode } from "./base-tokens.mjs";
 
 /** F#34N — Fetch proof-of-edge from m2m internal (fail-open, never blocking). */
 async function fetchProofOfEdge(m2mUrl, internalSecret) {
@@ -60,7 +60,14 @@ function toolTextResult(obj, isError = false) {
 function rejectInvalidSwapParams(params) {
     const err = validateTerminalSwap(params);
     if (err) {
-        return toolTextResult({ error: err, pair: "BTC/USDC" }, true);
+        return toolTextResult(
+            {
+                error: err,
+                pair: "BTC/USDC",
+                pair_policy: terminalSwapPolicyMode(),
+            },
+            true,
+        );
     }
     return null;
 }
@@ -75,7 +82,7 @@ export function registerTerminalSwapTools(server, ctx) {
         "swap_via_nattswap",
         {
             description:
-                "BTC/USDC swap on Base via NattSwap (Li.Fi) with step-by-step agent instructions. Free — your gateway to BTC trading.",
+                "Cross-chain swap via Li.Fi (Li.Fi-routed chains). Free — step-by-step agent instructions. Decision signals remain BTC/USDC only.",
             inputSchema: swapParamsSchema,
         },
         async (params) => {
@@ -111,7 +118,7 @@ export function registerTerminalSwapTools(server, ctx) {
         "swap_quote",
         {
             description:
-                "Raw Li.Fi swap quote for BTC/USDC on Base. Free — no x402 needed.",
+                "Raw Li.Fi swap quote JSON. Cross-chain supported. Free — no x402 needed.",
             inputSchema: swapParamsSchema,
         },
         async (params) => {

@@ -25,7 +25,18 @@ function isBaseChainId(chain) {
     return Number.isFinite(n) && n === BASE_CHAIN_ID;
 }
 
+export function isNattswapCrossChainEnabled() {
+    return process.env.NATTSWAP_CROSS_CHAIN_ENABLED !== "false";
+}
+
+export function terminalSwapPolicyMode() {
+    return isNattswapCrossChainEnabled() ? "cross_chain" : "btc_usdc_cage";
+}
+
 export function validateTerminalSwap(params) {
+    if (terminalSwapPolicyMode() === "cross_chain") {
+        return null;
+    }
     if (!isBaseChainId(params.fromChain) || !isBaseChainId(params.toChain)) {
         return TERMINAL_SWAP_ERROR;
     }
