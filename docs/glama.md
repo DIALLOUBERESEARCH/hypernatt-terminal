@@ -31,7 +31,7 @@ Expected after rebuild: `"version":"2.5.0"`, `"tools":14`, `beta_program` on ser
 
 Glama rebuild le Docker + introspection `stdio.mjs` (`tools/list`). README seul ne suffit pas si `/health` est stale.
 
-1. Sync monorepo -> `hypernatt-terminal` (`sync-hypernatt-terminal-repo.ps1`).
+1. Sync monorepo -> `hypernatt-terminal` (`sync-hypernatt-terminal-repo.ps1`) — **must include `package-lock.json`** or Glama `npm ci` fails silently.
 2. `git push origin main`.
 3. Glama admin -> **Repository** -> **Sync Server**.
 4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = 14 entries.
