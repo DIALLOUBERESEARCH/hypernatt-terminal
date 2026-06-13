@@ -12,20 +12,25 @@
 
 ## What you get (before the first tool call)
 
-Real production samples — [full examples](example-responses.md) with curls.
+Three production samples — [full doc](example-responses.md). Order: **trap → vault → hunt**.
+
+**`get_mm_trap_state`** (2 credits):
+
+```json
+{
+  "state": "MM_TRAP_ACTIVE",
+  "trap_direction": "DOWN_HUNT_LONGS",
+  "sweep_zone": { "low": 56933, "high": 58667 },
+  "chart_verdicts": { "hunt": "SWEEP_MATH_FAIL", "reclaim": "RECLAIM_MATH_OK" }
+}
+```
 
 **`get_btc_usdc_signal`** (1 credit, HOLD free):
 
 ```json
 {
-  "cycle": {
-    "cycle_id": "C94D4BB60",
-    "direction": "LONG",
-    "total_legs": 4,
-    "avg_entry_price": 66715.06
-  },
-  "has_active": true,
-  "pair": "BTC/USDC"
+  "cycle": { "direction": "LONG", "cycle_id": "C94D4BB60", "total_legs": 4 },
+  "has_active": true
 }
 ```
 
@@ -35,8 +40,7 @@ Real production samples — [full examples](example-responses.md) with curls.
 {
   "mm_hunt_score": -35,
   "magnet_bias": "BEARISH_MAGNET",
-  "pressure_direction": "DOWN_HUNT_LONGS",
-  "alert_level": "orange"
+  "pressure_direction": "DOWN_HUNT_LONGS"
 }
 ```
 

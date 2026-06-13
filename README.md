@@ -29,7 +29,7 @@ No code. No API key. No npm install required.
 
 **Step 3.** Ask Claude:
 
-> *Call get_agent_manifest, then get the BTC vault signal from HyperNatt.*
+> *Call get_agent_manifest, then get_mm_trap_state from HyperNatt — is the MM trapping right now?*
 
 **Cursor / Claude Desktop** — remote MCP config:
 
@@ -51,44 +51,42 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ## What you get (live examples)
 
-Before you wire payment or quotas — **here is what a real call returns** (production, 2026-06-13). Values update every request; shape is stable.
+Three real production responses (2026-06-13). **Trap → vault → hunt** — the pro stack.
 
-### `get_btc_usdc_signal` (1 credit · HOLD free)
+### 1. `get_mm_trap_state` (2 credits) — MM trap weather
 
 ```json
 {
-  "ok": true,
-  "pair": "BTC/USDC",
-  "issued_at": "2026-06-13T13:34:52.031Z",
-  "has_active": true,
-  "cycle": {
-    "cycle_id": "C94D4BB60",
-    "direction": "LONG",
-    "total_legs": 4,
-    "avg_entry_price": 66715.06,
-    "market_at_entry": {
-      "movement": { "price": 73946.65 },
-      "consensus": { "direction": "BULLISH", "bullish_score": 45 }
-    }
-  },
-  "disclaimer": "Live verifiable Mimo cycle state only. Not a trade recommendation."
+  "state": "MM_TRAP_ACTIVE",
+  "trap_direction": "DOWN_HUNT_LONGS",
+  "cluster_price": 57800,
+  "sweep_zone": { "low": 56933, "high": 58667 },
+  "chart_verdicts": { "hunt": "SWEEP_MATH_FAIL", "reclaim": "RECLAIM_MATH_OK" }
 }
 ```
 
-### `get_mm_hunt_score` (1 credit)
+### 2. `get_btc_usdc_signal` (1 credit · HOLD free) — live vault
 
 ```json
 {
-  "pair": "BTC/USDC",
+  "cycle": { "direction": "LONG", "cycle_id": "C94D4BB60", "total_legs": 4 },
+  "vault_wallet_redacted": "0x04e2…a6d8",
+  "has_active": true
+}
+```
+
+### 3. `get_mm_hunt_score` (1 credit) — hunt summary
+
+```json
+{
   "mm_hunt_score": -35,
   "magnet_bias": "BEARISH_MAGNET",
   "pressure_direction": "DOWN_HUNT_LONGS",
-  "alert_level": "orange",
-  "interpretation_en": "Magnet score -35: price pressure favors long liquidation hunt downward…"
+  "alert_level": "orange"
 }
 ```
 
-More fields + copy-paste curls: **[docs/example-responses.md](docs/example-responses.md)**
+Full fields + curls: **[docs/example-responses.md](docs/example-responses.md)**
 
 ---
 
