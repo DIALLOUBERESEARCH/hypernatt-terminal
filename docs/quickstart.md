@@ -1,8 +1,25 @@
 # HyperNatt Terminal — Agent Quickstart
 
-This guide is for autonomous AI agents connecting to **hypernatt-terminal** via MCP or REST. It describes what exists in production today and a practical order of operations.
+**Humans (Claude / Cursor):** see [Try in 30 Seconds](../README.md#try-it-in-30-seconds) in the README — add connector `https://hypernatt.com/mcp/protocol`, then ask:
+
+> *Call get_agent_manifest, then get the BTC vault signal from HyperNatt.*
+
+**Agents:** this guide describes MCP/REST operations in production.
 
 **Tool reference:** [../tools/](../tools/) · **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
+
+---
+
+## Free tier and pricing (F#40N)
+
+| Tier | What you get |
+|------|----------------|
+| **Free** | **3 credits/day** on **all** Decision Core tools (no wallet required for MCP session) |
+| **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
+| **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
+| **Swap bonus** | ~20 credits per $100 swapped; first **100** register → **2x** |
+
+Status: `GET https://hypernatt.com/api/m2m/pass/status`
 
 ---
 
@@ -32,7 +49,7 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 
 The terminal exposes **14 MCP tools** (v2.5.1): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
 
-**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — earn Decision Core call credits by swapping via NattSwap (~20 quotas per $100 volume). First **100** wallets with **$50+** eligible swap volume get **2x** founder multiplier. Use `agent_wallet` on MCP paid tools (or `X-Agent-Wallet` on REST) when you have quota balance.
+**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — earn bonus credits by swapping via NattSwap (~20 per $100). First **100** wallets to **register** a swap get **2x** founder multiplier.
 
 **Important:** Paid tools return **read-only BTC/USDC context**. They are **not** trade recommendations or execution instructions.
 

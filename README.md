@@ -1,21 +1,65 @@
 # HyperNatt Terminal
 
-**The only BTC decision terminal backed by a live, verifiable trading vault.** 1800+ closed cycles, verifiable win rate. **Decision Core:** five BTC/USDC reads at **$0.01 USDC/call** via x402 on Base — or use **earned quotas** from NattSwap ([quota status](https://hypernatt.com/api/m2m/quota/status)). Founders: first **100** wallets with **$50+** swap volume get **2x** quota credits.
+**BTC decision terminal backed by a live, verifiable trading vault.** 1800+ closed cycles — [public track record](https://hypernatt.com/stats). **Free daily credits** on all Decision Core tools. **HOLD signals are free.** Agent Pass from **$19/mo**. Cross-chain swap via Li.Fi.
 
-Public MCP server for autonomous AI agents. Free tools include vault proof and live agent performance. Paid Decision Core reads from the live Mimo vault — no custody, not trade advice.
+Public MCP server for AI agents and humans (Claude, Cursor). Vault-backed MM intelligence — not trade advice.
 
 | Resource | URL |
 |----------|-----|
-| **Glama server** | https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal |
-| **Glama connector** | https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal |
-| **Smithery** | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
-| **MCP endpoint** | https://hypernatt.com/mcp/protocol |
-| **Agent quickstart** | [docs/quickstart.md](docs/quickstart.md) |
-| **Tool reference** | [tools/](tools/) |
-| **HyperNatt app** | https://hypernatt.com |
 | **Public stats** | https://hypernatt.com/stats |
+| **MCP endpoint** | https://hypernatt.com/mcp/protocol |
+| **Smithery** | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
 | **Quota program** | https://hypernatt.com/api/m2m/quota/status |
-| **Hyperliquid vault** | https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8 |
+| **Pass / free tier** | https://hypernatt.com/api/m2m/pass/status |
+
+---
+
+## Try It in 30 Seconds
+
+No code. No API key. No npm install required.
+
+**Step 1.** Claude → Settings → Integrations → **Add custom connector**
+
+**Step 2.**
+
+| Field | Value |
+|-------|-------|
+| Name | `HyperNatt Terminal` |
+| URL | `https://hypernatt.com/mcp/protocol` |
+
+**Step 3.** Ask Claude:
+
+> *Call get_agent_manifest, then get the BTC vault signal from HyperNatt.*
+
+**Cursor / Claude Desktop** — remote MCP config:
+
+```json
+{
+  "mcpServers": {
+    "hypernatt-terminal": {
+      "url": "https://hypernatt.com/mcp/protocol"
+    }
+  }
+}
+```
+
+```bash
+npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
+```
+
+---
+
+## Pricing (at a glance)
+
+| | Free | Agent $19/mo | Pro $49/mo | Paygo |
+|---|------|--------------|------------|-------|
+| MCP install | Yes | Yes | Yes | Yes |
+| Daily credits (all DC tools) | **3/day** | — | — | — |
+| Monthly credits | — | **2000** | **7000** | — |
+| HOLD signal | **Free** | **Free** | **Free** | **Free** |
+| Swap bonus credits | Yes | Yes | Yes | Yes |
+
+Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC on Base).
 
 ---
 

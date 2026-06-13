@@ -52,7 +52,7 @@ import {
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 import { extractPayerWallet, recordX402Event } from "./x402-telemetry.mjs";
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
-import { checkQuotaBypass } from "./x402-quota.mjs";
+import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
 import {
     registerTerminalCommerceTools,
     registerTerminalSwapTools,
@@ -167,29 +167,76 @@ async function processPaidToolPayment({
     paymentRaw,
     agent_wallet,
     sessionId,
+    mcp_client_id,
     parse,
     verify,
     buildRequired,
     buildRequirements: buildReqs,
 }) {
     const headerWallet = normalizeAgentWallet(agent_wallet);
-    if (headerWallet && (await checkQuotaBypass(headerWallet, tool))) {
-        console.log(`[F#38N] quota bypass MCP: ${headerWallet} → ${tool}`);
-        return { ok: true, wallet: headerWallet, quotaBypass: true };
-    }
+    const clientId = mcp_client_id || sessionId || null;
 
     if (headerWallet && (await checkBetaBypass(headerWallet, tool))) {
         console.log(`[F#36N] beta bypass MCP: ${headerWallet} → ${tool}`);
-        return { ok: true, wallet: headerWallet, betaBypass: true };
+        return {
+            ok: true,
+            wallet: headerWallet,
+            betaBypass: true,
+            clientKey: null,
+        };
     }
 
-    if (!paymentRaw) {
+    const pre = await checkPaywallPrecheck({
+        wallet: headerWallet,
+        tool,
+        mcpClientId: clientId,
+        hasPayment: Boolean(paymentRaw),
+    });
+
+    if (!pre.allow) {
         recordX402Event({
             event_type: "402_shown",
             tool,
             price_usdc: priceUsdc,
         });
         return { errorResult: jsonToolResult(buildRequired(), true) };
+    }
+
+    const isSignal = tool === "get_btc_usdc_signal";
+
+    if (!paymentRaw) {
+        if (!isSignal) {
+            const consumed = await consumePaywall({
+                wallet: headerWallet,
+                tool,
+                clientKey: pre.clientKey,
+            });
+            if (consumed.consumed) {
+                console.log(
+                    `[F#40N] ${consumed.method || "paywall"} bypass MCP: ${headerWallet || pre.clientKey?.slice(0, 8)} → ${tool}`,
+                );
+                return {
+                    ok: true,
+                    wallet: headerWallet,
+                    quotaBypass: consumed.method === "quota",
+                    freeBypass: consumed.method === "free",
+                    passBypass: consumed.method === "pass",
+                    clientKey: pre.clientKey,
+                };
+            }
+            recordX402Event({
+                event_type: "402_shown",
+                tool,
+                price_usdc: priceUsdc,
+            });
+            return { errorResult: jsonToolResult(buildRequired(), true) };
+        }
+        return {
+            ok: true,
+            wallet: headerWallet,
+            deferBilling: true,
+            clientKey: pre.clientKey,
+        };
     }
 
     let paymentPayload;
@@ -238,30 +285,84 @@ async function processPaidToolPayment({
         price_usdc: priceUsdc,
     });
 
-    settlePaymentWithFacilitator(
+    if (!isSignal) {
+        settlePaymentWithFacilitator(
+            paymentPayload,
+            paymentPayload?.accepted ?? buildReqs(),
+        ).then((result) => {
+            if (result.success) {
+                console.log(
+                    `[F#32N] 💰 ${tool} settled: ${result.txHash || "simulated"}`,
+                );
+                recordX402Event({
+                    event_type: "payment_settled",
+                    tool,
+                    payer_wallet: wallet,
+                    agent_id: wallet,
+                    price_usdc: priceUsdc,
+                    tx_hash: result.txHash || null,
+                });
+            }
+        });
+        return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
+    }
+
+    return {
+        ok: true,
+        wallet,
+        betaBypass: false,
+        deferBilling: isSignal,
+        deferSettle: isSignal,
         paymentPayload,
-        paymentPayload?.accepted ?? buildReqs(),
-    ).then((result) => {
-        if (result.success) {
-            console.log(
-                `[F#32N] 💰 ${tool} settled: ${result.txHash || "simulated"}`,
-            );
-            recordX402Event({
-                event_type: "payment_settled",
-                tool,
-                payer_wallet: wallet,
-                agent_id: wallet,
-                price_usdc: priceUsdc,
-                tx_hash: result.txHash || null,
-            });
-        } else {
-            console.warn(
-                `[F#32N] ⚠️ ${tool} settle failed: ${result.error || "unknown"}`,
-            );
-        }
+        paymentRequirements: paymentPayload?.accepted ?? buildReqs(),
+        clientKey: pre.clientKey,
+    };
+}
+
+async function finalizeSignalMcpBilling(payment, payload) {
+    const billing = await consumePaywall({
+        wallet: payment.wallet,
+        tool: "get_btc_usdc_signal",
+        clientKey: payment.clientKey,
+        signalPayload: payload,
     });
 
-    return { ok: true, wallet, betaBypass: false };
+    if (billing.hold_free) {
+        console.log("[F#40N] HOLD free MCP — no signal charge");
+        return { ...payment, quotaBypass: false, holdFree: true };
+    }
+
+    if (billing.consumed) {
+        return {
+            ...payment,
+            quotaBypass: billing.method === "quota",
+            freeBypass: billing.method === "free",
+            passBypass: billing.method === "pass",
+        };
+    }
+
+    if (payment.deferSettle && payment.paymentPayload) {
+        settlePaymentWithFacilitator(
+            payment.paymentPayload,
+            payment.paymentRequirements,
+        ).then((result) => {
+            if (result.success) {
+                console.log(
+                    `[F#32N] 💰 get_btc_usdc_signal settled: ${result.txHash || "simulated"}`,
+                );
+                recordX402Event({
+                    event_type: "payment_settled",
+                    tool: "get_btc_usdc_signal",
+                    payer_wallet: payment.wallet,
+                    agent_id: payment.wallet,
+                    price_usdc: SIGNAL_PRICE_USDC,
+                    tx_hash: result.txHash || null,
+                });
+            }
+        });
+    }
+
+    return payment;
 }
 
 export function createMcpServer() {
@@ -343,14 +444,15 @@ export function createMcpServer() {
 
             try {
                 const payload = await fetchSignalPayload(M2M_URL, INTERNAL_SECRET);
+                const billed = await finalizeSignalMcpBilling(payment, payload);
                 const out = full_payload ? payload : summarizeCyclePayload(payload);
                 onToolCallRecorded({
-                    wallet: payment.wallet,
+                    wallet: billed.wallet,
                     tool: "get_btc_usdc_signal",
-                    priceUsdc: SIGNAL_PRICE_USDC,
+                    priceUsdc: billed.holdFree ? 0 : SIGNAL_PRICE_USDC,
                     sessionId: extra?.sessionId,
-                    betaBypass: payment.betaBypass,
-                    quotaBypass: payment.quotaBypass,
+                    betaBypass: billed.betaBypass,
+                    quotaBypass: billed.quotaBypass,
                 });
                 return {
                     content: [

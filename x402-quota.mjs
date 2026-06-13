@@ -1,5 +1,5 @@
 /**
- * F#38N — quota bypass precheck (mcp-server -> m2m-service).
+ * F#40N — paywall bypass precheck/consume (mcp-server -> m2m-service).
  */
 import axios from "axios";
 
@@ -15,16 +15,12 @@ function normalizeWallet(wallet) {
     return /^0x[a-f0-9]{40}$/.test(w) ? w : null;
 }
 
-/**
- * Debit quota and return true when Decision Core call is covered.
- */
-export async function checkQuotaBypass(wallet, tool) {
-    const w = normalizeWallet(wallet);
-    if (!w || !INTERNAL_SECRET) return false;
+async function internalPost(path, body) {
+    if (!INTERNAL_SECRET) return null;
     try {
         const res = await axios.post(
-            `${M2M_URL.replace(/\/$/, "")}/api/m2m/internal/quota/precheck`,
-            { wallet: w, tool },
+            `${M2M_URL.replace(/\/$/, "")}${path}`,
+            body,
             {
                 headers: {
                     "X-M2M-Internal-Secret": INTERNAL_SECRET,
@@ -33,8 +29,63 @@ export async function checkQuotaBypass(wallet, tool) {
                 timeout: 3000,
             },
         );
-        return res.data?.bypass === true;
+        return res.data;
     } catch {
-        return false;
+        return null;
     }
+}
+
+/**
+ * @deprecated use checkPaywallPrecheck
+ */
+export async function checkQuotaBypass(wallet, tool) {
+    const data = await internalPost("/api/m2m/internal/quota/precheck", {
+        wallet,
+        tool,
+    });
+    return data?.bypass === true;
+}
+
+export async function checkPaywallPrecheck({
+    wallet,
+    tool,
+    mcpClientId,
+    hasPayment,
+}) {
+    const data = await internalPost("/api/m2m/internal/paywall/precheck", {
+        wallet: wallet || undefined,
+        tool,
+        mcp_client_id: mcpClientId || undefined,
+        has_payment: Boolean(hasPayment),
+    });
+    if (!data) return { allow: false, defer: false, clientKey: null };
+    return {
+        allow: data.allow === true,
+        defer: data.defer === true,
+        clientKey: data.client_key || null,
+        cost: data.cost ?? 0,
+    };
+}
+
+export async function consumePaywall({
+    wallet,
+    tool,
+    clientKey,
+    signalPayload,
+}) {
+    const data = await internalPost("/api/m2m/internal/paywall/consume", {
+        wallet: wallet || undefined,
+        tool,
+        client_key: clientKey || undefined,
+        signal_payload: signalPayload || undefined,
+    });
+    if (!data) {
+        return { consumed: false, hold_free: false };
+    }
+    return {
+        consumed: data.consumed === true,
+        hold_free: data.hold_free === true,
+        method: data.method || null,
+        cost: data.cost ?? 0,
+    };
 }
