@@ -2,18 +2,24 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.1",
-    "description": "BTC Decision Terminal for AI Agents — live vault-backed BTC/USDC signals, on-chain proof, Li.Fi cross-chain swap. Decision Core $0.01 USDC/call via x402 on Base or earn quotas via NattSwap (https://hypernatt.com/api/m2m/quota/status). Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats"
+    "version": "2.5.2",
+    "description": "BTC Decision Terminal for AI Agents — live vault-backed BTC/USDC signals, on-chain proof, Li.Fi cross-chain swap. Start with get_agent_manifest. Free tier: 10 credits/day on Decision Core (no wallet). HOLD signals free. Agent Pass from $19/mo. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats · Pass: https://hypernatt.com/api/m2m/pass/status"
   },
   "authentication": {
     "required": false,
     "schemes": []
   },
   "privacy_note": "Tool usage (wallet address, tool name, timestamp, market context) is logged to improve HyperNatt Terminal. No prompt content. No resale.",
+  "pass_program": {
+    "status_url": "https://hypernatt.com/api/m2m/pass/status",
+    "agent_pass_usd": 19,
+    "agent_pass_credits": 2000,
+    "note": "Agent Pass $19/mo (~2000 credits) or Pro Pass $49/mo. Free tier: 10 Decision Core credits/day without wallet. HOLD on get_btc_usdc_signal is always free."
+  },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
     "balance_url": "https://hypernatt.com/api/m2m/quota/balance",
-    "note": "Earn Decision Core call quotas by swapping via NattSwap (~20 quotas per $100 volume). Founders: first 100 wallets at $50+ get 2x. Else $0.01 USDC/call via x402 on Base."
+    "note": "Bonus credits from NattSwap swaps (~20 per $100 volume). Founders: first 100 registered swaps get 2x multiplier. Else paygo $0.01 USDC/call via x402 on Base."
   },
   "tools": [
     {
@@ -44,7 +50,7 @@
     },
     {
       "name": "get_btc_usdc_signal",
-      "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. $0.01 USDC x402 on Base, or quota bypass with agent_wallet. BTC/USDC only.",
+      "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. HOLD verdicts are free. Else: 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base. BTC/USDC only.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -65,7 +71,7 @@
     },
     {
       "name": "get_mm_hunt_score",
-      "description": "Is the Market Maker hunting your position? Live liquidation pressure score and trap phase detection. $0.01 USDC x402 on Base, or quota bypass with agent_wallet.",
+      "description": "Is the Market Maker hunting your position? Live liquidation pressure score and trap phase detection. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -77,7 +83,7 @@
     },
     {
       "name": "get_similarity_match",
-      "description": "What happened last time BTC looked like this? Top-3 historical microstructure matches with outcomes. $0.01 USDC x402 on Base, or quota bypass with agent_wallet.",
+      "description": "What happened last time BTC looked like this? Top-3 historical microstructure matches with outcomes. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -89,7 +95,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Where will the next BTC liquidation cascade hit? Raw cluster data: magnet score, OI, long/short ratio, real liquidations 1h/24h. $0.01 USDC x402 on Base, or quota bypass with agent_wallet.",
+      "description": "Where will the next BTC liquidation cascade hit? Raw cluster data: magnet score, OI, long/short ratio, real liquidations 1h/24h. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -100,7 +106,7 @@
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Live Market Maker manipulation weather: trap active/idle, hunt direction, sweep zones. $0.01 USDC x402 on Base, or quota bypass with agent_wallet.",
+      "description": "Live Market Maker manipulation weather: trap active/idle, hunt direction, sweep zones. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
       "inputSchema": {
         "type": "object",
         "properties": {

@@ -14,7 +14,7 @@
 
 | Tier | What you get |
 |------|----------------|
-| **Free** | **3 credits/day** on **all** Decision Core tools (no wallet required for MCP session) |
+| **Free** | **10 credits/day** on **all** Decision Core tools (no wallet required for MCP session) |
 | **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
 | **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
 | **Swap bonus** | ~20 credits per $100 swapped; first **100** register → **2x** |

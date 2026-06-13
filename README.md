@@ -54,7 +54,7 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 | | Free | Agent $19/mo | Pro $49/mo | Paygo |
 |---|------|--------------|------------|-------|
 | MCP install | Yes | Yes | Yes | Yes |
-| Daily credits (all DC tools) | **3/day** | — | — | — |
+| Daily credits (all DC tools) | **10/day** | — | — | — |
 | Monthly credits | — | **2000** | **7000** | — |
 | HOLD signal | **Free** | **Free** | **Free** | **Free** |
 | Swap bonus credits | Yes | Yes | Yes | Yes |
