@@ -51,3 +51,26 @@ if (missing.length || extra.length) {
 console.log(
     `[verify-mcp-tool-count] OK v${version}: ${EXPECTED_COUNT} tools — ${names.join(", ")}`,
 );
+
+const tdqsRequired = [
+    "get_mm_trap_state",
+    "get_liq_radar",
+    "get_agent_balance",
+    "claim_ndat",
+    "swap_via_nattswap",
+];
+for (const toolName of tdqsRequired) {
+    const row = (card.tools || []).find((t) => t.name === toolName);
+    const desc = row?.description || "";
+    if (!desc.includes("USE WHEN:") || !desc.includes("RETURNS:")) {
+        console.error(
+            `[verify-mcp-tool-count] FAIL: ${toolName} missing TDQS fields (USE WHEN / RETURNS) — Glama will grade B`,
+        );
+        process.exit(1);
+    }
+}
+if ((card.tools || []).some((t) => /Beta.*grandfather/i.test(t.description || ""))) {
+    console.error("[verify-mcp-tool-count] FAIL: stale Beta/grandfather text in server-card");
+    process.exit(1);
+}
+console.log("[verify-mcp-tool-count] TDQS gate OK");
