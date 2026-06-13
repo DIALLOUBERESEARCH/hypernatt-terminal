@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.DIALLOUBE-RESEARCH/hypernatt-terminal",
   "title": "hypernatt-terminal",
-  "description": "BTC Decision Terminal for AI agents: live Hyperliquid vault signals, x402 $0.01, Li.Fi swap",
+  "description": "BTC Decision Terminal for AI agents. 10 free credits/day, HOLD free, Agent Pass $19/mo. x402 $0.01.",
   "repository": {
     "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
     "source": "github"
   },
-  "version": "2.4.0",
+  "version": "2.5.2",
   "remotes": [
     {
       "type": "streamable-http",

@@ -54,12 +54,17 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 | | Free | Agent $19/mo | Pro $49/mo | Paygo |
 |---|------|--------------|------------|-------|
 | MCP install | Yes | Yes | Yes | Yes |
-| Daily credits (all DC tools) | **10/day** | — | — | — |
+| Daily credits (shared pool, all DC tools) | **10/day** | — | — | — |
+| Credit cost per tool | 1 credit (signal, hunt, similarity) · **2 credits** (liq_radar, mm_trap_state) | same | same | per credit |
 | Monthly credits | — | **2000** | **7000** | — |
 | HOLD signal | **Free** | **Free** | **Free** | **Free** |
 | Swap bonus credits | Yes | Yes | Yes | Yes |
 
 Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC on Base).
+
+**Paywall funnel (in order):** 10 free credits/day → **swap earns bonus credits** → Agent Pass $19/mo → Pro $49/mo → paygo $0.01/credit.
+
+> *10 free credits/day. Swap to earn more. Or $19/mo for serious use.*
 
 ---
 

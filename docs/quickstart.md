@@ -14,12 +14,19 @@
 
 | Tier | What you get |
 |------|----------------|
-| **Free** | **10 credits/day** on **all** Decision Core tools (no wallet required for MCP session) |
+| **Free** | **10 shared credits/day** on all Decision Core tools (no wallet) |
 | **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
+| **Credit weights** | signal / hunt / similarity = **1** · liq_radar / mm_trap_state = **2** each |
 | **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
+| **Pro Pass** | **$49/mo** → **7000 credits** / 30 days |
 | **Swap bonus** | ~20 credits per $100 swapped; first **100** register → **2x** |
+| **Paygo** | **$0.01 USDC** / credit via x402 on Base |
 
-Status: `GET https://hypernatt.com/api/m2m/pass/status`
+**Paywall order:** free tier → swap quotas → Agent Pass → Pro Pass → paygo.
+
+> *10 free credits/day. Swap to earn more. Or $19/mo for serious use.*
+
+Status: `GET https://hypernatt.com/api/m2m/pass/status` · `GET https://hypernatt.com/api/m2m/quota/status`
 
 ---
 
@@ -68,13 +75,13 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 
 ### Decision Core — five paid tools
 
-| Tool | Role |
-|------|------|
-| `get_btc_usdc_signal` | Cycle direction (**LONG** / **SHORT** / **HOLD**) from the live vault |
-| `get_mm_hunt_score` | Microstructure pressure & liquidation-hunt context |
-| `get_similarity_match` | Top-3 historical regime matches & ~4h outcomes |
-| `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs |
-| `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) |
+| Tool | Role | Credits |
+|------|------|---------|
+| `get_btc_usdc_signal` | Cycle direction (**LONG** / **SHORT** / **HOLD**) from the live vault | **1** (HOLD free) |
+| `get_mm_hunt_score` | Microstructure pressure & liquidation-hunt context | **1** |
+| `get_similarity_match` | Top-3 historical regime matches & ~4h outcomes | **1** |
+| `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs | **2** |
+| `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) | **2** |
 
 Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). With quota balance: pass **`agent_wallet`** and skip payment.
 

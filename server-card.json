@@ -95,7 +95,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Where will the next BTC liquidation cascade hit? Raw cluster data: magnet score, OI, long/short ratio, real liquidations 1h/24h. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
+      "description": "Where will the next BTC liquidation cascade hit? Costs 2 credits (free tier / pass / quota / $0.01 x402 on Base).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -106,7 +106,7 @@
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Live Market Maker manipulation weather: trap active/idle, hunt direction, sweep zones. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
+      "description": "Live MM trap/sweep state. Costs 2 credits (free tier / pass / quota / $0.01 x402 on Base).",
       "inputSchema": {
         "type": "object",
         "properties": {
