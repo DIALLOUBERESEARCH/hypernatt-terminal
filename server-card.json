@@ -49,6 +49,17 @@
       }
     },
     {
+      "name": "get_mm_trap_state",
+      "description": "Is the MM trapping right now? Flagship Decision Core read: MM_TRAP_ACTIVE state, hunt direction (e.g. DOWN_HUNT_LONGS), sweep zone bounds, math-verified sweep/reclaim verdicts. Manipulation weather — not a Coinglass cluster dump. 2 credits from shared daily pool (10 free/day), Agent Pass, swap quota, or $0.01 USDC x402 on Base. Docs: tools/get_mm_trap_state.md",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x_payment": { "type": "string" },
+          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — quota bypass when balance covers tool weight." }
+        }
+      }
+    },
+    {
       "name": "get_btc_usdc_signal",
       "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. HOLD verdicts are free. Else: 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base. BTC/USDC only.",
       "inputSchema": {
@@ -95,18 +106,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Where will the next BTC liquidation cascade hit? Costs 2 credits (free tier / pass / quota / $0.01 x402 on Base).",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": { "type": "string" },
-          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — quota bypass when balance covers tool weight." }
-        }
-      }
-    },
-    {
-      "name": "get_mm_trap_state",
-      "description": "Live MM trap/sweep state. Costs 2 credits (free tier / pass / quota / $0.01 x402 on Base).",
+      "description": "Raw BTC liquidation radar: magnet score, OI build-up, L/S ratio, clusters, real liquidations. Commodity microstructure layer behind hunt/trap — use get_mm_trap_state for manipulation weather. 2 credits (10 free/day shared pool, Agent Pass, quota, or $0.01 x402 Base).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -153,7 +153,7 @@
     },
     {
       "name": "get_agent_balance",
-      "description": "Your NDAT token balance: pending and claimed. Free.",
+      "description": "Check pending and claimed NDAT token balance for your agent wallet on Base. Free. Use after register_nattswap_reward. Docs: tools/get_agent_balance.md",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -164,7 +164,7 @@
     },
     {
       "name": "claim_ndat",
-      "description": "Claim your pending NDAT rewards on Base. Agent pays gas. Free.",
+      "description": "Build an ECDSA claim payload to withdraw pending NDAT on Base (agent pays gas). Free. Docs: tools/claim_ndat.md",
       "inputSchema": {
         "type": "object",
         "properties": {

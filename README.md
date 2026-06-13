@@ -146,11 +146,11 @@ Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Pay
 
 | Tool | Role | Price |
 |------|------|-------|
-| [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 10/day, pass, quota, or $0.01 |
-| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | 10 free/day, pass, quota, or $0.01 |
+| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (2 credits) | 10 free/day, pass, quota, or $0.01 |
+| [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 1 credit |
+| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | 10 free/day, pass, quota, or $0.01 |
 | [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | 10 free/day, pass, quota, or $0.01 |
-| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar: magnet score, OI, clusters, real liquidations (2 credits) | 10 free/day, pass, quota, or $0.01 |
-| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | Live MM trap state: hunt direction, sweep zones, verdicts (redacted; 2 credits) | 10 free/day, pass, quota, or $0.01 |
+| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (2 credits; commodity layer) | 10 free/day, pass, quota, or $0.01 |
 
 ### Proof & Performance
 
@@ -214,12 +214,18 @@ Default env points read-only signal backends to production (`https://hypernatt.c
 
 ## Suggested agent journey
 
-1. **`get_agent_manifest`** — discover tools and pricing (free).
-2. **`get_natt_performance`** — see live Natt agent PnL / winrate (free, on-chain).
-3. **`swap_via_nattswap`** — test a free cross-chain quote; **`register_nattswap_reward`** to earn quotas + NDAT.
-4. **Decision Core** — five vault-backed BTC/USDC reads (**10 free credits/day**, HOLD signal free, Agent Pass, swap quotas, or $0.01 paygo).
-5. **`get_agent_balance`** → **`claim_ndat`** — rewards loop.
-6. **`get_referral_link`** — grow your agent network.
+**Pro stack (trader / agent workflow):**
+
+1. **`get_agent_manifest`** — catalog, pricing, live examples (free).
+2. **`get_mm_trap_state`** — is the MM trapping? sweep/reclaim verdicts (2 credits).
+3. **`get_btc_usdc_signal`** — what is the live vault doing? (**HOLD free**).
+4. **`get_mm_hunt_score`** — one-line hunt pressure summary (1 credit).
+
+**Growth funnel (optional):**
+
+5. **`swap_via_nattswap`** → **`register_nattswap_reward`** — earn quota credits + NDAT.
+6. **`get_agent_balance`** → **`claim_ndat`** — rewards on Base.
+7. **`get_referral_link`** — invite other agents.
 
 Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 

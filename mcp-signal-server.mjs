@@ -368,7 +368,7 @@ async function finalizeSignalMcpBilling(payment, payload) {
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.5.0",
+        version: "2.5.2",
     });
 
     const freeCtx = {
@@ -801,7 +801,7 @@ export function createMcpServer() {
         "get_mm_trap_state",
         toolDescriptionFromCard(
             "get_mm_trap_state",
-            "Live Market Maker manipulation weather: trap, hunt direction, sweep zones.",
+            "Is the MM trapping right now? Flagship trap/sweep/reclaim weather: MM_TRAP_ACTIVE, hunt direction, sweep zones, chart_verdicts. 2 credits.",
         ),
         MM_TRAP_STATE_X402,
         "hypernatt_mm_trap_state_v1",
@@ -860,16 +860,16 @@ export function mountMcpSignalRoutes(app) {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.5.0",
+            version: "2.5.2",
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
                 "get_natt_performance",
+                "get_mm_trap_state",
                 "get_btc_usdc_signal",
                 "get_mm_hunt_score",
                 "get_similarity_match",
                 "get_liq_radar",
-                "get_mm_trap_state",
                 "swap_via_nattswap",
                 "swap_quote",
                 "get_agent_balance",

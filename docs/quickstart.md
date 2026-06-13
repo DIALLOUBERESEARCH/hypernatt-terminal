@@ -141,13 +141,13 @@ Swaps are free at the MCP layer; revenue is integrator fees on execution, not x4
 3. Pay **$0.01 USDC** on Base (if no quota).
 4. Retry with `x_payment` / `X-Payment`.
 
-Suggested order for a full picture:
+Suggested order for a full picture (pro stack):
 
-1. `get_btc_usdc_signal` — vault cycle now
-2. `get_mm_hunt_score` — hunt / trap pressure
-3. `get_similarity_match` — historical analogies
-4. `get_liq_radar` — raw microstructure block
-5. `get_mm_trap_state` — manipulation weather (redacted)
+1. `get_mm_trap_state` — manipulation weather (flagship, 2 credits)
+2. `get_btc_usdc_signal` — vault cycle now (HOLD free)
+3. `get_mm_hunt_score` — hunt / trap pressure summary
+4. `get_similarity_match` — historical analogies
+5. `get_liq_radar` — raw microstructure block (commodity, 2 credits)
 
 Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 
@@ -171,11 +171,11 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 | 1 | `get_agent_manifest` | Free |
 | 2 | `get_vault_proof` | Free |
 | 3 | `get_natt_performance` | Free |
-| 4 | `get_btc_usdc_signal` | $0.01 x402 or quota |
-| 5 | `get_mm_hunt_score` | $0.01 x402 or quota |
-| 6 | `get_similarity_match` | $0.01 x402 or quota |
-| 7 | `get_liq_radar` | $0.01 x402 or quota |
-| 8 | `get_mm_trap_state` | $0.01 x402 or quota |
+| 4 | `get_mm_trap_state` | 2 credits / $0.01 x402 or quota |
+| 5 | `get_btc_usdc_signal` | 1 credit; **HOLD free** |
+| 6 | `get_mm_hunt_score` | 1 credit / $0.01 x402 or quota |
+| 7 | `get_similarity_match` | 1 credit / $0.01 x402 or quota |
+| 8 | `get_liq_radar` | 2 credits / $0.01 x402 or quota |
 | 9 | `swap_via_nattswap` | Free |
 | 10 | `swap_quote` | Free |
 | 11 | `get_agent_balance` | Free |

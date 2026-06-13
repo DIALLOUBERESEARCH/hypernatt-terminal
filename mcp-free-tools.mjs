@@ -148,7 +148,8 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "get_agent_balance",
         {
-            description: "Your NDAT token balance: pending and claimed. Free.",
+            description:
+                "Check pending and claimed NDAT balance for your agent wallet on Base. Free. Docs: tools/get_agent_balance.md",
             inputSchema: {
                 wallet: z.string().describe("Agent EVM address"),
             },
@@ -175,7 +176,7 @@ export function registerTerminalCommerceTools(server, ctx) {
         "claim_ndat",
         {
             description:
-                "Claim your pending NDAT rewards on Base. Agent pays gas. Free.",
+                "Withdraw pending NDAT on Base via ECDSA claim payload (you pay gas). Free. Docs: tools/claim_ndat.md",
             inputSchema: {
                 wallet: z.string().describe("Agent EVM address"),
                 amount: z.number().optional().describe("NDAT amount; omit to claim all pending"),
