@@ -65,7 +65,7 @@ Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC
 
 ## What it is
 
-HyperNatt Terminal exposes **14 MCP tools** (v2.5.1): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
+HyperNatt Terminal exposes **14 MCP tools** (v2.5.2): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -96,15 +96,15 @@ The terminal is organized into four sections (Decision Core first). Same structu
 
 ### Decision Core
 
-Five Decision Core tools (**$0.01 USDC each** via **x402 on Base**, or **quota bypass** when your wallet has earned credits from NattSwap). Pass **`agent_wallet`** (MCP) or header **`X-Agent-Wallet`** (HTTP). Check balance: `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…`. Backed by the Mimo **BTC/USDC** vault (live since **2026-02-27**).
+Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Paywall order: **10 free credits/day** (no wallet on MCP session) → **Agent Pass** / **Pro Pass** → **swap-earned quotas** (`agent_wallet` or `X-Agent-Wallet`) → **$0.01 USDC/credit** via x402 on Base. **`get_btc_usdc_signal` HOLD verdicts are always free.** Status: `GET https://hypernatt.com/api/m2m/pass/status` · quota balance: `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…`
 
 | Tool | Role | Price |
 |------|------|-------|
-| [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | $0.01 x402 or quota |
-| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | $0.01 x402 or quota |
-| [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | $0.01 x402 or quota |
-| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar: magnet score, OI, clusters, real liquidations | $0.01 x402 or quota |
-| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | Live MM trap state: hunt direction, sweep zones, verdicts (redacted) | $0.01 x402 or quota |
+| [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 10/day, pass, quota, or $0.01 |
+| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt context | 10 free/day, pass, quota, or $0.01 |
+| [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | 10 free/day, pass, quota, or $0.01 |
+| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar: magnet score, OI, clusters, real liquidations (2 credits) | 10 free/day, pass, quota, or $0.01 |
+| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | Live MM trap state: hunt direction, sweep zones, verdicts (redacted; 2 credits) | 10 free/day, pass, quota, or $0.01 |
 
 ### Proof & Performance
 
@@ -171,7 +171,7 @@ Default env points read-only signal backends to production (`https://hypernatt.c
 1. **`get_agent_manifest`** — discover tools and pricing (free).
 2. **`get_natt_performance`** — see live Natt agent PnL / winrate (free, on-chain).
 3. **`swap_via_nattswap`** — test a free cross-chain quote; **`register_nattswap_reward`** to earn quotas + NDAT.
-4. **Decision Core** — five vault-backed BTC/USDC reads ($0.01 or quota bypass).
+4. **Decision Core** — five vault-backed BTC/USDC reads (**10 free credits/day**, HOLD signal free, Agent Pass, swap quotas, or $0.01 paygo).
 5. **`get_agent_balance`** → **`claim_ndat`** — rewards loop.
 6. **`get_referral_link`** — grow your agent network.
 
@@ -183,15 +183,17 @@ Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` (includes `quota_program`) |
+| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` (includes `pass_program`, `quota_program`, onboarding) |
+| `GET /api/m2m/pass/status` | Agent Pass / Pro Pass pricing + free tier params (public) |
+| `GET /api/m2m/free-tier/remaining` | Remaining free credits today (header `X-Client-Key` optional) |
 | `GET /api/m2m/quota/status` | Quota program params + founder slots (public) |
 | `GET /api/m2m/quota/balance?wallet=0x…` | Quota balance for wallet (public) |
 | `GET /api/m2m/stats/usage` | Public 24h usage counters |
-| `GET /api/m2m/signal` | Paid signal (x402 or quota) |
-| `GET /api/m2m/mm-hunt` | Paid MM hunt (x402 or quota) |
-| `GET /api/m2m/similarity-match` | Paid similarity (x402 or quota) |
-| `GET /api/m2m/liq-radar` | Paid liq radar (x402 or quota) |
-| `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402 or quota) |
+| `GET /api/m2m/signal` | Signal (free tier / pass / quota / x402; HOLD free) |
+| `GET /api/m2m/mm-hunt` | MM hunt (free tier / pass / quota / x402) |
+| `GET /api/m2m/similarity-match` | Similarity (free tier / pass / quota / x402) |
+| `GET /api/m2m/liq-radar` | Liq radar (free tier / pass / quota / x402) |
+| `GET /api/m2m/mm-trap-state` | MM trap state (free tier / pass / quota / x402) |
 
 Base URL: `https://hypernatt.com`
 
