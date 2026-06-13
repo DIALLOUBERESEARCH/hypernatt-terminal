@@ -77,7 +77,7 @@ const PUBLIC_MM_TRAP_STATE_URL =
     process.env.PUBLIC_MM_TRAP_STATE_URL ||
     "https://hypernatt.com/api/m2m/mm-trap-state";
 
-import { toolDescriptionFromCard } from "./server-card-tools.mjs";
+import { toolDescriptionFromCard, getServerCard } from "./server-card-tools.mjs";
 
 const SERVER_TITLE =
     "HyperNatt Terminal — BTC Decision Terminal for AI Agents";
@@ -807,8 +807,9 @@ function capturePaymentHeader(req, sessionId) {
  */
 export function mountMcpSignalRoutes(app) {
     app.get("/.well-known/mcp/server-card.json", (_req, res) => {
-        if (SERVER_CARD) {
-            res.json(SERVER_CARD);
+        const card = getServerCard();
+        if (card) {
+            res.json(card);
             return;
         }
         res.status(404).json({ error: "server-card not configured" });

@@ -22,3 +22,8 @@ export function toolDescriptionFromCard(toolName, fallback = "") {
     const row = SERVER_CARD.tools.find((t) => t.name === toolName);
     return row?.description || fallback;
 }
+
+/** HTTP /.well-known/mcp/server-card.json */
+export function getServerCard() {
+    return SERVER_CARD;
+}
