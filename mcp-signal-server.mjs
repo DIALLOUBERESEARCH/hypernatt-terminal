@@ -803,6 +803,35 @@ function capturePaymentHeader(req, sessionId) {
 }
 
 /**
+ * Streamable HTTP transport rejects requests unless Accept includes text/event-stream.
+ * Claude connector often sends only application/json on tools/call → 406.
+ * Hono reads rawHeaders — mutating req.headers alone is not enough.
+ */
+export function ensureStreamableHttpAccept(req) {
+    const fixed = "application/json, text/event-stream";
+    if (typeof req.setHeader === "function") {
+        try {
+            req.setHeader("Accept", fixed);
+            return;
+        } catch {
+            // read-only IncomingMessage — fall through
+        }
+    }
+    req.headers.accept = fixed;
+    const raw = req.rawHeaders;
+    if (!Array.isArray(raw)) {
+        return;
+    }
+    for (let i = 0; i < raw.length; i += 2) {
+        if (String(raw[i]).toLowerCase() === "accept") {
+            raw[i + 1] = fixed;
+            return;
+        }
+    }
+    raw.push("Accept", fixed);
+}
+
+/**
  * @param {import('express').Express} app
  */
 export function mountMcpSignalRoutes(app) {
@@ -907,6 +936,7 @@ export function mountMcpSignalRoutes(app) {
     // Streamable HTTP MCP (recommended)
     app.all("/protocol", async (req, res) => {
         try {
+            ensureStreamableHttpAccept(req);
             const sessionId = req.headers["mcp-session-id"];
             capturePaymentHeader(req, sessionId);
 
