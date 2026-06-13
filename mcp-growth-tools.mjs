@@ -48,11 +48,17 @@ export function registerGrowthTools(server, ctx) {
                     .describe("en or fr (default en)"),
             },
         },
-        async ({ locale }) => {
+        async ({ locale }, extra) => {
             try {
                 const params = locale ? { locale } : {};
+                const headers = { "X-M2M-Transport": "mcp" };
+                const sessionId = extra?.sessionId;
+                if (sessionId && String(sessionId).length >= 8) {
+                    headers["X-M2M-Client-Id"] = String(sessionId);
+                }
                 const response = await axios.get(`${base()}/api/m2m/agent/manifest`, {
                     params,
+                    headers,
                     timeout: 15000,
                 });
                 const poe = await fetchProofOfEdge(m2mUrl, internalSecret);

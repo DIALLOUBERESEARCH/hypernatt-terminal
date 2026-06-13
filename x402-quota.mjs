@@ -78,6 +78,7 @@ export async function consumePaywall({
         tool,
         client_key: clientKey || undefined,
         signal_payload: signalPayload || undefined,
+        transport: "mcp",
     });
     if (!data) {
         return { consumed: false, hold_free: false };
