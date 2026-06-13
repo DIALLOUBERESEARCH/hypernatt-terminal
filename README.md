@@ -111,7 +111,7 @@ Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC
 
 ## What it is
 
-HyperNatt Terminal exposes **14 MCP tools** (v2.5.2): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
+HyperNatt Terminal exposes **14 MCP tools** (v2.5.3): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 

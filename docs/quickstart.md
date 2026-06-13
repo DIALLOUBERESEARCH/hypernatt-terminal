@@ -213,4 +213,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.2 (14 tools, quota program + Li.Fi cross-chain).*
+*Document version: hypernatt-terminal MCP v2.5.3 (14 tools, quota program + Li.Fi cross-chain).*
