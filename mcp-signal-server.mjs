@@ -350,7 +350,7 @@ async function finalizeSignalMcpBilling(payment, payload) {
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.5.2",
+        version: "2.5.3",
     });
 
     const freeCtx = {
@@ -385,7 +385,7 @@ export function createMcpServer() {
                     .string()
                     .optional()
                     .describe(
-                        "Optional EVM wallet (0x…). Beta-grandfathered wallets skip x402 payment.",
+                        "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota covers this tool's credit weight.",
                     ),
             },
         },
@@ -492,7 +492,7 @@ export function createMcpServer() {
                 agent_wallet: z
                     .string()
                     .optional()
-                    .describe("Optional EVM wallet (0x…). Beta-grandfathered wallets skip x402."),
+                    .describe("Optional EVM wallet (0x + 40 hex). Skips x402 when quota covers credit weight."),
             },
         },
         async ({ x_payment, full_payload, agent_wallet }, extra) => {
@@ -603,7 +603,7 @@ export function createMcpServer() {
                 agent_wallet: z
                     .string()
                     .optional()
-                    .describe("Optional EVM wallet (0x…). Beta-grandfathered wallets skip x402."),
+                    .describe("Optional EVM wallet (0x + 40 hex). Skips x402 when quota covers credit weight."),
             },
         },
         async ({ x_payment, full_payload, agent_wallet }, extra) => {
@@ -843,7 +843,7 @@ export function mountMcpSignalRoutes(app) {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.5.2",
+            version: "2.5.3",
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",

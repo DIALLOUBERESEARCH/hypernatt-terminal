@@ -3,6 +3,7 @@
  */
 import axios from "axios";
 import { z } from "zod";
+import { toolDescriptionFromCard } from "./server-card-tools.mjs";
 
 /** F#34N — Fetch proof-of-edge from m2m internal (fail-open). */
 async function fetchProofOfEdge(m2mUrl, internalSecret) {
@@ -36,8 +37,10 @@ export function registerGrowthTools(server, ctx) {
     server.registerTool(
         "get_agent_manifest",
         {
-            description:
+            description: toolDescriptionFromCard(
+                "get_agent_manifest",
                 "Start here: catalog of 14 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
+            ),
             inputSchema: {
                 locale: z
                     .string()

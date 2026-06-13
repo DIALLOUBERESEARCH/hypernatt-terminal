@@ -4,6 +4,7 @@
 import axios from "axios";
 import { z } from "zod";
 import { toolDescriptionFromCard } from "./server-card-tools.mjs";
+import { validateTerminalSwap, terminalSwapPolicyMode } from "./base-tokens.mjs";
 
 /** F#34N — Fetch proof-of-edge from m2m internal (fail-open, never blocking). */
 async function fetchProofOfEdge(m2mUrl, internalSecret) {
@@ -23,14 +24,20 @@ async function fetchProofOfEdge(m2mUrl, internalSecret) {
 }
 
 const swapParamsSchema = {
-    fromChain: z.union([z.number(), z.string()]).describe("Source chain id"),
-    toChain: z.union([z.number(), z.string()]).describe("Destination chain id"),
-    fromToken: z.string().describe("Source token address"),
-    toToken: z.string().describe("Destination token address"),
-    fromAmount: z.string().describe("Amount in token smallest units"),
-    fromAddress: z.string().describe("Sender wallet"),
-    toAddress: z.string().describe("Recipient wallet"),
-    slippage: z.number().optional().describe("Slippage percent"),
+    fromChain: z
+        .union([z.number(), z.string()])
+        .describe("Source Li.Fi chain id (e.g. 1 Ethereum, 8453 Base, 42161 Arbitrum)"),
+    toChain: z
+        .union([z.number(), z.string()])
+        .describe("Destination Li.Fi chain id"),
+    fromToken: z.string().describe("Source token contract address on fromChain"),
+    toToken: z.string().describe("Destination token contract address on toChain"),
+    fromAmount: z
+        .string()
+        .describe("Amount in token smallest units (wei for 18-decimal tokens)"),
+    fromAddress: z.string().describe("Sender wallet 0x + 40 hex chars"),
+    toAddress: z.string().describe("Recipient wallet 0x + 40 hex chars"),
+    slippage: z.number().optional().describe("Max slippage percent (e.g. 0.5 for 0.5%)"),
 };
 
 function m2mHeaders(internalSecret) {
@@ -81,8 +88,10 @@ export function registerTerminalSwapTools(server, ctx) {
     server.registerTool(
         "swap_via_nattswap",
         {
-            description:
-                "Cross-chain swap via Li.Fi (Li.Fi-routed chains). Free — step-by-step agent instructions. Decision signals remain BTC/USDC only.",
+            description: toolDescriptionFromCard(
+                "swap_via_nattswap",
+                "Cross-chain swap via Li.Fi with step-by-step agent instructions. Free at MCP layer.",
+            ),
             inputSchema: swapParamsSchema,
         },
         async (params) => {
@@ -117,8 +126,10 @@ export function registerTerminalSwapTools(server, ctx) {
     server.registerTool(
         "swap_quote",
         {
-            description:
-                "Raw Li.Fi swap quote JSON. Cross-chain supported. Free — no x402 needed.",
+            description: toolDescriptionFromCard(
+                "swap_quote",
+                "Raw Li.Fi swap quote JSON. Cross-chain. Free — no x402.",
+            ),
             inputSchema: swapParamsSchema,
         },
         async (params) => {
@@ -222,11 +233,17 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "register_nattswap_reward",
         {
-            description:
+            description: toolDescriptionFromCard(
+                "register_nattswap_reward",
                 "Register a completed swap to earn NDAT rewards. Free.",
+            ),
             inputSchema: {
-                txHash: z.string().describe("Source chain transaction hash"),
-                agentAddress: z.string().describe("Agent wallet that executed the swap"),
+                txHash: z
+                    .string()
+                    .describe("Confirmed swap transaction hash on source chain (0x…)"),
+                agentAddress: z
+                    .string()
+                    .describe("Agent wallet 0x + 40 hex that executed or benefits from the swap"),
             },
         },
         async (body) => {
@@ -251,9 +268,14 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "get_referral_link",
         {
-            description: "Get your referral link to invite other agents and earn rewards. Free.",
+            description: toolDescriptionFromCard(
+                "get_referral_link",
+                "Get your referral link to invite other agents and earn rewards. Free.",
+            ),
             inputSchema: {
-                referrer: z.string().describe("Referrer agent EVM address"),
+                referrer: z
+                    .string()
+                    .describe("Referrer agent EVM address 0x + 40 hex chars on Base"),
             },
         },
         async ({ referrer }) => {
@@ -285,8 +307,10 @@ export function registerVaultProofTool(server, ctx) {
     server.registerTool(
         "get_vault_proof",
         {
-            description:
-                "Free proof we eat our own cooking: on-chain vault address, public URLs, signed cycle hash. Verify our live BTC trades yourself.",
+            description: toolDescriptionFromCard(
+                "get_vault_proof",
+                "Free proof we eat our own cooking: on-chain vault address, public URLs, signed cycle hash.",
+            ),
             inputSchema: {},
         },
         async () => {
@@ -327,8 +351,10 @@ export function registerNattPerformanceTool(server, ctx) {
     server.registerTool(
         "get_natt_performance",
         {
-            description:
-                "Free live P&L, win rate, and estimated APR from our trading agent Natt. Real capital, real results — verifiable on BaseScan.",
+            description: toolDescriptionFromCard(
+                "get_natt_performance",
+                "Free live P&L, win rate, and estimated APR from trading agent Natt on Base.",
+            ),
             inputSchema: {},
         },
         async () => {

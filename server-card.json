@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.2",
+    "version": "2.5.3",
     "description": "BTC Decision Terminal for AI Agents — live vault-backed BTC/USDC signals, on-chain proof, Li.Fi cross-chain swap. Start with get_agent_manifest. Free tier: 10 credits/day on Decision Core (no wallet). HOLD signals free. Agent Pass from $19/mo. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats · Pass: https://hypernatt.com/api/m2m/pass/status"
   },
   "authentication": {
@@ -61,7 +61,7 @@
     },
     {
       "name": "get_btc_usdc_signal",
-      "description": "Should I enter BTC now? Real-time cycle state (LONG/SHORT/HOLD) from a live Hyperliquid vault. HOLD verdicts are free. Else: 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base. BTC/USDC only.",
+      "description": "Should I align with the live BTC vault? Real-time Mimo cycle state LONG/SHORT/HOLD from a public Hyperliquid vault. USE WHEN: vault bias, cycle_id, leg count. NOT WHEN: MM trap weather (get_mm_trap_state) or hunt score (get_mm_hunt_score). RETURNS: hypernatt_mimo_cycle_state_v1 with cycle.direction, cycle_id, total_legs, vault_wallet_redacted. HOLD direction is always free. COST: 1 credit / 10 free day pool / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -82,7 +82,7 @@
     },
     {
       "name": "get_mm_hunt_score",
-      "description": "Is the Market Maker hunting your position? Live liquidation pressure score and trap phase detection. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
+      "description": "Is the Market Maker hunting your position? One-line liquidation pressure summary. USE WHEN: quick hunt read, alert_level, magnet_bias. NOT WHEN: full trap/sweep math (get_mm_trap_state) or raw clusters (get_liq_radar). RETURNS: hypernatt_mm_hunt_score_v1 — mm_hunt_score (-100..100), pressure_direction, alert_level, long_trap_phase, interpretation_en. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -94,7 +94,7 @@
     },
     {
       "name": "get_similarity_match",
-      "description": "What happened last time BTC looked like this? Top-3 historical microstructure matches with outcomes. 10 free credits/day (no wallet), Agent Pass, quota bypass (agent_wallet), or $0.01 USDC x402 on Base.",
+      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed ~4h outcomes. USE WHEN: analogies / regime context. NOT WHEN: live trap (get_mm_trap_state) or vault cycle (get_btc_usdc_signal). RETURNS: hypernatt_similarity_match_v1 with matches[] (similarity_score, outcome_4h, features summary). COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -117,7 +117,7 @@
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain swap via Li.Fi (Li.Fi-routed chains) with step-by-step agent instructions. Free — Decision signals remain BTC/USDC only.",
+      "description": "Cross-chain token swap via Li.Fi across Li.Fi-routed chains (any pair — not limited to BTC/USDC). USE WHEN: bridge, fund gas, treasury routing. NOT WHEN: Decision Core BTC reads (get_btc_usdc_signal / trap / hunt) — vault signals stay BTC/USDC only. RETURNS: Li.Fi route JSON + step-by-step agent execution instructions + recommended_action. MCP free; on-chain swap costs gas + integrator fee. Side effects: MCP read-only until wallet signs.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -135,7 +135,7 @@
     },
     {
       "name": "swap_quote",
-      "description": "Raw Li.Fi swap quote. Cross-chain supported. Free — no x402 needed.",
+      "description": "Raw Li.Fi swap quote JSON without execution steps. USE WHEN: preview route, fees, and slippage before swap_via_nattswap. NOT WHEN: you need step-by-step agent instructions (use swap_via_nattswap). RETURNS: Li.Fi quote { estimate, toolDetails, transactionRequest, ... }. Free — no x402. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -176,7 +176,7 @@
     },
     {
       "name": "register_nattswap_reward",
-      "description": "Register a completed swap to earn NDAT rewards. Free.",
+      "description": "Register a completed on-chain swap tx to credit NDAT rewards + Decision Core quota credits. USE WHEN: swap_via_nattswap (or any Li.Fi swap) tx is confirmed on-chain. NOT WHEN: only quoting (swap_quote) or checking balance (get_agent_balance). RETURNS: credits_awarded, ndat_credited, founder_multiplier flags. Free at MCP. Side effects: mutating reward ledger for agentAddress.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -188,7 +188,7 @@
     },
     {
       "name": "get_referral_link",
-      "description": "Get your referral link to invite other agents and earn rewards. Free.",
+      "description": "Generate referral URL to invite other agents to HyperNatt Terminal / NattSwap. USE WHEN: growth / affiliate onboarding. NOT WHEN: checking rewards (get_agent_balance). RETURNS: { referral_url, referrer, program params }. Free. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
