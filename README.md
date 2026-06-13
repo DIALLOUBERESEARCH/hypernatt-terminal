@@ -49,6 +49,49 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
+## What you get (live examples)
+
+Before you wire payment or quotas — **here is what a real call returns** (production, 2026-06-13). Values update every request; shape is stable.
+
+### `get_btc_usdc_signal` (1 credit · HOLD free)
+
+```json
+{
+  "ok": true,
+  "pair": "BTC/USDC",
+  "issued_at": "2026-06-13T13:34:52.031Z",
+  "has_active": true,
+  "cycle": {
+    "cycle_id": "C94D4BB60",
+    "direction": "LONG",
+    "total_legs": 4,
+    "avg_entry_price": 66715.06,
+    "market_at_entry": {
+      "movement": { "price": 73946.65 },
+      "consensus": { "direction": "BULLISH", "bullish_score": 45 }
+    }
+  },
+  "disclaimer": "Live verifiable Mimo cycle state only. Not a trade recommendation."
+}
+```
+
+### `get_mm_hunt_score` (1 credit)
+
+```json
+{
+  "pair": "BTC/USDC",
+  "mm_hunt_score": -35,
+  "magnet_bias": "BEARISH_MAGNET",
+  "pressure_direction": "DOWN_HUNT_LONGS",
+  "alert_level": "orange",
+  "interpretation_en": "Magnet score -35: price pressure favors long liquidation hunt downward…"
+}
+```
+
+More fields + copy-paste curls: **[docs/example-responses.md](docs/example-responses.md)**
+
+---
+
 ## Pricing (at a glance)
 
 | | Free | Agent $19/mo | Pro $49/mo | Paygo |

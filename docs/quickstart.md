@@ -10,6 +10,38 @@
 
 ---
 
+## What you get (before the first tool call)
+
+Real production samples — [full examples](example-responses.md) with curls.
+
+**`get_btc_usdc_signal`** (1 credit, HOLD free):
+
+```json
+{
+  "cycle": {
+    "cycle_id": "C94D4BB60",
+    "direction": "LONG",
+    "total_legs": 4,
+    "avg_entry_price": 66715.06
+  },
+  "has_active": true,
+  "pair": "BTC/USDC"
+}
+```
+
+**`get_mm_hunt_score`** (1 credit):
+
+```json
+{
+  "mm_hunt_score": -35,
+  "magnet_bias": "BEARISH_MAGNET",
+  "pressure_direction": "DOWN_HUNT_LONGS",
+  "alert_level": "orange"
+}
+```
+
+---
+
 ## Free tier and pricing (F#40N)
 
 | Tier | What you get |
@@ -177,4 +209,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.1 (14 tools, quota program + Li.Fi cross-chain).*
+*Document version: hypernatt-terminal MCP v2.5.2 (14 tools, quota program + Li.Fi cross-chain).*
