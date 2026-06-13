@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 import { z } from "zod";
-import { validateTerminalSwap, terminalSwapPolicyMode } from "./base-tokens.mjs";
+import { toolDescriptionFromCard } from "./server-card-tools.mjs";
 
 /** F#34N — Fetch proof-of-edge from m2m internal (fail-open, never blocking). */
 async function fetchProofOfEdge(m2mUrl, internalSecret) {
@@ -148,10 +148,16 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "get_agent_balance",
         {
-            description:
-                "Check pending and claimed NDAT balance for your agent wallet on Base. Free. Docs: tools/get_agent_balance.md",
+            description: toolDescriptionFromCard(
+                "get_agent_balance",
+                "Check pending and claimed NDAT balance for your agent wallet on Base. Free.",
+            ),
             inputSchema: {
-                wallet: z.string().describe("Agent EVM address"),
+                wallet: z
+                    .string()
+                    .describe(
+                        "Required. Agent EVM address on Base: 0x followed by 40 hexadecimal characters (checksum optional).",
+                    ),
             },
         },
         async ({ wallet }) => {
@@ -175,11 +181,22 @@ export function registerTerminalCommerceTools(server, ctx) {
     server.registerTool(
         "claim_ndat",
         {
-            description:
-                "Withdraw pending NDAT on Base via ECDSA claim payload (you pay gas). Free. Docs: tools/claim_ndat.md",
+            description: toolDescriptionFromCard(
+                "claim_ndat",
+                "Build ECDSA claim payload to withdraw pending NDAT on Base. Agent pays gas. Free.",
+            ),
             inputSchema: {
-                wallet: z.string().describe("Agent EVM address"),
-                amount: z.number().optional().describe("NDAT amount; omit to claim all pending"),
+                wallet: z
+                    .string()
+                    .describe(
+                        "Required. Wallet that earned NDAT: 0x + 40 hex chars on Base.",
+                    ),
+                amount: z
+                    .number()
+                    .optional()
+                    .describe(
+                        "Optional NDAT amount to claim. Omit or leave unset to claim all pending_ndat from get_agent_balance.",
+                    ),
             },
         },
         async ({ wallet, amount }) => {

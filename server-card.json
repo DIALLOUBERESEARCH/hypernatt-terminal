@@ -50,7 +50,7 @@
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Is the MM trapping right now? Flagship Decision Core read: MM_TRAP_ACTIVE state, hunt direction (e.g. DOWN_HUNT_LONGS), sweep zone bounds, math-verified sweep/reclaim verdicts. Manipulation weather — not a Coinglass cluster dump. 2 credits from shared daily pool (10 free/day), Agent Pass, swap quota, or $0.01 USDC x402 on Base. Docs: tools/get_mm_trap_state.md",
+      "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: 2 credits / 10 free day pool / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -106,7 +106,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Raw BTC liquidation radar: magnet score, OI build-up, L/S ratio, clusters, real liquidations. Commodity microstructure layer behind hunt/trap — use get_mm_trap_state for manipulation weather. 2 credits (10 free/day shared pool, Agent Pass, quota, or $0.01 x402 Base).",
+      "description": "Raw BTC liquidation radar — magnet score, OI build-up, long/short ratio, liquidation clusters, 1h/24h liquidations. USE WHEN: you need the full microstructure block (clusters, magnet, OI). NOT WHEN: trap/sweep/reclaim verdicts (get_mm_trap_state) or short hunt narrative (get_mm_hunt_score). RETURNS: hypernatt_liq_radar_v1 with liq_radar { magnet_score, magnet_bias, clusters_above/below, oi_buildup, long_short_ratio }. Redacted, read-only. COST: 2 credits / free tier / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -153,7 +153,7 @@
     },
     {
       "name": "get_agent_balance",
-      "description": "Check pending and claimed NDAT token balance for your agent wallet on Base. Free. Use after register_nattswap_reward. Docs: tools/get_agent_balance.md",
+      "description": "Check pending and claimed NDAT swap-reward balance for one agent wallet on Base. USE WHEN: after register_nattswap_reward or before claim_ndat. NOT WHEN: you need Decision Core quota credits (quota/balance API) or BTC signals. RETURNS: JSON with pending_ndat, claimed_ndat, total_earned_ndat for wallet. Read-only. Free — no x402, no credits. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -164,7 +164,7 @@
     },
     {
       "name": "claim_ndat",
-      "description": "Build an ECDSA claim payload to withdraw pending NDAT on Base (agent pays gas). Free. Docs: tools/claim_ndat.md",
+      "description": "Build ECDSA-signed claim payload to withdraw pending NDAT on Base (agent broadcasts tx and pays gas). USE WHEN: get_agent_balance shows pending_ndat > 0 and wallet can sign on Base. NOT WHEN: only checking balance (get_agent_balance) or registering swap rewards (register_nattswap_reward). RETURNS: signature, deadline, amount, verification { ndat_contract, chain } for on-chain claim. MCP free; execution costs gas. Side effects: MCP read-only; on-chain claim is mutating.",
       "inputSchema": {
         "type": "object",
         "properties": {

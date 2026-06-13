@@ -7,9 +7,6 @@
  *   *    /mcp/protocol  -> container /protocol
  */
 import crypto from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -80,22 +77,7 @@ const PUBLIC_MM_TRAP_STATE_URL =
     process.env.PUBLIC_MM_TRAP_STATE_URL ||
     "https://hypernatt.com/api/m2m/mm-trap-state";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-let SERVER_CARD = null;
-try {
-    SERVER_CARD = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "server-card.json"), "utf8"),
-    );
-} catch {
-    SERVER_CARD = null;
-}
-
-/** Smithery/Glama index tools/list descriptions — server-card.json is source of truth. */
-function toolDescriptionFromCard(toolName, fallback = "") {
-    if (!SERVER_CARD?.tools) return fallback;
-    const row = SERVER_CARD.tools.find((t) => t.name === toolName);
-    return row?.description || fallback;
-}
+import { toolDescriptionFromCard } from "./server-card-tools.mjs";
 
 const SERVER_TITLE =
     "HyperNatt Terminal — BTC Decision Terminal for AI Agents";
@@ -722,13 +704,13 @@ export function createMcpServer() {
                         .string()
                         .optional()
                         .describe(
-                            "Optional x402 payment payload (base64 JSON). Omit to receive 402 payment instructions.",
+                            "Base64 x402 USDC payment on Base (eip155:8453). Omit on first call to receive 402 payment instructions; retry with header after paying $0.01/credit.",
                         ),
                     agent_wallet: z
                         .string()
                         .optional()
                         .describe(
-                            "Optional EVM wallet (0x…). Beta-grandfathered wallets skip x402.",
+                            "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota balance covers this tool's credit weight (2 for liq_radar/mm_trap_state).",
                         ),
                 },
             },
