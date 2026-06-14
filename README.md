@@ -1,12 +1,12 @@
 # HyperNatt Terminal
 
-HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, agent performance, and Li.Fi cross-chain swap.
+HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.
 
 Full HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.
 
-10 tools · v2.5.10 · Streamable HTTP. Call get_agent_manifest first.
+9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.
 
-Free: manifest, vault proof, performance, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. Credit weights: signal, hunt, similarity = 1; liq_radar and mm_trap_state = 2. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).
+Free: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. Credit weights: signal, hunt, similarity = 1; liq_radar and mm_trap_state = 2. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).
 
 Humans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: "Call get_vault_proof, then get_mm_trap_state — is the MM trapping?"
 

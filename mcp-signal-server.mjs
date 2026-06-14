@@ -54,7 +54,6 @@ import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
 import {
     registerTerminalSwapTools,
     registerVaultProofTool,
-    registerNattPerformanceTool,
 } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
 import {
@@ -65,7 +64,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.5.10";
+const TERMINAL_VERSION = "2.5.11";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -433,7 +432,6 @@ export function createMcpServer() {
     };
     registerGrowthTools(server, freeCtx);
     registerVaultProofTool(server, freeCtx);
-    registerNattPerformanceTool(server, freeCtx);
     registerTerminalSwapTools(server, freeCtx);
 
     server.registerTool(
@@ -947,7 +945,6 @@ export function mountMcpSignalRoutes(app) {
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
-                "get_natt_performance",
                 "get_mm_trap_state",
                 "get_btc_usdc_signal",
                 "get_mm_hunt_score",
@@ -1128,7 +1125,7 @@ export function mountMcpSignalRoutes(app) {
     });
 
     console.log(
-        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 10 tools`,
+        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 9 tools`,
     );
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,

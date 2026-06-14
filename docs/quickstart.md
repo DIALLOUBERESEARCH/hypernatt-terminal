@@ -95,7 +95,7 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **10 MCP tools** (v2.5.10): orientation, proof, **cross-chain swap**, and five Decision Core reads.
+The terminal exposes **9 MCP tools** (v2.5.11): orientation, proof, **cross-chain swap**, and five Decision Core reads.
 
 **Quota program (live):** https://hypernatt.com/api/m2m/quota/status — bonus Decision Core credits from NattSwap volume (~20 per $100).
 
@@ -110,7 +110,7 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 | Section | Pricing | Purpose |
 |---------|---------|---------|
 | **Decision Core** | $0.01 USD/call (or **quota bypass**) | Vault-backed BTC context — five tools |
-| **Proof & Performance** | Free | Natt agent on-chain metrics |
+| **Execution** | Free | Li.Fi cross-chain swap |
 | **Execution** | Free | Li.Fi cross-chain swap quotes (NattSwap) |
 
 ### Decision Core — five paid tools
@@ -157,20 +157,19 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 
 ---
 
-## Reference — all 10 MCP tools
+## Reference — all 9 MCP tools
 
 | # | Tool | Price |
 |---|------|-------|
 | 1 | `get_agent_manifest` | Free |
 | 2 | `get_vault_proof` | Free |
-| 3 | `get_natt_performance` | Free |
-| 4 | `get_mm_trap_state` | 2 credits / $0.01 x402 or quota |
-| 5 | `get_btc_usdc_signal` | 1 credit; **HOLD free** |
-| 6 | `get_mm_hunt_score` | 1 credit / $0.01 x402 or quota |
-| 7 | `get_similarity_match` | 1 credit / $0.01 x402 or quota |
-| 8 | `get_liq_radar` | 2 credits / $0.01 x402 or quota |
-| 9 | `swap_via_nattswap` | Free |
-| 10 | `swap_quote` | Free |
+| 3 | `get_mm_trap_state` | 2 credits / $0.01 x402 or quota |
+| 4 | `get_btc_usdc_signal` | 1 credit; **HOLD free** |
+| 5 | `get_mm_hunt_score` | 1 credit / $0.01 x402 or quota |
+| 6 | `get_similarity_match` | 1 credit / $0.01 x402 or quota |
+| 7 | `get_liq_radar` | 2 credits / $0.01 x402 or quota |
+| 8 | `swap_via_nattswap` | Free |
+| 9 | `swap_quote` | Free |
 
 Per-tool docs: [../tools/](../tools/)
 
@@ -202,4 +201,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.10 (10 tools, ecosystem homepage discovery + session resilience).*
+*Document version: hypernatt-terminal MCP v2.5.11 (9 tools, ecosystem homepage discovery + session resilience).*

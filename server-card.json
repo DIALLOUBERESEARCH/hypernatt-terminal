@@ -2,8 +2,8 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.10",
-    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, agent performance, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\n10 tools · v2.5.10 · Streamable HTTP. Call get_agent_manifest first.\n\nFree: manifest, vault proof, performance, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. Credit weights: signal, hunt, similarity = 1; liq_radar and mm_trap_state = 2. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "version": "2.5.11",
+    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nFree: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. Credit weights: signal, hunt, similarity = 1; liq_radar and mm_trap_state = 2. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -31,11 +31,14 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 10 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
+      "description": "Start here: catalog of 9 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "locale": { "type": "string", "description": "en or fr (optional)" }
+          "locale": {
+            "type": "string",
+            "description": "en or fr (optional)"
+          }
         }
       }
     },
@@ -48,21 +51,18 @@
       }
     },
     {
-      "name": "get_natt_performance",
-      "description": "Free live P&L, win rate, and estimated APR from our trading agent Natt. Real capital, real results — verifiable on BaseScan.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {}
-      }
-    },
-    {
       "name": "get_mm_trap_state",
       "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: 2 credits / 25 free day pool + intro / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "x_payment": { "type": "string" },
-          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — quota bypass when balance covers tool weight." }
+          "x_payment": {
+            "type": "string"
+          },
+          "agent_wallet": {
+            "type": "string",
+            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
+          }
         }
       }
     },
@@ -93,9 +93,16 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "x_payment": { "type": "string" },
-          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — quota bypass when balance covers tool weight." },
-          "full_payload": { "type": "boolean" }
+          "x_payment": {
+            "type": "string"
+          },
+          "agent_wallet": {
+            "type": "string",
+            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
+          },
+          "full_payload": {
+            "type": "boolean"
+          }
         }
       }
     },
@@ -105,9 +112,16 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "x_payment": { "type": "string" },
-          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — quota bypass when balance covers tool weight." },
-          "full_payload": { "type": "boolean" }
+          "x_payment": {
+            "type": "string"
+          },
+          "agent_wallet": {
+            "type": "string",
+            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
+          },
+          "full_payload": {
+            "type": "boolean"
+          }
         }
       }
     },
@@ -117,8 +131,13 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "x_payment": { "type": "string" },
-          "agent_wallet": { "type": "string", "description": "EVM wallet 0x… — quota bypass when balance covers tool weight." }
+          "x_payment": {
+            "type": "string"
+          },
+          "agent_wallet": {
+            "type": "string",
+            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
+          }
         }
       }
     },
@@ -128,16 +147,46 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "fromChain": { "type": ["number", "string"] },
-          "toChain": { "type": ["number", "string"] },
-          "fromToken": { "type": "string" },
-          "toToken": { "type": "string" },
-          "fromAmount": { "type": "string" },
-          "fromAddress": { "type": "string" },
-          "toAddress": { "type": "string" },
-          "slippage": { "type": "number" }
+          "fromChain": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "toChain": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "fromToken": {
+            "type": "string"
+          },
+          "toToken": {
+            "type": "string"
+          },
+          "fromAmount": {
+            "type": "string"
+          },
+          "fromAddress": {
+            "type": "string"
+          },
+          "toAddress": {
+            "type": "string"
+          },
+          "slippage": {
+            "type": "number"
+          }
         },
-        "required": ["fromChain", "toChain", "fromToken", "toToken", "fromAmount", "fromAddress", "toAddress"]
+        "required": [
+          "fromChain",
+          "toChain",
+          "fromToken",
+          "toToken",
+          "fromAmount",
+          "fromAddress",
+          "toAddress"
+        ]
       }
     },
     {
@@ -146,16 +195,46 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "fromChain": { "type": ["number", "string"] },
-          "toChain": { "type": ["number", "string"] },
-          "fromToken": { "type": "string" },
-          "toToken": { "type": "string" },
-          "fromAmount": { "type": "string" },
-          "fromAddress": { "type": "string" },
-          "toAddress": { "type": "string" },
-          "slippage": { "type": "number" }
+          "fromChain": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "toChain": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "fromToken": {
+            "type": "string"
+          },
+          "toToken": {
+            "type": "string"
+          },
+          "fromAmount": {
+            "type": "string"
+          },
+          "fromAddress": {
+            "type": "string"
+          },
+          "toAddress": {
+            "type": "string"
+          },
+          "slippage": {
+            "type": "number"
+          }
         },
-        "required": ["fromChain", "toChain", "fromToken", "toToken", "fromAmount", "fromAddress", "toAddress"]
+        "required": [
+          "fromChain",
+          "toChain",
+          "fromToken",
+          "toToken",
+          "fromAmount",
+          "fromAddress",
+          "toAddress"
+        ]
       }
     }
   ],

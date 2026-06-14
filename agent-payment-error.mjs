@@ -5,7 +5,6 @@
 const FREE_TOOLS_ALWAYS_WORK = [
     "get_agent_manifest",
     "get_vault_proof",
-    "get_natt_performance",
     "swap_quote",
     "swap_via_nattswap",
 ];

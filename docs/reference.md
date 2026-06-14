@@ -99,7 +99,7 @@ Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC
 
 ## What it is
 
-HyperNatt Terminal exposes **10 MCP tools** (v2.5.10): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), and five Decision Core reads. MCP Streamable HTTP session resilience (spec 404 re-init).
+HyperNatt Terminal exposes **9 MCP tools** (v2.5.11): orientation + vault proof, **cross-chain swap** (Li.Fi), and five Decision Core reads. MCP Streamable HTTP session resilience (spec 404 re-init).
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -135,12 +135,7 @@ Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Pay
 | [`get_mm_hunt_score`](../tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | free tier, pass, quota, or $0.01 |
 | [`get_similarity_match`](../tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | free tier, pass, quota, or $0.01 |
 | [`get_liq_radar`](../tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (2 credits; commodity layer) | free tier, pass, quota, or $0.01 |
-
-### Proof & Performance
-
-| Tool | Role | Price |
-|------|------|-------|
-| [`get_natt_performance`](../tools/get_natt_performance.md) | Live trading performance of Natt — PnL, winrate, APR, verifiable on-chain | Free |
+| [`get_vault_proof`](../tools/get_vault_proof.md) | On-chain vault proof + signed cycle snapshot hash | Free |
 
 ### Execution
 
@@ -156,7 +151,6 @@ Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Pay
 | Tool | Role | Price |
 |------|------|-------|
 | [`get_agent_manifest`](../tools/get_agent_manifest.md) | Catalog, journey, sections, live 24h usage stats | Free |
-| [`get_vault_proof`](../tools/get_vault_proof.md) | On-chain vault proof + signed cycle snapshot hash | Free |
 
 ---
 
@@ -213,4 +207,3 @@ Base URL: `https://hypernatt.com`
 
 - **Vault:** https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8
 - **Track record:** https://hypernatt.com/stats
-- **Natt agent:** use `get_natt_performance` → `wallet_basescan_url`
