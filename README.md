@@ -95,7 +95,7 @@ Full fields + curls: **[docs/example-responses.md](docs/example-responses.md)**
 | | Free | Agent $19/mo | Pro $49/mo | Paygo |
 |---|------|--------------|------------|-------|
 | MCP install | Yes | Yes | Yes | Yes |
-| Daily credits (shared pool, all DC tools) | **10/day** | — | — | — |
+| Daily credits (shared pool, all DC tools) | **25/day** + intro-free 1st call/tool (~**32** effective) | — | — | — |
 | Credit cost per tool | 1 credit (signal, hunt, similarity) · **2 credits** (liq_radar, mm_trap_state) | same | same | per credit |
 | Monthly credits | — | **2000** | **7000** | — |
 | HOLD signal | **Free** | **Free** | **Free** | **Free** |
@@ -103,15 +103,15 @@ Full fields + curls: **[docs/example-responses.md](docs/example-responses.md)**
 
 Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC on Base).
 
-**Paywall funnel (in order):** 10 free credits/day → **swap earns bonus credits** → Agent Pass $19/mo → Pro $49/mo → paygo $0.01/credit.
+**Paywall funnel (in order):** 25 shared credits/day + intro-free per tool → **swap earns bonus credits** → Agent Pass $19/mo → Pro $49/mo → paygo $0.01/credit.
 
-> *10 free credits/day. Swap to earn more. Or $19/mo for serious use.*
+> *25 shared credits/day + intro-free per tool (~32/day). Swap to earn more. Or $19/mo for serious use.*
 
 ---
 
 ## What it is
 
-HyperNatt Terminal exposes **14 MCP tools** (v2.5.3): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
+HyperNatt Terminal exposes **14 MCP tools** (v2.5.6): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -142,15 +142,15 @@ The terminal is organized into four sections (Decision Core first). Same structu
 
 ### Decision Core
 
-Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Paywall order: **10 free credits/day** (no wallet on MCP session) → **Agent Pass** / **Pro Pass** → **swap-earned quotas** (`agent_wallet` or `X-Agent-Wallet`) → **$0.01 USDC/credit** via x402 on Base. **`get_btc_usdc_signal` HOLD verdicts are always free.** Status: `GET https://hypernatt.com/api/m2m/pass/status` · quota balance: `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…`
+Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Paywall order: **25 shared credits/day** + intro-free 1st call per tool (~**32 effective/day**, no wallet on MCP session) → **Agent Pass** / **Pro Pass** → **swap-earned quotas** (`agent_wallet` or `X-Agent-Wallet`) → **$0.01 USDC/credit** via x402 on Base. **`get_btc_usdc_signal` HOLD verdicts are always free.** Status: `GET https://hypernatt.com/api/m2m/pass/status` · quota balance: `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…`
 
 | Tool | Role | Price |
 |------|------|-------|
-| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (2 credits) | 10 free/day, pass, quota, or $0.01 |
+| [`get_mm_trap_state`](tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (2 credits) | free tier, pass, quota, or $0.01 |
 | [`get_btc_usdc_signal`](tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 1 credit |
-| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | 10 free/day, pass, quota, or $0.01 |
-| [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | 10 free/day, pass, quota, or $0.01 |
-| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (2 credits; commodity layer) | 10 free/day, pass, quota, or $0.01 |
+| [`get_mm_hunt_score`](tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | free tier, pass, quota, or $0.01 |
+| [`get_similarity_match`](tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | free tier, pass, quota, or $0.01 |
+| [`get_liq_radar`](tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (2 credits; commodity layer) | free tier, pass, quota, or $0.01 |
 
 ### Proof & Performance
 

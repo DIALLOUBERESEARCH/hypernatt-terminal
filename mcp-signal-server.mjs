@@ -50,6 +50,7 @@ import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 import { extractPayerWallet, recordX402Event } from "./x402-telemetry.mjs";
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
 import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
+import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
 import {
     registerTerminalCommerceTools,
     registerTerminalSwapTools,
@@ -98,8 +99,29 @@ const TERMINAL_ONCHAIN_PROOF = {
 /** sessionId -> X-Payment header captured from HTTP POST */
 const sessionPayments = new Map();
 
+/** sessionId -> { ip, userAgent } for paywall client_key fallback */
+const sessionClientMeta = new Map();
+
 /** sessionId -> active MCP transport */
 const transports = new Map();
+
+function freeDailyCap() {
+    return parseInt(process.env.X402_FREE_DAILY_CREDITS || "25", 10);
+}
+
+function paymentErrorResult(buildRequired, ctx) {
+    const base =
+        typeof buildRequired === "function" ? buildRequired() : buildRequired;
+    const enriched = enrichPaymentRequiredPayload(base, {
+        reasonCode: ctx.reasonCode,
+        tool: ctx.tool,
+        creditsRemaining: ctx.creditsRemaining ?? 0,
+        dailyCap: ctx.dailyCap ?? freeDailyCap(),
+        introFreeAvailable: ctx.introFreeAvailable,
+        priceUsdc: ctx.priceUsdc,
+    });
+    return jsonToolResult(enriched, true);
+}
 
 function jsonToolResult(value, isError = false) {
     return {
@@ -150,6 +172,7 @@ async function processPaidToolPayment({
     agent_wallet,
     sessionId,
     mcp_client_id,
+    clientMeta,
     parse,
     verify,
     buildRequired,
@@ -157,6 +180,7 @@ async function processPaidToolPayment({
 }) {
     const headerWallet = normalizeAgentWallet(agent_wallet);
     const clientId = mcp_client_id || sessionId || null;
+    const meta = clientMeta || (sessionId ? sessionClientMeta.get(sessionId) : null);
 
     if (headerWallet && (await checkBetaBypass(headerWallet, tool))) {
         console.log(`[F#36N] beta bypass MCP: ${headerWallet} → ${tool}`);
@@ -173,6 +197,8 @@ async function processPaidToolPayment({
         tool,
         mcpClientId: clientId,
         hasPayment: Boolean(paymentRaw),
+        ip: meta?.ip,
+        userAgent: meta?.userAgent,
     });
 
     if (!pre.allow) {
@@ -181,7 +207,16 @@ async function processPaidToolPayment({
             tool,
             price_usdc: priceUsdc,
         });
-        return { errorResult: jsonToolResult(buildRequired(), true) };
+        return {
+            errorResult: paymentErrorResult(buildRequired, {
+                reasonCode: pre.paywallUnavailable
+                    ? "PAYWALL_UNAVAILABLE"
+                    : "FREE_TIER_EXHAUSTED",
+                tool,
+                creditsRemaining: 0,
+                priceUsdc,
+            }),
+        };
     }
 
     const isSignal = tool === "get_btc_usdc_signal";
@@ -192,6 +227,9 @@ async function processPaidToolPayment({
                 wallet: headerWallet,
                 tool,
                 clientKey: pre.clientKey,
+                mcpClientId: clientId,
+                ip: meta?.ip,
+                userAgent: meta?.userAgent,
             });
             if (consumed.consumed) {
                 console.log(
@@ -202,6 +240,7 @@ async function processPaidToolPayment({
                     wallet: headerWallet,
                     quotaBypass: consumed.method === "quota",
                     freeBypass: consumed.method === "free",
+                    introBypass: consumed.method === "intro",
                     passBypass: consumed.method === "pass",
                     clientKey: pre.clientKey,
                 };
@@ -211,13 +250,24 @@ async function processPaidToolPayment({
                 tool,
                 price_usdc: priceUsdc,
             });
-            return { errorResult: jsonToolResult(buildRequired(), true) };
+            return {
+                errorResult: paymentErrorResult(buildRequired, {
+                    reasonCode: consumed.paywallUnavailable
+                        ? "PAYWALL_UNAVAILABLE"
+                        : "FREE_TIER_EXHAUSTED",
+                    tool,
+                    creditsRemaining: 0,
+                    priceUsdc,
+                }),
+            };
         }
         return {
             ok: true,
             wallet: headerWallet,
             deferBilling: true,
             clientKey: pre.clientKey,
+            clientMeta: meta,
+            mcpClientId: clientId,
         };
     }
 
@@ -232,9 +282,13 @@ async function processPaidToolPayment({
             detail: "invalid x_payment format",
         });
         return {
-            errorResult: jsonToolResult(
-                buildRequired("Invalid x_payment format"),
-                true,
+            errorResult: paymentErrorResult(
+                () => buildRequired("Invalid x_payment format"),
+                {
+                    reasonCode: "PAYMENT_REQUIRED",
+                    tool,
+                    priceUsdc,
+                },
             ),
         };
     }
@@ -251,9 +305,13 @@ async function processPaidToolPayment({
             facilitator_error: String(verification.error || "").slice(0, 500),
         });
         return {
-            errorResult: jsonToolResult(
-                buildRequired(`Payment invalid: ${verification.error}`),
-                true,
+            errorResult: paymentErrorResult(
+                () => buildRequired(`Payment invalid: ${verification.error}`),
+                {
+                    reasonCode: "PAYMENT_REQUIRED",
+                    tool,
+                    priceUsdc,
+                },
             ),
         };
     }
@@ -302,11 +360,15 @@ async function processPaidToolPayment({
 }
 
 async function finalizeSignalMcpBilling(payment, payload) {
+    const meta = payment.clientMeta;
     const billing = await consumePaywall({
         wallet: payment.wallet,
         tool: "get_btc_usdc_signal",
         clientKey: payment.clientKey,
         signalPayload: payload,
+        mcpClientId: payment.mcpClientId,
+        ip: meta?.ip,
+        userAgent: meta?.userAgent,
     });
 
     if (billing.hold_free) {
@@ -319,6 +381,7 @@ async function finalizeSignalMcpBilling(payment, payload) {
             ...payment,
             quotaBypass: billing.method === "quota",
             freeBypass: billing.method === "free",
+            introBypass: billing.method === "intro",
             passBypass: billing.method === "pass",
         };
     }
@@ -350,7 +413,7 @@ async function finalizeSignalMcpBilling(payment, payload) {
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.5.3",
+        version: "2.5.6",
     });
 
     const freeCtx = {
@@ -872,7 +935,7 @@ export function mountMcpSignalRoutes(app) {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.5.3",
+            version: "2.5.6",
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
@@ -967,12 +1030,21 @@ export function mountMcpSignalRoutes(app) {
                     onsessioninitialized: (id) => {
                         transports.set(id, transport);
                         capturePaymentHeader(req, id);
+                        sessionClientMeta.set(id, {
+                            ip: String(
+                                req.headers["x-forwarded-for"] ||
+                                    req.socket?.remoteAddress ||
+                                    "",
+                            ).split(",")[0],
+                            userAgent: String(req.headers["user-agent"] || ""),
+                        });
                     },
                 });
                 transport.onclose = () => {
                     if (transport.sessionId) {
                         transports.delete(transport.sessionId);
                         sessionPayments.delete(transport.sessionId);
+                        sessionClientMeta.delete(transport.sessionId);
                     }
                 };
                 const server = createMcpServer();
@@ -1023,7 +1095,7 @@ export function mountMcpSignalRoutes(app) {
         await transport.handlePostMessage(req, res, req.body);
     });
 
-    console.log("[MCP Terminal] hypernatt-terminal v2.5.0 — 14 tools");
+    console.log("[MCP Terminal] hypernatt-terminal v2.5.6 — 14 tools");
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,
     );

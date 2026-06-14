@@ -11,7 +11,7 @@ Compressed view of the same upstream block as `get_liq_radar` — use when you w
 | Tier | Cost |
 |------|------|
 | **Credits** | **1** (shared daily pool) |
-| **Free tier** | 10 credits/day across all Decision Core tools |
+| **Free tier** | 25 shared pool/day + 1st call free per tool (~32 effective/day) |
 | **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
 
 ## When to use

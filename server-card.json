@@ -2,8 +2,8 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.3",
-    "description": "BTC Decision Terminal for AI Agents — live vault-backed BTC/USDC signals, on-chain proof, Li.Fi cross-chain swap. Start with get_agent_manifest. Free tier: 10 credits/day on Decision Core (no wallet). HOLD signals free. Agent Pass from $19/mo. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats · Pass: https://hypernatt.com/api/m2m/pass/status"
+    "version": "2.5.6",
+    "description": "BTC Decision Terminal for AI Agents — live vault-backed BTC/USDC signals, on-chain proof, Li.Fi cross-chain swap. Start with get_agent_manifest. Free tier: 25 shared credits/day + 1st call free per Decision Core tool (~32 effective/day, no wallet). HOLD signals free. Agent Pass from $19/mo. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats · Pass: https://hypernatt.com/api/m2m/pass/status"
   },
   "authentication": {
     "required": false,
@@ -14,7 +14,7 @@
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
     "agent_pass_usd": 19,
     "agent_pass_credits": 2000,
-    "note": "Agent Pass $19/mo (~2000 credits) or Pro Pass $49/mo. Free tier: 10 Decision Core credits/day without wallet. HOLD on get_btc_usdc_signal is always free."
+    "note": "Agent Pass $19/mo (~2000 credits) or Pro Pass $49/mo. Free tier: 25 shared credits/day + intro-free 1st call per Decision Core tool (~32 effective/day, no wallet). HOLD on get_btc_usdc_signal is always free."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
@@ -50,7 +50,7 @@
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: 2 credits / 10 free day pool / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: 2 credits / 25 free day pool + intro / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -61,7 +61,7 @@
     },
     {
       "name": "get_btc_usdc_signal",
-      "description": "Should I align with the live BTC vault? Real-time Mimo cycle state LONG/SHORT/HOLD from a public Hyperliquid vault. USE WHEN: vault bias, cycle_id, leg count. NOT WHEN: MM trap weather (get_mm_trap_state) or hunt score (get_mm_hunt_score). RETURNS: hypernatt_mimo_cycle_state_v1 with cycle.direction, cycle_id, total_legs, vault_wallet_redacted. HOLD direction is always free. COST: 1 credit / 10 free day pool / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "Should I align with the live BTC vault? Real-time Mimo cycle LONG/SHORT/HOLD. USE WHEN: vault bias, cycle_id, open PnL (chain_snapshot), checkpoint HOLD. NOT WHEN: MM trap math (get_mm_trap_state) or hunt score alone. RETURNS: hypernatt_mimo_cycle_state_v1 — default summary v2 includes chain_snapshot, checkpoint_snapshot, interpretation_contract_v1 (PnL authority: chain only, not avg_entry). full_payload:true for per-leg detail. HOLD direction is always free. COST: 1 credit / 25 free day pool + intro / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -94,7 +94,7 @@
     },
     {
       "name": "get_similarity_match",
-      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed ~4h outcomes. USE WHEN: analogies / regime context. NOT WHEN: live trap (get_mm_trap_state) or vault cycle (get_btc_usdc_signal). RETURNS: hypernatt_similarity_match_v1 with matches[] (similarity_score, outcome_4h, features summary). COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed ~4h BTC outcomes (NOT vault PnL). USE WHEN: analogies / regime context only. NOT WHEN: trade direction (get_btc_usdc_signal), live trap (get_mm_trap_state), or sizing. RETURNS: hypernatt_similarity_match_v1 with interpretation_contract_v1, confidence_tier, episode_diversity, matches[]. Agents MUST quote do_not_infer rules — never treat similarity_pct as win probability. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {

@@ -46,11 +46,12 @@ Three production samples — [full doc](example-responses.md). Order: **trap →
 
 ---
 
-## Free tier and pricing (F#40N)
+## Free tier and pricing (F#43N)
 
 | Tier | What you get |
 |------|----------------|
-| **Free** | **10 shared credits/day** on all Decision Core tools (no wallet) |
+| **Free** | **25 shared credits/day** on all Decision Core tools (no wallet) |
+| **Intro** | **First call per Decision Core tool per day is free** (taste each product) |
 | **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
 | **Credit weights** | signal / hunt / similarity = **1** · liq_radar / mm_trap_state = **2** each |
 | **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
@@ -60,7 +61,7 @@ Three production samples — [full doc](example-responses.md). Order: **trap →
 
 **Paywall order:** free tier → swap quotas → Agent Pass → Pro Pass → paygo.
 
-> *10 free credits/day. Swap to earn more. Or $19/mo for serious use.*
+> *25 shared credits/day + intro-free per tool (~32/day). Swap to earn more. Or $19/mo for serious use.*
 
 Status: `GET https://hypernatt.com/api/m2m/pass/status` · `GET https://hypernatt.com/api/m2m/quota/status`
 
@@ -90,7 +91,7 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **14 MCP tools** (v2.5.1): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
+The terminal exposes **14 MCP tools** (v2.5.6): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
 
 **Quota program (live):** https://hypernatt.com/api/m2m/quota/status — earn bonus credits by swapping via NattSwap (~20 per $100). First **100** wallets to **register** a swap get **2x** founder multiplier.
 
@@ -213,4 +214,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.3 (14 tools, quota program + Li.Fi cross-chain).*
+*Document version: hypernatt-terminal MCP v2.5.6 (14 tools, F#43N dev trial + Li.Fi cross-chain).*

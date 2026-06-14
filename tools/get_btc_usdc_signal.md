@@ -12,7 +12,7 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
 |------|------|
 | **Credits** | **1** (shared daily pool) |
 | **HOLD verdict** | **Free** — `direction: HOLD` never consumes credits |
-| **Free tier** | 10 credits/day across all Decision Core tools |
+| **Free tier** | 25 shared pool/day + 1st call free per tool (~32 effective/day) |
 | **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
 
 ## When to use
@@ -34,7 +34,47 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
 
 \* HOLD responses are always free. MCP free tier may cover non-HOLD calls.
 
-## Example response (production)
+## Example response (summary v2 — default MCP)
+
+```json
+{
+  "ok": true,
+  "product": "hypernatt_mimo_cycle_state_v1",
+  "pair": "BTC/USDC",
+  "has_active": true,
+  "issued_at": "2026-06-13T13:42:22.315Z",
+  "direction": "LONG",
+  "cycle_id": "C94D4BB60",
+  "total_legs": 4,
+  "chain_snapshot": {
+    "entry_price": 63098.9,
+    "size": 0.06768,
+    "leverage": 5,
+    "unrealized_pnl_pct": 10.6979,
+    "unrealized_pnl_usd": 91.37,
+    "liquidation_price": 51214.35,
+    "position_tp_observed": 75000
+  },
+  "checkpoint_snapshot": {
+    "last_action": "HOLD",
+    "last_confidence": 100,
+    "mfe_pct": 2.3,
+    "max_drawdown_pct": -3.37
+  },
+  "position_accounting": {
+    "avg_entry_price": 66715.06,
+    "initial_entry": 73934
+  },
+  "interpretation_contract_v1": { "version": "1" },
+  "disclaimer": "Live verifiable Mimo cycle state only. Not a trade recommendation."
+}
+```
+
+**PnL rule:** use `chain_snapshot.unrealized_pnl_pct` for open PnL — not `avg_entry_price` vs spot.
+
+Pass `full_payload: true` for per-leg entries and full OpenViking checkpoint text.
+
+## Example response (legacy shape — pre v2)
 
 ```json
 {
@@ -57,17 +97,15 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
 }
 ```
 
-Full payloads include per-leg entries and rich `market_at_entry` blocks.
-
 ## Field guide
 
 | Field | Meaning |
 |-------|---------|
-| `cycle.direction` | **LONG** / **SHORT** / **HOLD** — active vault bias |
-| `cycle.cycle_id` | Live cycle identifier |
-| `cycle.total_legs` | DLA legs in current cycle (max 4) |
-| `cycle.avg_entry_price` | Weighted average entry |
-| `vault_wallet_redacted` | Public vault address (redacted) for verification |
+| `direction` / `cycle_id` | Active vault bias and cycle id |
+| `chain_snapshot` | HL position entry, open PnL (authority for unrealized %) |
+| `checkpoint_snapshot` | Last session decision (e.g. HOLD) + MFE/DD |
+| `position_accounting.avg_entry_price` | Leg-weighted average — not open PnL authority |
+| `interpretation_contract_v1` | Agent guardrails — read before narrating |
 
 ## Verify on-chain
 

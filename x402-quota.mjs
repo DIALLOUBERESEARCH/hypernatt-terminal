@@ -1,5 +1,6 @@
 /**
  * F#40N — paywall bypass precheck/consume (mcp-server -> m2m-service).
+ * F#43N — forward ip/ua for client_key fallback.
  */
 import axios from "axios";
 
@@ -51,19 +52,31 @@ export async function checkPaywallPrecheck({
     tool,
     mcpClientId,
     hasPayment,
+    ip,
+    userAgent,
 }) {
     const data = await internalPost("/api/m2m/internal/paywall/precheck", {
         wallet: wallet || undefined,
         tool,
         mcp_client_id: mcpClientId || undefined,
         has_payment: Boolean(hasPayment),
+        ip: ip || undefined,
+        user_agent: userAgent || undefined,
     });
-    if (!data) return { allow: false, defer: false, clientKey: null };
+    if (!data) {
+        return {
+            allow: false,
+            defer: false,
+            clientKey: null,
+            paywallUnavailable: true,
+        };
+    }
     return {
         allow: data.allow === true,
         defer: data.defer === true,
         clientKey: data.client_key || null,
         cost: data.cost ?? 0,
+        paywallUnavailable: false,
     };
 }
 
@@ -72,6 +85,9 @@ export async function consumePaywall({
     tool,
     clientKey,
     signalPayload,
+    ip,
+    userAgent,
+    mcpClientId,
 }) {
     const data = await internalPost("/api/m2m/internal/paywall/consume", {
         wallet: wallet || undefined,
@@ -79,14 +95,18 @@ export async function consumePaywall({
         client_key: clientKey || undefined,
         signal_payload: signalPayload || undefined,
         transport: "mcp",
+        mcp_client_id: mcpClientId || undefined,
+        ip: ip || undefined,
+        user_agent: userAgent || undefined,
     });
     if (!data) {
-        return { consumed: false, hold_free: false };
+        return { consumed: false, hold_free: false, paywallUnavailable: true };
     }
     return {
         consumed: data.consumed === true,
         hold_free: data.hold_free === true,
         method: data.method || null,
         cost: data.cost ?? 0,
+        paywallUnavailable: false,
     };
 }

@@ -11,7 +11,7 @@ For pro workflows, prefer **`get_mm_trap_state`** (trap/sweep/reclaim weather) a
 | Tier | Cost |
 |------|------|
 | **Credits** | **2** (shared daily pool) |
-| **Free tier** | 10 credits/day across all Decision Core tools |
+| **Free tier** | 25 shared pool/day + 1st call free per tool (~32 effective/day) |
 | **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
 
 Paywall order: free tier → swap quotas → Agent Pass → Pro Pass → x402.
