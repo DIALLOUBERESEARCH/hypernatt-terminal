@@ -2,8 +2,15 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.8",
-    "description": "Live Hyperliquid vault (1800+ closed cycles) — verify at hypernatt.com/stats before you pay. MM trap/hunt/signal from Mimo's stack, not a generic BTC API wrapper. Start with get_agent_manifest. Free tier: 25 shared credits/day + 1st call free per Decision Core tool (~32 effective/day, no wallet). HOLD signals free. Agent Pass from $19/mo. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats · Pass: https://hypernatt.com/api/m2m/pass/status"
+    "version": "2.5.10",
+    "description": "HyperNatt platform https://hypernatt.com — live perp vault, AI assistant, on-chain proof. This MCP (hypernatt-terminal) is one agent brick at /mcp/protocol, not the whole ecosystem. 1800+ closed vault cycles — verify at https://hypernatt.com/stats. Start with get_agent_manifest. Free tier: 25 shared credits/day + intro per tool (~32/day). HOLD free. Agent Pass $19/mo. MCP docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+  },
+  "ecosystem": {
+    "homepage": "https://hypernatt.com",
+    "stats_url": "https://hypernatt.com/stats",
+    "mcp_url": "https://hypernatt.com/mcp/protocol",
+    "pass_status_url": "https://hypernatt.com/api/m2m/pass/status",
+    "note": "Discover the full HyperNatt product on the homepage; use this server card for the agent terminal only."
   },
   "authentication": {
     "required": false,
@@ -19,12 +26,12 @@
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
     "balance_url": "https://hypernatt.com/api/m2m/quota/balance",
-    "note": "Bonus credits from NattSwap swaps (~20 per $100 volume). Founders: first 100 registered swaps get 2x multiplier. Else paygo $0.01 USDC/call via x402 on Base."
+    "note": "Bonus Decision Core credits from NattSwap swap volume (~20 per $100). Status: GET /api/m2m/quota/status · balance: GET /api/m2m/quota/balance?wallet=0x…"
   },
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 14 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
+      "description": "Start here: catalog of 10 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -149,52 +156,6 @@
           "slippage": { "type": "number" }
         },
         "required": ["fromChain", "toChain", "fromToken", "toToken", "fromAmount", "fromAddress", "toAddress"]
-      }
-    },
-    {
-      "name": "get_agent_balance",
-      "description": "Check pending and claimed NDAT swap-reward balance for one agent wallet on Base. USE WHEN: after register_nattswap_reward or before claim_ndat. NOT WHEN: you need Decision Core quota credits (quota/balance API) or BTC signals. RETURNS: JSON with pending_ndat, claimed_ndat, total_earned_ndat for wallet. Read-only. Free — no x402, no credits. Side effects: none.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "wallet": { "type": "string", "description": "Agent EVM address" }
-        },
-        "required": ["wallet"]
-      }
-    },
-    {
-      "name": "claim_ndat",
-      "description": "Build ECDSA-signed claim payload to withdraw pending NDAT on Base (agent broadcasts tx and pays gas). USE WHEN: get_agent_balance shows pending_ndat > 0 and wallet can sign on Base. NOT WHEN: only checking balance (get_agent_balance) or registering swap rewards (register_nattswap_reward). RETURNS: signature, deadline, amount, verification { ndat_contract, chain } for on-chain claim. MCP free; execution costs gas. Side effects: MCP read-only; on-chain claim is mutating.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "wallet": { "type": "string" },
-          "amount": { "type": "number", "description": "Optional; default all pending" }
-        },
-        "required": ["wallet"]
-      }
-    },
-    {
-      "name": "register_nattswap_reward",
-      "description": "Register a completed on-chain swap tx to credit NDAT rewards + Decision Core quota credits. USE WHEN: swap_via_nattswap (or any Li.Fi swap) tx is confirmed on-chain. NOT WHEN: only quoting (swap_quote) or checking balance (get_agent_balance). RETURNS: credits_awarded, ndat_credited, founder_multiplier flags. Free at MCP. Side effects: mutating reward ledger for agentAddress.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "txHash": { "type": "string" },
-          "agentAddress": { "type": "string" }
-        },
-        "required": ["txHash", "agentAddress"]
-      }
-    },
-    {
-      "name": "get_referral_link",
-      "description": "Generate referral URL to invite other agents to HyperNatt Terminal / NattSwap. USE WHEN: growth / affiliate onboarding. NOT WHEN: checking rewards (get_agent_balance). RETURNS: { referral_url, referrer, program params }. Free. Side effects: none.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "referrer": { "type": "string", "description": "Referrer EVM address" }
-        },
-        "required": ["referrer"]
       }
     }
   ],

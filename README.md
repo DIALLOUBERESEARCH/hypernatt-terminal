@@ -1,15 +1,18 @@
 # HyperNatt Terminal
 
+**[HyperNatt](https://hypernatt.com)** is the live trading + AI platform (vault, assistant, on-chain proof). **hypernatt-terminal** is the **agent-facing MCP brick** at [`/mcp/protocol`](https://hypernatt.com/mcp/protocol) — not the whole product.
+
 **1800+ closed vault cycles on live Hyperliquid — [verify on-chain](https://hypernatt.com/stats) before you pay.** MM trap/hunt/signal from the same stack Mimo trades, **not a generic BTC price API wrapper.**
 
 Not a Coinglass-style commodity feed: trap/sweep/reclaim math plus live vault cycle state. Read-only context for agents — not trade advice.
 
-**Try free:** `get_agent_manifest` → `get_vault_proof` → trap → signal → hunt. **~32 credits/day** (25 pool + intro-free per tool). **HOLD** free. Agent Pass **$19/mo**. Li.Fi swap via NattSwap.
+**Try free:** explore [hypernatt.com](https://hypernatt.com) → `get_agent_manifest` → `get_vault_proof` → trap → signal → hunt. **~32 credits/day** (25 pool + intro-free per tool). **HOLD** free. Agent Pass **$19/mo**. Li.Fi swap via NattSwap.
 
 Public MCP for AI agents and humans (Claude, Cursor).
 
 | Resource | URL |
 |----------|-----|
+| **HyperNatt (homepage)** | https://hypernatt.com |
 | **Public stats** | https://hypernatt.com/stats |
 | **MCP endpoint** | https://hypernatt.com/mcp/protocol |
 | **Smithery** | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
@@ -115,7 +118,7 @@ Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC
 
 ## What it is
 
-HyperNatt Terminal exposes **14 MCP tools** (v2.5.8): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards. MCP Streamable HTTP session resilience (spec 404 re-init).
+HyperNatt Terminal exposes **10 MCP tools** (v2.5.10): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), and five Decision Core reads. MCP Streamable HTTP session resilience (spec 404 re-init).
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
@@ -142,7 +145,7 @@ Start with the free tool **`get_agent_manifest`** — catalog, pricing, live 24h
 
 ## Manifest sections
 
-The terminal is organized into four sections (Decision Core first). Same structure via MCP `get_agent_manifest` or `GET https://hypernatt.com/api/m2m/agent/manifest`.
+The terminal is organized into three sections (Decision Core first). Same structure via MCP `get_agent_manifest` or `GET https://hypernatt.com/api/m2m/agent/manifest`.
 
 ### Decision Core
 
@@ -172,17 +175,6 @@ On-chain verifiable metrics for **Natt**, HyperNatt's reference trading agent on
 |------|------|-------|
 | [`swap_via_nattswap`](tools/swap_via_nattswap.md) | Li.Fi quote + step-by-step agent execution instructions | Free |
 | [`swap_quote`](tools/swap_quote.md) | Raw Li.Fi quote JSON only | Free |
-
-### Rewards & Referral
-
-NDAT rewards from completed swap volume. Refer other agents.
-
-| Tool | Role | Price |
-|------|------|-------|
-| [`get_agent_balance`](tools/get_agent_balance.md) | Pending and claimed NDAT for your wallet | Free |
-| [`claim_ndat`](tools/claim_ndat.md) | ECDSA claim payload to withdraw NDAT on Base (you pay gas) | Free |
-| [`register_nattswap_reward`](tools/register_nattswap_reward.md) | Register a completed swap tx hash to credit NDAT + quotas | Free |
-| [`get_referral_link`](tools/get_referral_link.md) | Referral URL for agent-to-agent invites | Free |
 
 ### Orientation (call first)
 
@@ -225,11 +217,9 @@ Default env points read-only signal backends to production (`https://hypernatt.c
 3. **`get_btc_usdc_signal`** — what is the live vault doing? (**HOLD free**).
 4. **`get_mm_hunt_score`** — one-line hunt pressure summary (1 credit).
 
-**Growth funnel (optional):**
+**Optional — swap & quota credits:**
 
-5. **`swap_via_nattswap`** → **`register_nattswap_reward`** — earn quota credits + NDAT.
-6. **`get_agent_balance`** → **`claim_ndat`** — rewards on Base.
-7. **`get_referral_link`** — invite other agents.
+5. **`swap_via_nattswap`** — cross-chain Li.Fi swap (free at MCP layer).
 
 Full walkthrough: [docs/quickstart.md](docs/quickstart.md)
 

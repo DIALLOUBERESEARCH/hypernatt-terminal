@@ -1,9 +1,8 @@
 {
-  "$schema": "https://glama.ai/mcp/schemas/server.json",
-  "maintainers": ["Heladj1977", "DIALLOUBE-RESEARCH"],
-  "displayName": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-  "description": "BTC Decision Terminal for AI agents — live vault-backed BTC/USDC signals, MM trap/hunt microstructure, on-chain proof, Li.Fi cross-chain swap. 14 tools · v2.5.8 · 25 shared credits/day + intro (~32/day) · HOLD free · Agent Pass $19/mo · MCP session resilience.",
-  "category": "finance",
-  "homepage": "https://hypernatt.com/stats",
+  "name": "hypernatt-terminal",
+  "displayName": "HyperNatt Terminal",
+  "homepage": "https://hypernatt.com",
+  "description": "HyperNatt platform https://hypernatt.com — live vault, AI assistant, on-chain proof. This MCP is one agent brick (10 tools, v2.5.10): vault-backed BTC/USDC signals, MM trap/hunt, Li.Fi swap. 25 shared credits/day + intro (~32/day). HOLD free. Agent Pass $19/mo.",
+  "url": "https://hypernatt.com/mcp/protocol",
   "repository": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
 }

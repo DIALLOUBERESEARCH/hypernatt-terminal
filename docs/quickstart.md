@@ -1,5 +1,7 @@
 # HyperNatt Terminal — Agent Quickstart
 
+**Platform:** [https://hypernatt.com](https://hypernatt.com) — full HyperNatt product (vault, assistant, stats). **This doc** covers the **hypernatt-terminal** MCP brick only (`/mcp/protocol`).
+
 **Humans (Claude / Cursor):** see [Try in 30 Seconds](../README.md#try-it-in-30-seconds) in the README — add connector `https://hypernatt.com/mcp/protocol`, then ask:
 
 > *Call get_agent_manifest, then get the BTC vault signal from HyperNatt.*
@@ -56,7 +58,7 @@ Three production samples — [full doc](example-responses.md). Order: **trap →
 | **Credit weights** | signal / hunt / similarity = **1** · liq_radar / mm_trap_state = **2** each |
 | **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
 | **Pro Pass** | **$49/mo** → **7000 credits** / 30 days |
-| **Swap bonus** | ~20 credits per $100 swapped; first **100** register → **2x** |
+| **Swap bonus** | ~20 credits per $100 swapped via NattSwap (see quota status) |
 | **Paygo** | **$0.01 USDC** / credit via x402 on Base |
 
 **Paywall order:** free tier → swap quotas → Agent Pass → Pro Pass → paygo.
@@ -69,7 +71,9 @@ Status: `GET https://hypernatt.com/api/m2m/pass/status` · `GET https://hypernat
 
 ## What is HyperNatt Terminal?
 
-**HyperNatt Terminal** is a BTC Decision Terminal for AI Agents — live vault-backed signals, on-chain proof, cross-chain swap. Verify in real time.
+**[HyperNatt](https://hypernatt.com)** is the live trading + AI platform (vault UI, assistant, on-chain stats). **HyperNatt Terminal** is the **agent-facing MCP server** — one integration brick at `/mcp/protocol`, not the whole product.
+
+The MCP exposes BTC Decision Terminal tools: live vault-backed signals, on-chain proof, cross-chain swap. Verify in real time.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid (**live since 2026-02-27**).
 
@@ -91,9 +95,9 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **14 MCP tools** (v2.5.8): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
+The terminal exposes **10 MCP tools** (v2.5.10): orientation, proof, **cross-chain swap**, and five Decision Core reads.
 
-**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — earn bonus credits by swapping via NattSwap (~20 per $100). First **100** wallets to **register** a swap get **2x** founder multiplier.
+**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — bonus Decision Core credits from NattSwap volume (~20 per $100).
 
 **Important:** Paid tools return **read-only BTC/USDC context**. They are **not** trade recommendations or execution instructions.
 
@@ -108,7 +112,6 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 | **Decision Core** | $0.01 USD/call (or **quota bypass**) | Vault-backed BTC context — five tools |
 | **Proof & Performance** | Free | Natt agent on-chain metrics |
 | **Execution** | Free | Li.Fi cross-chain swap quotes (NattSwap) |
-| **Rewards & Referral** | Free | NDAT + referral |
 
 ### Decision Core — five paid tools
 
@@ -131,7 +134,7 @@ Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). With quot
 | `swap_via_nattswap` | Li.Fi quote + step-by-step execution instructions (any Li.Fi-routed chain pair) |
 | `swap_quote` | Raw Li.Fi quote JSON only |
 
-Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes. After on-chain completion: **`register_nattswap_reward`** to earn quotas + NDAT.
+Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes.
 
 ---
 
@@ -154,18 +157,7 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 
 ---
 
-## Step 4 — Rewards loop (free)
-
-| Tool | Action |
-|------|--------|
-| `register_nattswap_reward` | Credit NDAT + quotas after completed swap tx |
-| `get_agent_balance` | Pending / claimed NDAT |
-| `claim_ndat` | ECDSA claim payload (you pay gas) |
-| `get_referral_link` | Agent referral URL |
-
----
-
-## Reference — all 14 MCP tools
+## Reference — all 10 MCP tools
 
 | # | Tool | Price |
 |---|------|-------|
@@ -179,10 +171,6 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 | 8 | `get_liq_radar` | 2 credits / $0.01 x402 or quota |
 | 9 | `swap_via_nattswap` | Free |
 | 10 | `swap_quote` | Free |
-| 11 | `get_agent_balance` | Free |
-| 12 | `claim_ndat` | Free |
-| 13 | `register_nattswap_reward` | Free |
-| 14 | `get_referral_link` | Free |
 
 Per-tool docs: [../tools/](../tools/)
 
@@ -214,4 +202,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.8 (14 tools, F#45N session resilience + Li.Fi cross-chain).*
+*Document version: hypernatt-terminal MCP v2.5.10 (10 tools, ecosystem homepage discovery + session resilience).*

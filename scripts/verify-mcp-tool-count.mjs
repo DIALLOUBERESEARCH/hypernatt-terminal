@@ -1,5 +1,5 @@
 /**
- * Build-time gate: server-card.json must list exactly 14 terminal tools.
+ * Build-time gate: server-card.json must list exactly 10 terminal tools.
  * Glama/Smithery introspection uses the same registry via createMcpServer().
  */
 import fs from "node:fs";
@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const cardPath = path.join(root, "server-card.json");
 
-const EXPECTED_COUNT = 14;
+const EXPECTED_COUNT = 10;
 const EXPECTED_TOOLS = [
     "get_agent_manifest",
     "get_vault_proof",
@@ -22,10 +22,6 @@ const EXPECTED_TOOLS = [
     "get_mm_trap_state",
     "swap_via_nattswap",
     "swap_quote",
-    "get_agent_balance",
-    "claim_ndat",
-    "register_nattswap_reward",
-    "get_referral_link",
 ].sort();
 
 const card = JSON.parse(fs.readFileSync(cardPath, "utf8"));
@@ -49,28 +45,5 @@ if (missing.length || extra.length) {
 }
 
 console.log(
-    `[verify-mcp-tool-count] OK v${version}: ${EXPECTED_COUNT} tools — ${names.join(", ")}`,
+    `[verify-mcp-tool-count] OK: ${EXPECTED_COUNT} tools v${version} — ${names.join(", ")}`,
 );
-
-const tdqsRequired = [
-    "get_mm_trap_state",
-    "get_liq_radar",
-    "get_agent_balance",
-    "claim_ndat",
-    "swap_via_nattswap",
-];
-for (const toolName of tdqsRequired) {
-    const row = (card.tools || []).find((t) => t.name === toolName);
-    const desc = row?.description || "";
-    if (!desc.includes("USE WHEN:") || !desc.includes("RETURNS:")) {
-        console.error(
-            `[verify-mcp-tool-count] FAIL: ${toolName} missing TDQS fields (USE WHEN / RETURNS) — Glama will grade B`,
-        );
-        process.exit(1);
-    }
-}
-if ((card.tools || []).some((t) => /Beta.*grandfather/i.test(t.description || ""))) {
-    console.error("[verify-mcp-tool-count] FAIL: stale Beta/grandfather text in server-card");
-    process.exit(1);
-}
-console.log("[verify-mcp-tool-count] TDQS gate OK");

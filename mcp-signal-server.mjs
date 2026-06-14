@@ -52,7 +52,6 @@ import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
 import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
 import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
 import {
-    registerTerminalCommerceTools,
     registerTerminalSwapTools,
     registerVaultProofTool,
     registerNattPerformanceTool,
@@ -66,7 +65,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.5.8";
+const TERMINAL_VERSION = "2.5.10";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -864,8 +863,6 @@ export function createMcpServer() {
         PUBLIC_MM_TRAP_STATE_URL,
     );
 
-    registerTerminalCommerceTools(server, freeCtx);
-
     return server;
 }
 
@@ -958,10 +955,6 @@ export function mountMcpSignalRoutes(app) {
                 "get_liq_radar",
                 "swap_via_nattswap",
                 "swap_quote",
-                "get_agent_balance",
-                "claim_ndat",
-                "register_nattswap_reward",
-                "get_referral_link",
             ],
             transports: {
                 sse: "/mcp/sse",
@@ -996,7 +989,10 @@ export function mountMcpSignalRoutes(app) {
                 },
                 network: "eip155:8453",
             },
+            homepage: "https://hypernatt.com",
             stats_url: "https://hypernatt.com/stats",
+            ecosystem_note:
+                "HyperNatt platform at hypernatt.com; hypernatt-terminal MCP is one agent integration brick.",
             products: [
                 "hypernatt_mimo_cycle_state_v1",
                 "hypernatt_mm_hunt_score_v1",
@@ -1132,7 +1128,7 @@ export function mountMcpSignalRoutes(app) {
     });
 
     console.log(
-        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 14 tools (F#45N session 404)`,
+        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 10 tools`,
     );
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,
