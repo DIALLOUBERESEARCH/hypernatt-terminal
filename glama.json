@@ -2,7 +2,7 @@
   "name": "hypernatt-terminal",
   "displayName": "HyperNatt Terminal",
   "homepage": "https://hypernatt.com",
-  "description": "HyperNatt platform https://hypernatt.com — live vault, AI assistant, on-chain proof. This MCP is one agent brick (10 tools, v2.5.10): vault-backed BTC/USDC signals, MM trap/hunt, Li.Fi swap. 25 shared credits/day + intro (~32/day). HOLD free. Agent Pass $19/mo.",
+  "description": "Live vault-backed BTC/USDC signals, MM trap/hunt, Li.Fi swap. One agent brick of HyperNatt (homepage on listing). 10 tools, v2.5.10. 25 credits/day + intro (~32/day). HOLD free. Agent Pass $19/mo.",
   "url": "https://hypernatt.com/mcp/protocol",
   "repository": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
 }

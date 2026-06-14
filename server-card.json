@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
     "version": "2.5.10",
-    "description": "HyperNatt platform https://hypernatt.com — live perp vault, AI assistant, on-chain proof. This MCP (hypernatt-terminal) is one agent brick at /mcp/protocol, not the whole ecosystem. 1800+ closed vault cycles — verify at https://hypernatt.com/stats. Start with get_agent_manifest. Free tier: 25 shared credits/day + intro per tool (~32/day). HOLD free. Agent Pass $19/mo. MCP docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "BTC Decision Terminal for AI agents — live vault-backed BTC/USDC context, MM intelligence, Li.Fi swap. One brick of HyperNatt (ecosystem.homepage). 10 tools, v2.5.10. Start with get_agent_manifest."
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
