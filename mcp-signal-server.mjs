@@ -58,6 +58,15 @@ import {
     registerNattPerformanceTool,
 } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
+import {
+    bindActiveSessionCounter,
+    isStaleMcpSession,
+    recordSessionClosed,
+    recordSessionCreated,
+    respondStaleSession,
+} from "./mcp-session-resilience.mjs";
+
+const TERMINAL_VERSION = "2.5.8";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -104,6 +113,8 @@ const sessionClientMeta = new Map();
 
 /** sessionId -> active MCP transport */
 const transports = new Map();
+
+bindActiveSessionCounter(() => transports.size);
 
 function freeDailyCap() {
     return parseInt(process.env.X402_FREE_DAILY_CREDITS || "25", 10);
@@ -413,7 +424,7 @@ async function finalizeSignalMcpBilling(payment, payload) {
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.5.7",
+        version: TERMINAL_VERSION,
     });
 
     const freeCtx = {
@@ -935,7 +946,7 @@ export function mountMcpSignalRoutes(app) {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.5.7",
+            version: TERMINAL_VERSION,
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
@@ -1003,6 +1014,18 @@ export function mountMcpSignalRoutes(app) {
             const sessionId = req.headers["mcp-session-id"];
             capturePaymentHeader(req, sessionId);
 
+            if (isStaleMcpSession(sessionId, transports)) {
+                recordX402Event({
+                    event_type: "discovery",
+                    tool: "_session_stale",
+                    client_source: String(req.headers["user-agent"] || "")
+                        .slice(0, 180),
+                    detail: `stale:${String(sessionId).slice(0, 36)}`,
+                });
+                respondStaleSession(res, String(sessionId));
+                return;
+            }
+
             if (sessionId && transports.has(sessionId)) {
                 const transport = transports.get(sessionId);
                 if (!(transport instanceof StreamableHTTPServerTransport)) {
@@ -1029,6 +1052,7 @@ export function mountMcpSignalRoutes(app) {
                     sessionIdGenerator: () => crypto.randomUUID(),
                     onsessioninitialized: (id) => {
                         transports.set(id, transport);
+                        recordSessionCreated();
                         capturePaymentHeader(req, id);
                         sessionClientMeta.set(id, {
                             ip: String(
@@ -1045,6 +1069,7 @@ export function mountMcpSignalRoutes(app) {
                         transports.delete(transport.sessionId);
                         sessionPayments.delete(transport.sessionId);
                         sessionClientMeta.delete(transport.sessionId);
+                        recordSessionClosed("streamable_transport_close");
                     }
                 };
                 const server = createMcpServer();
@@ -1080,6 +1105,7 @@ export function mountMcpSignalRoutes(app) {
         res.on("close", () => {
             transports.delete(transport.sessionId);
             sessionPayments.delete(transport.sessionId);
+            recordSessionClosed("sse_connection_close");
         });
         await server.connect(transport);
     });
@@ -1089,13 +1115,25 @@ export function mountMcpSignalRoutes(app) {
         capturePaymentHeader(req, sessionId);
         const transport = transports.get(sessionId);
         if (!(transport instanceof SSEServerTransport)) {
+            if (sessionId) {
+                recordX402Event({
+                    event_type: "discovery",
+                    tool: "_session_stale",
+                    client_source: "sse_messages",
+                    detail: `stale_sse:${sessionId.slice(0, 36)}`,
+                });
+                respondStaleSession(res, sessionId);
+                return;
+            }
             res.status(400).json({ error: "Unknown or expired MCP SSE sessionId" });
             return;
         }
         await transport.handlePostMessage(req, res, req.body);
     });
 
-    console.log("[MCP Terminal] hypernatt-terminal v2.5.7 — 14 tools");
+    console.log(
+        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 14 tools (F#45N session 404)`,
+    );
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,
     );

@@ -2,7 +2,7 @@
   "$schema": "https://glama.ai/mcp/schemas/server.json",
   "maintainers": ["Heladj1977", "DIALLOUBE-RESEARCH"],
   "displayName": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-  "description": "BTC Decision Terminal for AI agents — live vault-backed BTC/USDC signals, MM trap/hunt microstructure (not Coinglass commodity), on-chain proof, Li.Fi cross-chain swap. 14 tools · v2.5.3 · 10 free Decision Core credits/day · HOLD free · Agent Pass $19/mo.",
+  "description": "BTC Decision Terminal for AI agents — live vault-backed BTC/USDC signals, MM trap/hunt microstructure, on-chain proof, Li.Fi cross-chain swap. 14 tools · v2.5.8 · 25 shared credits/day + intro (~32/day) · HOLD free · Agent Pass $19/mo · MCP session resilience.",
   "category": "finance",
   "homepage": "https://hypernatt.com/stats",
   "repository": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"

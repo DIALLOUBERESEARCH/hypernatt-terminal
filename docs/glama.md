@@ -25,7 +25,7 @@ docker run --rm -p 8011:8011 hypernatt-terminal
 curl -sS http://127.0.0.1:8011/health
 ```
 
-Expected after rebuild: `"version":"2.5.1"`, `"tools":14`, `quota_program` on server-card at `/.well-known/mcp/server-card.json`.
+Expected after rebuild: `"version":"2.5.8"`, `"tools":14`, `mcp_sessions_v1` on `GET /health`.
 
 ## Re-sync after version bump (BLOQUANT)
 

@@ -91,7 +91,7 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 | SSE transport | `https://hypernatt.com/mcp/sse` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 
-The terminal exposes **14 MCP tools** (v2.5.6): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
+The terminal exposes **14 MCP tools** (v2.5.8): orientation, proof, **cross-chain swap**, five Decision Core reads, and NDAT rewards.
 
 **Quota program (live):** https://hypernatt.com/api/m2m/quota/status — earn bonus credits by swapping via NattSwap (~20 per $100). First **100** wallets to **register** a swap get **2x** founder multiplier.
 
@@ -214,4 +214,4 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-*Document version: hypernatt-terminal MCP v2.5.6 (14 tools, F#43N dev trial + Li.Fi cross-chain).*
+*Document version: hypernatt-terminal MCP v2.5.8 (14 tools, F#45N session resilience + Li.Fi cross-chain).*

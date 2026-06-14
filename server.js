@@ -105,13 +105,21 @@ function terminalToolsFromCard() {
     }));
 }
 
-app.get("/health", (_req, res) => {
+app.get("/health", async (_req, res) => {
+    let mcpSessions = null;
+    try {
+        const mod = await import("./mcp-session-resilience.mjs");
+        mcpSessions = mod.getMcpSessionStats();
+    } catch {
+        mcpSessions = null;
+    }
     res.json({
         status: "healthy",
         service: "hypernatt-terminal",
         version: serverCard.serverInfo.version || pkg.version,
         port: MCP_PORT,
         tools: serverCard.tools.length,
+        mcp_sessions_v1: mcpSessions,
     });
 });
 

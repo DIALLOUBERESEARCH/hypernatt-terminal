@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.5.7",
+    "version": "2.5.8",
     "description": "Live Hyperliquid vault (1800+ closed cycles) — verify at hypernatt.com/stats before you pay. MM trap/hunt/signal from Mimo's stack, not a generic BTC API wrapper. Start with get_agent_manifest. Free tier: 25 shared credits/day + 1st call free per Decision Core tool (~32 effective/day, no wallet). HOLD signals free. Agent Pass from $19/mo. Docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal · Stats: https://hypernatt.com/stats · Pass: https://hypernatt.com/api/m2m/pass/status"
   },
   "authentication": {

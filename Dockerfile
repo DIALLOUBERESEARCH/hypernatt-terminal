@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY server.js stdio.mjs mcp-signal-server.mjs mcp-free-tools.mjs mcp-growth-tools.mjs base-tokens.mjs \
+COPY server.js stdio.mjs mcp-signal-server.mjs mcp-session-resilience.mjs agent-payment-error.mjs mcp-free-tools.mjs mcp-growth-tools.mjs base-tokens.mjs \
     x402-signal.mjs x402-mm-hunt.mjs x402-similarity.mjs x402-data-products.mjs \
     x402-facilitator-client.mjs x402-telemetry.mjs x402-beta.mjs x402-quota.mjs server-card-tools.mjs server-card.json server.json ./
 COPY scripts/verify-mcp-tool-count.mjs ./scripts/verify-mcp-tool-count.mjs
