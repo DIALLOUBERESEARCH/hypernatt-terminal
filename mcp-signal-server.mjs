@@ -413,7 +413,7 @@ async function finalizeSignalMcpBilling(payment, payload) {
 export function createMcpServer() {
     const server = new McpServer({
         name: "hypernatt-terminal",
-        version: "2.5.6",
+        version: "2.5.7",
     });
 
     const freeCtx = {
@@ -935,7 +935,7 @@ export function mountMcpSignalRoutes(app) {
         res.json({
             name: "hypernatt-terminal",
             title: SERVER_TITLE,
-            version: "2.5.6",
+            version: "2.5.7",
             tools: [
                 "get_agent_manifest",
                 "get_vault_proof",
@@ -1095,7 +1095,7 @@ export function mountMcpSignalRoutes(app) {
         await transport.handlePostMessage(req, res, req.body);
     });
 
-    console.log("[MCP Terminal] hypernatt-terminal v2.5.6 — 14 tools");
+    console.log("[MCP Terminal] hypernatt-terminal v2.5.7 — 14 tools");
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,
     );

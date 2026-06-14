@@ -1,8 +1,12 @@
 # HyperNatt Terminal
 
-**BTC decision terminal backed by a live, verifiable trading vault.** 1800+ closed cycles — [public track record](https://hypernatt.com/stats). **Free daily credits** on all Decision Core tools. **HOLD signals are free.** Agent Pass from **$19/mo**. Cross-chain swap via Li.Fi.
+**1800+ closed vault cycles on live Hyperliquid — [verify on-chain](https://hypernatt.com/stats) before you pay.** MM trap/hunt/signal from the same stack Mimo trades, **not a generic BTC price API wrapper.**
 
-Public MCP server for AI agents and humans (Claude, Cursor). Vault-backed MM intelligence — not trade advice.
+Not a Coinglass-style commodity feed: trap/sweep/reclaim math plus live vault cycle state. Read-only context for agents — not trade advice.
+
+**Try free:** `get_agent_manifest` → `get_vault_proof` → trap → signal → hunt. **~32 credits/day** (25 pool + intro-free per tool). **HOLD** free. Agent Pass **$19/mo**. Li.Fi swap via NattSwap.
+
+Public MCP for AI agents and humans (Claude, Cursor).
 
 | Resource | URL |
 |----------|-----|
@@ -111,7 +115,7 @@ Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC
 
 ## What it is
 
-HyperNatt Terminal exposes **14 MCP tools** (v2.5.6): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
+HyperNatt Terminal exposes **14 MCP tools** (v2.5.7): orientation + vault proof, Natt agent performance, **cross-chain swap** (Li.Fi), five Decision Core reads, and rewards.
 
 Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
 
