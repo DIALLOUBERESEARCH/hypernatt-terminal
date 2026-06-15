@@ -40,6 +40,7 @@ Read-only BTC/USDC context, not trade advice. No custody. Verify on-chain.
 ## Documentation
 
 - [Quickstart](docs/quickstart.md) — connect Claude / Cursor in 30 seconds
+- [Integrations](docs/integrations.md) — MCP clients, REST + x402, agent frameworks
 - [Example responses](docs/example-responses.md) — live JSON samples
 - [Tool reference](tools/README.md) — per-tool docs
 - [Full technical reference](docs/reference.md) — manifest sections, REST API, Docker, pricing tables
