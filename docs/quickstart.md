@@ -55,15 +55,15 @@ Three production samples — [full doc](example-responses.md). Order: **trap →
 | **Free** | **25 shared credits/day** on all Decision Core tools (no wallet) |
 | **Intro** | **First call per Decision Core tool per day is free** (taste each product) |
 | **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
-| **Credit cost** | All 5 Decision Core tools = **1 credit** (~$0.01) each |
+| **Credit cost** | All 5 Decision Core tools = **1 credit** ($0.01) each |
 | **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
 | **Pro Pass** | **$49/mo** → **7000 credits** / 30 days |
-| **Swap bonus** | ~20 credits per $100 swapped via NattSwap (see quota status) |
+| **Swap bonus** | about 20 credits per $100 swapped via NattSwap (see quota status) |
 | **Paygo** | **$0.01 USDC** / credit via x402 on Base |
 
 **Paywall order:** free tier → swap quotas → Agent Pass → Pro Pass → paygo.
 
-> *25 shared credits/day + intro-free per tool (~32/day). Swap to earn more. Or $19/mo for serious use.*
+> *25 shared credits/day + intro-free per tool (about 32/day). Swap to earn more. Or $19/mo for serious use.*
 
 Status: `GET https://hypernatt.com/api/m2m/pass/status` · `GET https://hypernatt.com/api/m2m/quota/status`
 
@@ -97,7 +97,7 @@ Signals are produced by **Mimo**, HyperNatt's automated strategy on the public *
 
 The terminal exposes **9 MCP tools** (v2.5.11): orientation, proof, **cross-chain swap**, and five Decision Core reads.
 
-**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — bonus Decision Core credits from NattSwap volume (~20 per $100).
+**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — bonus Decision Core credits from NattSwap volume (about 20 per $100).
 
 **Important:** Paid tools return **read-only BTC/USDC context**. They are **not** trade recommendations or execution instructions.
 
@@ -119,7 +119,7 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 |------|------|---------|
 | `get_btc_usdc_signal` | Cycle direction (**LONG** / **SHORT** / **HOLD**) from the live vault | **1** (HOLD free) |
 | `get_mm_hunt_score` | Microstructure pressure & liquidation-hunt context | **1** |
-| `get_similarity_match` | Top-3 historical regime matches & ~4h outcomes | **1** |
+| `get_similarity_match` | Top-3 historical regime matches & about 4h outcomes | **1** |
 | `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs | **2** |
 | `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) | **2** |
 

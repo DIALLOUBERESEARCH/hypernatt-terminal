@@ -34,12 +34,12 @@ Glama rebuild le Docker + introspection `stdio.mjs` (`tools/list`). README seul 
 1. Sync monorepo -> `hypernatt-terminal` (`sync-hypernatt-terminal-repo.ps1`) — **must include `package-lock.json`** or Glama `npm ci` fails silently.
 2. `git push origin main`.
 3. Glama admin -> **Repository** -> **Sync Server**.
-4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = 9 entries.
+4. Attendre rebuild sandbox (about 10-30 min). Onglet **Tools** = 9 entries.
 5. Hard refresh (Ctrl+F5) page publique.
 
 ## Glama Dockerfile admin (quality check) — BLOQUANT
 
-Glama indexes tools via `mcp-proxy` + **stdio** (`tools/list`). If CMD = `server.js`, you get a **stale subset (~11 tools)**.
+Glama indexes tools via `mcp-proxy` + **stdio** (`tools/list`). If CMD = `server.js`, you get a **stale subset (9 tools)**.
 
 **Admin → Server → Dockerfile settings** (must match exactly):
 
@@ -55,6 +55,6 @@ Dockerfile `CMD ["node", "server.js"]` is for **HTTP healthcheck only**; Glama a
 After **Sync Server**, onglet **Tools** must show **9** entries including:
 `get_liq_radar`, `get_mm_trap_state`.
 
-If still wrong count: hard refresh (Ctrl+F5) → re-Sync → wait build **Succeeded** (~30 min).
+If still wrong count: hard refresh (Ctrl+F5) → re-Sync → wait build **Succeeded** (about 30 min).
 
 Prod agents use HTTP: `node server.js` → `https://hypernatt.com/mcp/protocol`.

@@ -12,7 +12,7 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
 |------|------|
 | **Credits** | **1** (shared daily pool) |
 | **HOLD verdict** | **Free** — `direction: HOLD` never consumes credits |
-| **Free tier** | 25 shared pool/day + 1st call free per tool (~32 effective/day) |
+| **Free tier** | 25 shared pool/day + 1st call free per tool (about 32 effective/day) |
 | **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
 
 ## When to use

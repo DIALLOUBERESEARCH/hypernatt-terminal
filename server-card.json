@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
     "version": "2.5.11",
-    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nFree: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. All 5 Decision Core tools cost 1 credit (~$0.01) each. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nFree: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (about 32/day effective). HOLD on get_btc_usdc_signal is always free. All 5 Decision Core tools cost 1 credit ($0.01) each. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -21,12 +21,12 @@
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
     "agent_pass_usd": 19,
     "agent_pass_credits": 2000,
-    "note": "Agent Pass $19/mo (~2000 credits) or Pro Pass $49/mo. Free tier: 25 shared credits/day + intro-free 1st call per Decision Core tool (~32 effective/day, no wallet). HOLD on get_btc_usdc_signal is always free."
+    "note": "Agent Pass $19/mo (about 2000 credits) or Pro Pass $49/mo. Free tier: 25 shared credits/day + intro-free 1st call per Decision Core tool (about 32 effective/day, no wallet). HOLD on get_btc_usdc_signal is always free."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
     "balance_url": "https://hypernatt.com/api/m2m/quota/balance",
-    "note": "Bonus Decision Core credits from NattSwap swap volume (~20 per $100). Status: GET /api/m2m/quota/status · balance: GET /api/m2m/quota/balance?wallet=0x…"
+    "note": "Bonus Decision Core credits from NattSwap swap volume (about 20 per $100). Status: GET /api/m2m/quota/status · balance: GET /api/m2m/quota/balance?wallet=0x…"
   },
   "tools": [
     {
@@ -108,7 +108,7 @@
     },
     {
       "name": "get_similarity_match",
-      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed ~4h BTC outcomes (NOT vault PnL). USE WHEN: analogies / regime context only. NOT WHEN: trade direction (get_btc_usdc_signal), live trap (get_mm_trap_state), or sizing. RETURNS: hypernatt_similarity_match_v1 with interpretation_contract_v1, confidence_tier, episode_diversity, matches[]. Agents MUST quote do_not_infer rules — never treat similarity_pct as win probability. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed about 4h BTC outcomes (NOT vault PnL). USE WHEN: analogies / regime context only. NOT WHEN: trade direction (get_btc_usdc_signal), live trap (get_mm_trap_state), or sizing. RETURNS: hypernatt_similarity_match_v1 with interpretation_contract_v1, confidence_tier, episode_diversity, matches[]. Agents MUST quote do_not_infer rules — never treat similarity_pct as win probability. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
