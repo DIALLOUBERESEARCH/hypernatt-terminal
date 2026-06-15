@@ -14,6 +14,29 @@ Documentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
 
 ---
 
+## Try it in 30 seconds (no install, no wallet)
+
+One free public call returns the full catalog (9 tools, prices, ecosystem links):
+
+```bash
+curl -s https://hypernatt.com/api/m2m/agent/manifest
+```
+
+Then verify the vault yourself, on-chain:
+
+- Live vault: https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8
+- Public track record: https://hypernatt.com/stats
+
+Want a runnable taste (stdlib only, no wallet)?
+
+```bash
+python examples/btc_trap_aware_min.py
+```
+
+Read-only BTC/USDC context, not trade advice. No custody. Verify on-chain.
+
+---
+
 ## Documentation
 
 - [Quickstart](docs/quickstart.md) — connect Claude / Cursor in 30 seconds

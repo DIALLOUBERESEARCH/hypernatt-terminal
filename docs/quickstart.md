@@ -120,8 +120,8 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 | `get_btc_usdc_signal` | Cycle direction (**LONG** / **SHORT** / **HOLD**) from the live vault | **1** (HOLD free) |
 | `get_mm_hunt_score` | Microstructure pressure & liquidation-hunt context | **1** |
 | `get_similarity_match` | Top-3 historical regime matches & about 4h outcomes | **1** |
-| `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs | **2** |
-| `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) | **2** |
+| `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs | **1** |
+| `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) | **1** |
 
 Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). With quota balance: pass **`agent_wallet`** and skip payment.
 
