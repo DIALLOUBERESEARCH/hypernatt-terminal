@@ -38,6 +38,9 @@ daily pool first (no wallet), then x402.
 # Full catalog (9 tools, prices, ecosystem) — free, no wallet:
 curl -s https://hypernatt.com/api/m2m/agent/manifest
 
+# Verifiable live vault data (edge measurement preliminary — verify on-chain):
+curl -s https://hypernatt.com/api/m2m/proof-of-edge
+
 # A Decision Core read — served from the free daily pool, no wallet:
 curl -s https://hypernatt.com/api/m2m/mm-trap-state
 ```

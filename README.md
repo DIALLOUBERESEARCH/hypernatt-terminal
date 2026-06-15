@@ -19,7 +19,8 @@ Documentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
 One free public call returns the full catalog (9 tools, prices, ecosystem links):
 
 ```bash
-curl -s https://hypernatt.com/api/m2m/agent/manifest
+curl -s https://hypernatt.com/api/m2m/agent/manifest      # full catalog, free
+curl -s https://hypernatt.com/api/m2m/proof-of-edge       # live vault data; edge measurement preliminary — verify on-chain
 ```
 
 Then verify the vault yourself, on-chain:
