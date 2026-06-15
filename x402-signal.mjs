@@ -230,8 +230,8 @@ export function summarizeCyclePayloadV1(payload) {
         idle: payload?.idle ?? null,
         track_record: {
             url: track.url,
-            win_rate: track.win_rate,
-            total_trades: track.total_trades,
+            scope: track.scope,
+            verify_yourself: "https://hypernatt.com/stats",
         },
         proof_snapshot_hash: proof.snapshot_hash,
         verification_url: track.url || "https://hypernatt.com/stats",

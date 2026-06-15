@@ -68,7 +68,7 @@ Compressed view of the same upstream block as `get_liq_radar` — use when you w
 | `magnet_bias` | e.g. `BEARISH_MAGNET` / `BULLISH_MAGNET` |
 | `pressure_direction` | e.g. `DOWN_HUNT_LONGS` |
 | `alert_level` | Severity band (e.g. orange) |
-| `long_trap_phase` | Institutional trap phase label + triggers |
+| `long_trap_phase` | MM trap phase label + triggers |
 | `interpretation_en` | Human/agent-readable summary |
 
 ## Try it
