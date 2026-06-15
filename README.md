@@ -6,7 +6,7 @@ Full HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com —
 
 9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.
 
-Free: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. Credit weights: signal, hunt, similarity = 1; liq_radar and mm_trap_state = 2. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).
+Free: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (~32/day effective). HOLD on get_btc_usdc_signal is always free. All 5 Decision Core tools cost 1 credit (~$0.01) each. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).
 
 Humans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: "Call get_vault_proof, then get_mm_trap_state — is the MM trapping?"
 

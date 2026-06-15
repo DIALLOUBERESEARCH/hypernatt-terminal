@@ -16,7 +16,7 @@
 
 Three production samples — [full doc](example-responses.md). Order: **trap → vault → hunt**.
 
-**`get_mm_trap_state`** (2 credits):
+**`get_mm_trap_state`** (1 credit):
 
 ```json
 {
@@ -55,7 +55,7 @@ Three production samples — [full doc](example-responses.md). Order: **trap →
 | **Free** | **25 shared credits/day** on all Decision Core tools (no wallet) |
 | **Intro** | **First call per Decision Core tool per day is free** (taste each product) |
 | **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
-| **Credit weights** | signal / hunt / similarity = **1** · liq_radar / mm_trap_state = **2** each |
+| **Credit cost** | All 5 Decision Core tools = **1 credit** (~$0.01) each |
 | **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
 | **Pro Pass** | **$49/mo** → **7000 credits** / 30 days |
 | **Swap bonus** | ~20 credits per $100 swapped via NattSwap (see quota status) |
@@ -147,11 +147,11 @@ Swaps are free at the MCP layer; revenue is integrator fees on execution, not x4
 
 Suggested order for a full picture (pro stack):
 
-1. `get_mm_trap_state` — manipulation weather (flagship, 2 credits)
+1. `get_mm_trap_state` — manipulation weather (flagship, 1 credit)
 2. `get_btc_usdc_signal` — vault cycle now (HOLD free)
 3. `get_mm_hunt_score` — hunt / trap pressure summary
 4. `get_similarity_match` — historical analogies
-5. `get_liq_radar` — raw microstructure block (commodity, 2 credits)
+5. `get_liq_radar` — raw microstructure block (commodity, 1 credit)
 
 Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 
@@ -163,11 +163,11 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 |---|------|-------|
 | 1 | `get_agent_manifest` | Free |
 | 2 | `get_vault_proof` | Free |
-| 3 | `get_mm_trap_state` | 2 credits / $0.01 x402 or quota |
+| 3 | `get_mm_trap_state` | 1 credit / $0.01 x402 or quota |
 | 4 | `get_btc_usdc_signal` | 1 credit; **HOLD free** |
 | 5 | `get_mm_hunt_score` | 1 credit / $0.01 x402 or quota |
 | 6 | `get_similarity_match` | 1 credit / $0.01 x402 or quota |
-| 7 | `get_liq_radar` | 2 credits / $0.01 x402 or quota |
+| 7 | `get_liq_radar` | 1 credit / $0.01 x402 or quota |
 | 8 | `swap_via_nattswap` | Free |
 | 9 | `swap_quote` | Free |
 

@@ -10,7 +10,7 @@ Captured from `https://hypernatt.com` on **2026-06-13**.
 
 ## 1. `get_mm_trap_state` — MM trap / sweep / reclaim
 
-**2 credits** · not Coinglass commodity
+**1 credit** · not Coinglass commodity
 
 ```json
 {

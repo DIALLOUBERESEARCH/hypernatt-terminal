@@ -43,7 +43,7 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 Three real production responses (2026-06-13). **Trap → vault → hunt** — the pro stack.
 
-### 1. `get_mm_trap_state` (2 credits) — MM trap weather
+### 1. `get_mm_trap_state` (1 credit) — MM trap weather
 
 ```json
 {
@@ -86,7 +86,7 @@ Full fields + curls: **[example-responses.md](example-responses.md)**
 |---|------|--------------|------------|-------|
 | MCP install | Yes | Yes | Yes | Yes |
 | Daily credits (shared pool, all DC tools) | **25/day** + intro-free 1st call/tool (~**32** effective) | — | — | — |
-| Credit cost per tool | 1 credit (signal, hunt, similarity) · **2 credits** (liq_radar, mm_trap_state) | same | same | per credit |
+| Credit cost per tool | 1 credit (all 5 Decision Core tools) | same | same | per credit |
 | Monthly credits | — | **2000** | **7000** | — |
 | HOLD signal | **Free** | **Free** | **Free** | **Free** |
 | Swap bonus credits | Yes | Yes | Yes | Yes |
@@ -130,11 +130,11 @@ Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Pay
 
 | Tool | Role | Price |
 |------|------|-------|
-| [`get_mm_trap_state`](../tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (2 credits) | free tier, pass, quota, or $0.01 |
+| [`get_mm_trap_state`](../tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (1 credit) | free tier, pass, quota, or $0.01 |
 | [`get_btc_usdc_signal`](../tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 1 credit |
 | [`get_mm_hunt_score`](../tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | free tier, pass, quota, or $0.01 |
 | [`get_similarity_match`](../tools/get_similarity_match.md) | Top-3 historical regime matches & observed ~4h BTC outcomes | free tier, pass, quota, or $0.01 |
-| [`get_liq_radar`](../tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (2 credits; commodity layer) | free tier, pass, quota, or $0.01 |
+| [`get_liq_radar`](../tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (1 credit; commodity layer) | free tier, pass, quota, or $0.01 |
 | [`get_vault_proof`](../tools/get_vault_proof.md) | On-chain vault proof + signed cycle snapshot hash | Free |
 
 ### Execution
@@ -174,7 +174,7 @@ curl -sS http://127.0.0.1:8011/health
 ## Suggested agent journey
 
 1. **`get_agent_manifest`** — catalog, pricing, live examples (free).
-2. **`get_mm_trap_state`** — is the MM trapping? (2 credits).
+2. **`get_mm_trap_state`** — is the MM trapping? (1 credit).
 3. **`get_btc_usdc_signal`** — what is the live vault doing? (**HOLD free**).
 4. **`get_mm_hunt_score`** — one-line hunt pressure summary (1 credit).
 5. **`swap_via_nattswap`** — optional cross-chain Li.Fi swap (free at MCP layer).

@@ -781,7 +781,7 @@ export function createMcpServer() {
                         .string()
                         .optional()
                         .describe(
-                            "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota balance covers this tool's credit weight (2 for liq_radar/mm_trap_state).",
+                            "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota balance covers this tool's credit weight (1 credit per Decision Core tool).",
                         ),
                 },
             },
@@ -854,7 +854,7 @@ export function createMcpServer() {
         "get_mm_trap_state",
         toolDescriptionFromCard(
             "get_mm_trap_state",
-            "Is the MM trapping right now? Flagship trap/sweep/reclaim weather: MM_TRAP_ACTIVE, hunt direction, sweep zones, chart_verdicts. 2 credits.",
+            "Is the MM trapping right now? Flagship trap/sweep/reclaim weather: MM_TRAP_ACTIVE, hunt direction, sweep zones, chart_verdicts. 1 credit.",
         ),
         MM_TRAP_STATE_X402,
         "hypernatt_mm_trap_state_v1",
