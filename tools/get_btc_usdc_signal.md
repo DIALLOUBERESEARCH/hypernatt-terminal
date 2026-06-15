@@ -50,8 +50,8 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
     "entry_price": 63098.9,
     "size": 0.06768,
     "leverage": 5,
-    "unrealized_pnl_pct": 10.6979,
-    "unrealized_pnl_usd": 91.37,
+    "unrealized_pnl_pct": 1.8,
+    "unrealized_pnl_usd": 15.40,
     "liquidation_price": 51214.35,
     "position_tp_observed": 75000
   },
