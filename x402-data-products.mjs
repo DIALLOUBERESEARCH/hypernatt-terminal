@@ -55,7 +55,7 @@ export function createDataProductX402(cfg) {
     const priceUsdc = parseFloat(
         process.env[cfg.priceEnv] ||
             process.env.MIMO_SIGNAL_X402_PRICE_USDC ||
-            "0.01",
+            "0.001",
     );
     const payTo = (process.env[cfg.payToEnv] || DEFAULT_TREASURY).toLowerCase();
 

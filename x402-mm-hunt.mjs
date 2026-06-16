@@ -15,7 +15,7 @@ const CDP_FACILITATOR_URL =
 export const MM_HUNT_PRICE_USDC = parseFloat(
     process.env.MM_HUNT_X402_PRICE_USDC ||
         process.env.MIMO_SIGNAL_X402_PRICE_USDC ||
-        "0.01",
+        "0.001",
 );
 
 export const MM_HUNT_PAYTO = (

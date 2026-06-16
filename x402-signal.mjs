@@ -24,7 +24,7 @@ const FORBIDDEN_SUMMARY_KEYS = new Set([
 ]);
 
 export const SIGNAL_PRICE_USDC = parseFloat(
-    process.env.MIMO_SIGNAL_X402_PRICE_USDC || "0.01",
+    process.env.MIMO_SIGNAL_X402_PRICE_USDC || "0.001",
 );
 
 export const SIGNAL_PAYTO = (

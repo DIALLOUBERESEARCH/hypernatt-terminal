@@ -25,7 +25,7 @@ function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
     if (reasonCode === "PAYMENT_REQUIRED") {
         return (
             `Payment required for ${tool}. ` +
-            "Connect a wallet with swap quota, Agent Pass, or pay $0.01 USDC per credit on Base."
+            "Connect a wallet with swap quota, Agent Pass, or pay $0.001 USDC per call on Base."
         );
     }
     return (

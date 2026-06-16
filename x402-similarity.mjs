@@ -15,7 +15,7 @@ const CDP_FACILITATOR_URL =
 export const SIMILARITY_PRICE_USDC = parseFloat(
     process.env.SIMILARITY_MATCH_X402_PRICE_USDC ||
         process.env.MIMO_SIGNAL_X402_PRICE_USDC ||
-        "0.01",
+        "0.001",
 );
 
 export const SIMILARITY_PAYTO = (

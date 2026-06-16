@@ -775,7 +775,7 @@ export function createMcpServer() {
                         .string()
                         .optional()
                         .describe(
-                            "Base64 x402 USDC payment on Base (eip155:8453). Omit on first call to receive 402 payment instructions; retry with header after paying $0.01/credit.",
+                            "Base64 x402 USDC payment on Base (eip155:8453). Omit on first call to receive 402 payment instructions; retry with header after paying $0.001/call.",
                         ),
                     agent_wallet: z
                         .string()
