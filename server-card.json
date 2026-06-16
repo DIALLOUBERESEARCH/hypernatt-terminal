@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
     "version": "2.5.11",
-    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nFree: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (about 32/day effective). HOLD on get_btc_usdc_signal is always free. All 5 Decision Core tools cost 1 credit ($0.01) each. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nPricing: flat $0.001 per call via x402 (USDC on Base) — no subscription, no credit pool. The 5 Decision Core tools (cycle signal, MM hunt, liquidation radar, MM trap state, regime similarity) are $0.001 each; HOLD on get_btc_usdc_signal is not charged. Free: manifest and signed vault proof. Cross-chain swaps route through Li.Fi (you sign your own tx). Heavy use: swap-earned quota or Agent Pass.\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -21,7 +21,7 @@
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
     "agent_pass_usd": 19,
     "agent_pass_credits": 2000,
-    "note": "Agent Pass $19/mo (about 2000 credits) or Pro Pass $49/mo. Free tier: 25 shared credits/day + intro-free 1st call per Decision Core tool (about 32 effective/day, no wallet). HOLD on get_btc_usdc_signal is always free."
+    "note": "Flat $0.001/call via x402 on Base — no subscription, no free tier. HOLD on get_btc_usdc_signal is not charged. Agent Pass and swap-earned quota available for bulk usage."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
@@ -52,7 +52,7 @@
     },
     {
       "name": "get_mm_trap_state",
-      "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: 1 credit / 25 free day pool + intro / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: $0.001 flat via x402 on Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -68,7 +68,7 @@
     },
     {
       "name": "get_btc_usdc_signal",
-      "description": "Should I align with the live BTC vault? Real-time Mimo cycle LONG/SHORT/HOLD. USE WHEN: vault bias, cycle_id, open PnL (chain_snapshot), checkpoint HOLD. NOT WHEN: MM trap math (get_mm_trap_state) or hunt score alone. RETURNS: hypernatt_mimo_cycle_state_v1 — default summary v2 includes chain_snapshot, checkpoint_snapshot, interpretation_contract_v1 (PnL authority: chain only, not avg_entry). full_payload:true for per-leg detail. HOLD direction is always free. COST: 1 credit / 25 free day pool + intro / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "Should I align with the live BTC vault? Real-time Mimo cycle LONG/SHORT/HOLD. USE WHEN: vault bias, cycle_id, open PnL (chain_snapshot), checkpoint HOLD. NOT WHEN: MM trap math (get_mm_trap_state) or hunt score alone. RETURNS: hypernatt_mimo_cycle_state_v1 — default summary v2 includes chain_snapshot, checkpoint_snapshot, interpretation_contract_v1 (PnL authority: chain only, not avg_entry). full_payload:true for per-leg detail. HOLD direction is not charged. COST: $0.001 flat via x402 on Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -89,7 +89,7 @@
     },
     {
       "name": "get_mm_hunt_score",
-      "description": "Is the Market Maker hunting your position? One-line liquidation pressure summary. USE WHEN: quick hunt read, alert_level, magnet_bias. NOT WHEN: full trap/sweep math (get_mm_trap_state) or raw clusters (get_liq_radar). RETURNS: hypernatt_mm_hunt_score_v1 — mm_hunt_score (-100..100), pressure_direction, alert_level, long_trap_phase, interpretation_en. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "Is the Market Maker hunting your position? One-line liquidation pressure summary. USE WHEN: quick hunt read, alert_level, magnet_bias. NOT WHEN: full trap/sweep math (get_mm_trap_state) or raw clusters (get_liq_radar). RETURNS: hypernatt_mm_hunt_score_v1 — mm_hunt_score (-100..100), pressure_direction, alert_level, long_trap_phase, interpretation_en. COST: $0.001 flat via x402 on Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -108,7 +108,7 @@
     },
     {
       "name": "get_similarity_match",
-      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed about 4h BTC outcomes (NOT vault PnL). USE WHEN: analogies / regime context only. NOT WHEN: trade direction (get_btc_usdc_signal), live trap (get_mm_trap_state), or sizing. RETURNS: hypernatt_similarity_match_v1 with interpretation_contract_v1, confidence_tier, episode_diversity, matches[]. Agents MUST quote do_not_infer rules — never treat similarity_pct as win probability. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed about 4h BTC outcomes (NOT vault PnL). USE WHEN: analogies / regime context only. NOT WHEN: trade direction (get_btc_usdc_signal), live trap (get_mm_trap_state), or sizing. RETURNS: hypernatt_similarity_match_v1 with interpretation_contract_v1, confidence_tier, episode_diversity, matches[]. Agents MUST quote do_not_infer rules — never treat similarity_pct as win probability. COST: $0.001 flat via x402 on Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -127,7 +127,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Raw BTC liquidation radar — magnet score, OI build-up, long/short ratio, liquidation clusters, 1h/24h liquidations. USE WHEN: you need the full microstructure block (clusters, magnet, OI). NOT WHEN: trap/sweep/reclaim verdicts (get_mm_trap_state) or short hunt narrative (get_mm_hunt_score). RETURNS: hypernatt_liq_radar_v1 with liq_radar { magnet_score, magnet_bias, clusters_above/below, oi_buildup, long_short_ratio }. Redacted, read-only. COST: 1 credit / free tier / quota / $0.01 x402 Base. Side effects: none.",
+      "description": "Raw BTC liquidation radar — magnet score, OI build-up, long/short ratio, liquidation clusters, 1h/24h liquidations. USE WHEN: you need the full microstructure block (clusters, magnet, OI). NOT WHEN: trap/sweep/reclaim verdicts (get_mm_trap_state) or short hunt narrative (get_mm_hunt_score). RETURNS: hypernatt_liq_radar_v1 with liq_radar { magnet_score, magnet_bias, clusters_above/below, oi_buildup, long_short_ratio }. Redacted, read-only. COST: $0.001 flat via x402 on Base. Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {

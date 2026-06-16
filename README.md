@@ -8,7 +8,7 @@ Security: no custody, no key access, read-only Decision Core, x402 you control, 
 
 9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.
 
-Free: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (about 32/day effective). HOLD on get_btc_usdc_signal is always free. All 5 Decision Core tools cost 1 credit ($0.01) each. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).
+Pricing: flat $0.001 per call via x402 (USDC on Base) — no subscription, no credit pool. The 5 Decision Core tools (cycle signal, MM hunt, liquidation radar, MM trap state, regime similarity) are $0.001 each; HOLD on get_btc_usdc_signal is not charged. Free: manifest and signed vault proof. Cross-chain swaps route through Li.Fi (you sign your own tx). Heavy use: swap-earned quota or Agent Pass.
 
 Humans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: "Call get_vault_proof, then get_mm_trap_state — is the MM trapping?"
 
