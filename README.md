@@ -4,6 +4,8 @@ HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliqui
 
 Full HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.
 
+Security: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).
+
 9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.
 
 Free: manifest, vault proof, swap quotes. Decision Core: 25 shared credits/day plus one intro-free call per tool (about 32/day effective). HOLD on get_btc_usdc_signal is always free. All 5 Decision Core tools cost 1 credit ($0.01) each. Then swap-earned quota, Agent Pass ($19/mo), Pro Pass ($49/mo), or paygo $0.01/credit via x402 (USDC on Base).
