@@ -52,18 +52,17 @@ Three production samples — [full doc](example-responses.md). Order: **trap →
 
 | Tier | What you get |
 |------|----------------|
-| **Free** | **25 shared credits/day** on all Decision Core tools (no wallet) |
-| **Intro** | **First call per Decision Core tool per day is free** (taste each product) |
+| **Intro** | **First call per Decision Core tool is free** (taste each product); no daily credit pool |
 | **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
-| **Credit cost** | All 5 Decision Core tools = **1 credit** ($0.01) each |
-| **Agent Pass** | **$19/mo** → **2000 credits** / 30 days |
-| **Pro Pass** | **$49/mo** → **7000 credits** / 30 days |
+| **Free** | `get_agent_manifest`, `get_vault_proof`, and swap quotes (no wallet) |
+| **Credit cost** | All 5 Decision Core tools = **1 credit** ($0.001) each |
+| **Agent Pass** | **$5/mo** → **~15,000 credits** / 30 days (~67% below paygo) |
 | **Swap bonus** | about 20 credits per $100 swapped via NattSwap (see quota status) |
-| **Paygo** | **$0.01 USDC** / credit via x402 on Base |
+| **Paygo** | **$0.001 USDC** / credit via x402 on Base |
 
-**Paywall order:** free tier → swap quotas → Agent Pass → Pro Pass → paygo.
+**Paywall order:** intro-free → swap-earned quota → Agent Pass $5/mo → paygo $0.001.
 
-> *25 shared credits/day + intro-free per tool (about 32/day). Swap to earn more. Or $19/mo for serious use.*
+> *First call per tool is free (intro); no daily credit pool. Swap to earn more. Or $5/mo Agent Pass (~15,000 credits) for serious use.*
 
 Status: `GET https://hypernatt.com/api/m2m/pass/status` · `GET https://hypernatt.com/api/m2m/quota/status`
 
@@ -109,7 +108,7 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 
 | Section | Pricing | Purpose |
 |---------|---------|---------|
-| **Decision Core** | $0.01 USD/call (or **quota bypass**) | Vault-backed BTC context — five tools |
+| **Decision Core** | $0.001 USD/call (or **quota bypass**) | Vault-backed BTC context — five tools |
 | **Execution** | Free | Li.Fi cross-chain swap |
 | **Execution** | Free | Li.Fi cross-chain swap quotes (NattSwap) |
 
@@ -123,7 +122,7 @@ Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input
 | `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs | **1** |
 | `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) | **1** |
 
-Public price: **$0.01 USDC** via **x402** on **Base** (`eip155:8453`). With quota balance: pass **`agent_wallet`** and skip payment.
+Public price: **$0.001 USDC** via **x402** on **Base** (`eip155:8453`). With quota balance: pass **`agent_wallet`** and skip payment.
 
 ---
 
@@ -138,11 +137,11 @@ Swaps are free at the MCP layer; revenue is integrator fees on execution, not x4
 
 ---
 
-## Step 3 — Decision Core ($0.01 each, or quota)
+## Step 3 — Decision Core ($0.001 each, or quota)
 
 1. Check `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…` — remaining credits.
 2. Call without payment → x402 instructions (402 on REST), **unless** quota balance covers the tool weight.
-3. Pay **$0.01 USDC** on Base (if no quota).
+3. Pay **$0.001 USDC** on Base (if no quota).
 4. Retry with `x_payment` / `X-Payment`.
 
 Suggested order for a full picture (pro stack):
@@ -163,11 +162,11 @@ Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
 |---|------|-------|
 | 1 | `get_agent_manifest` | Free |
 | 2 | `get_vault_proof` | Free |
-| 3 | `get_mm_trap_state` | 1 credit / $0.01 x402 or quota |
+| 3 | `get_mm_trap_state` | 1 credit / $0.001 x402 or quota |
 | 4 | `get_btc_usdc_signal` | 1 credit; **HOLD free** |
-| 5 | `get_mm_hunt_score` | 1 credit / $0.01 x402 or quota |
-| 6 | `get_similarity_match` | 1 credit / $0.01 x402 or quota |
-| 7 | `get_liq_radar` | 1 credit / $0.01 x402 or quota |
+| 5 | `get_mm_hunt_score` | 1 credit / $0.001 x402 or quota |
+| 6 | `get_similarity_match` | 1 credit / $0.001 x402 or quota |
+| 7 | `get_liq_radar` | 1 credit / $0.001 x402 or quota |
 | 8 | `swap_via_nattswap` | Free |
 | 9 | `swap_quote` | Free |
 

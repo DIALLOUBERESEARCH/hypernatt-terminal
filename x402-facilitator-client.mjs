@@ -12,6 +12,20 @@ const VERIFY_PATH = "/platform/v2/x402/verify";
 const SETTLE_PATH = "/platform/v2/x402/settle";
 const REQUEST_HOST = "api.cdp.coinbase.com";
 
+/**
+ * Human-readable USD price label. Avoids "$0.00" for sub-cent prices
+ * (e.g. 0.001 USDC). Display only — the on-chain charge uses usdcAtomic()
+ * and is unchanged.
+ *   >= 0.01 -> 2 decimals ("0.01", "1.00")
+ *   <  0.01 -> up to 6 decimals, trailing zeros stripped ("0.001")
+ */
+export function formatUsdLabel(price) {
+    const p = Number(price);
+    if (!Number.isFinite(p) || p <= 0) return "0.00";
+    if (p >= 0.01) return p.toFixed(2);
+    return p.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
+}
+
 function verifyUrl() {
     return `${String(DEFAULT_FACILITATOR).replace(/\/$/, "")}/verify`;
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HyperNatt Terminal - minimal zero-wallet taste (free tier).
+"""HyperNatt Terminal - minimal zero-wallet taste (intro-free).
 
 Reads the FREE public manifest (full 9-tool catalog + live proof-of-edge) with
 no API key and no wallet, then prints how to go further with the Decision Core.
@@ -41,8 +41,8 @@ def main() -> int:
     print()
     print("Next (free, no wallet): connect the MCP at the url above in Claude/Cursor,")
     print("then call get_vault_proof and get_mm_trap_state.")
-    print("Decision Core reads = read-only context, 25 free credits/day + intro-free")
-    print("per tool, HOLD always free; beyond that $0.01/credit via x402 on Base.")
+    print("Decision Core reads = read-only context, first call per tool free (intro),")
+    print("no daily credit pool, HOLD always free; beyond that $0.001/call via x402 on Base.")
     print()
     print("This is NOT trade advice. Verify on-chain:", eco.get("stats_url"))
     return 0

@@ -10,10 +10,11 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
 
 | Tier | Cost |
 |------|------|
-| **Credits** | **1** (shared daily pool) |
+| **Credits** | **1** |
 | **HOLD verdict** | **Free** — `direction: HOLD` never consumes credits |
-| **Free tier** | 25 shared pool/day + 1st call free per tool (about 32 effective/day) |
-| **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
+| **Free** | first call per tool is free (intro); no daily credit pool |
+| **Pass** | **$5/mo** Agent Pass (~15,000 credits, ~67% below paygo) |
+| **Paygo** | **$0.001 USDC** / call via **x402** on **Base** (`eip155:8453`) |
 
 ## When to use
 
@@ -32,7 +33,7 @@ Backed by a **public vault with depositors** since **2026-02-27** — not a synt
 | `x_payment` | string | No* | Base64 x402 payment payload. Omit first to get payment instructions. |
 | `agent_wallet` | string | No | Wallet with quota balance (bypass x402 when covered). |
 
-\* HOLD responses are always free. MCP free tier may cover non-HOLD calls.
+\* HOLD responses are always free. The first call per tool is free (intro).
 
 ## Example response (summary v2 — default MCP)
 

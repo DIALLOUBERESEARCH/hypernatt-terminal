@@ -2,7 +2,7 @@
  * F#24b — x402 helpers for MCP get_similarity_match.
  */
 import axios from "axios";
-import { verifyPaymentWithFacilitator } from "./x402-facilitator-client.mjs";
+import { verifyPaymentWithFacilitator, formatUsdLabel } from "./x402-facilitator-client.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -36,7 +36,7 @@ function usdcAtomic(priceUsdc) {
 }
 
 export function buildPaymentRequirements() {
-    const priceLabel = `$${SIMILARITY_PRICE_USDC.toFixed(2)}`;
+    const priceLabel = `$${formatUsdLabel(SIMILARITY_PRICE_USDC)}`;
     return {
         scheme: "exact",
         network: BASE_MAINNET,
@@ -56,7 +56,7 @@ export function buildPaymentRequired(extraError) {
         x402Version: 2,
         error:
             extraError ||
-            `X-PAYMENT required. Pay $${SIMILARITY_PRICE_USDC.toFixed(2)} USDC on Base (treasury ${SIMILARITY_PAYTO}).`,
+            `X-PAYMENT required. Pay $${formatUsdLabel(SIMILARITY_PRICE_USDC)} USDC on Base (treasury ${SIMILARITY_PAYTO}).`,
         accepts: [buildPaymentRequirements()],
         mcp_hint:
             "Retry get_similarity_match with x_payment (base64 JSON payment payload) or send X-Payment header on POST /messages.",

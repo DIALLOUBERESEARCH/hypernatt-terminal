@@ -10,9 +10,10 @@ Compressed view of the same upstream block as `get_liq_radar` — use when you w
 
 | Tier | Cost |
 |------|------|
-| **Credits** | **1** (shared daily pool) |
-| **Free tier** | 25 shared pool/day + 1st call free per tool (about 32 effective/day) |
-| **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
+| **Credits** | **1** |
+| **Free** | first call per tool is free (intro); no daily credit pool |
+| **Pass** | **$5/mo** Agent Pass (~15,000 credits, ~67% below paygo) |
+| **Paygo** | **$0.001 USDC** / call via **x402** on **Base** (`eip155:8453`) |
 
 ## When to use
 

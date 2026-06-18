@@ -81,7 +81,7 @@ Captured from `https://hypernatt.com` on **2026-06-13**.
 
 ---
 
-## Try it (no wallet on free tier)
+## Try it (no wallet)
 
 ```bash
 curl -sS https://hypernatt.com/api/m2m/mm-trap-state | jq '.state, .trap_direction, .sweep_zone'

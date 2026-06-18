@@ -10,11 +10,12 @@ Not a Coinglass cluster dump — **manipulation weather** with redacted detector
 
 | Tier | Cost |
 |------|------|
-| **Credits** | **1** (shared daily pool) |
-| **Free tier** | 25 shared pool/day + 1st call free per tool (about 32 effective/day) |
-| **Paygo** | **$0.01 USDC** / credit via **x402** on **Base** (`eip155:8453`) |
+| **Credits** | **1** |
+| **Free** | first call per tool is free (intro); no daily credit pool |
+| **Pass** | **$5/mo** Agent Pass (~15,000 credits, ~67% below paygo) |
+| **Paygo** | **$0.001 USDC** / call via **x402** on **Base** (`eip155:8453`) |
 
-Paywall order: free tier → swap quotas → Agent Pass → Pro Pass → x402.
+Paywall order: intro-free → swap-earned quota → Agent Pass $5/mo → paygo $0.001.
 
 ## When to use
 
@@ -34,7 +35,7 @@ Paywall order: free tier → swap quotas → Agent Pass → Pro Pass → x402.
 | `x_payment` | string | No* | Base64 x402 payment payload. Omit first to get payment instructions. |
 | `agent_wallet` | string | No | Wallet with swap-earned quota balance (bypass x402 when covered). |
 
-\* MCP session may consume **free tier** credits without wallet.
+\* The first call per tool is free (intro), no wallet needed.
 
 ## Example response (production)
 

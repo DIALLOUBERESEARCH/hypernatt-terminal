@@ -82,18 +82,18 @@ Full fields + curls: **[example-responses.md](example-responses.md)**
 
 ## Pricing (at a glance)
 
-| | Free | Agent $19/mo | Pro $49/mo | Paygo |
-|---|------|--------------|------------|-------|
-| MCP install | Yes | Yes | Yes | Yes |
-| Daily credits (shared pool, all DC tools) | **25/day** + intro-free 1st call/tool (about **32** effective) | — | — | — |
-| Credit cost per tool | 1 credit (all 5 Decision Core tools) | same | same | per credit |
-| Monthly credits | — | **2000** | **7000** | — |
-| HOLD signal | **Free** | **Free** | **Free** | **Free** |
-| Swap bonus credits | Yes | Yes | Yes | Yes |
+| | Free (intro) | Agent Pass $5/mo | Paygo |
+|---|------|--------------|-------|
+| MCP install | Yes | Yes | Yes |
+| First call per Decision Core tool | **Free (intro)** | included | included |
+| Credit cost per tool | 1 credit (all 5 Decision Core tools) | same | per credit |
+| Monthly credits | — | **~15,000** / 30 days | — |
+| HOLD signal | **Free** | **Free** | **Free** |
+| Swap-earned credits | Yes | Yes | Yes |
 
-Decision Core = five tools at **$0.01/credit** when credits exhausted (x402 USDC on Base).
+Decision Core = five tools at **$0.001/credit** when credits exhausted (x402 USDC on Base). No daily credit pool. The **$5/mo Agent Pass** (~15,000 credits) is about **67% below paygo**.
 
-**Paywall funnel (in order):** 25 shared credits/day + intro-free per tool → **swap earns bonus credits** → Agent Pass $19/mo → Pro $49/mo → paygo $0.01/credit.
+**Paywall funnel (in order):** first call per tool free (intro) → **swap earns bonus credits** → Agent Pass $5/mo → paygo $0.001/credit.
 
 ---
 
@@ -126,15 +126,15 @@ Same structure via MCP `get_agent_manifest` or `GET https://hypernatt.com/api/m2
 
 ### Decision Core
 
-Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Paywall order: **25 shared credits/day** + intro-free 1st call per tool (about **32 effective/day**, no wallet on MCP session) → **Agent Pass** / **Pro Pass** → **swap-earned quotas** (`agent_wallet` or `X-Agent-Wallet`) → **$0.01 USDC/credit** via x402 on Base. **`get_btc_usdc_signal` HOLD verdicts are always free.**
+Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Paywall order: **first call per tool is free (intro)**, no daily credit pool → **swap-earned quotas** (`agent_wallet` or `X-Agent-Wallet`) → **Agent Pass $5/mo** (~15,000 credits) → **$0.001 USDC/credit** via x402 on Base. **`get_btc_usdc_signal` HOLD verdicts are always free.**
 
 | Tool | Role | Price |
 |------|------|-------|
-| [`get_mm_trap_state`](../tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (1 credit) | free tier, pass, quota, or $0.01 |
+| [`get_mm_trap_state`](../tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (1 credit) | intro, pass, quota, or $0.001 |
 | [`get_btc_usdc_signal`](../tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 1 credit |
-| [`get_mm_hunt_score`](../tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | free tier, pass, quota, or $0.01 |
-| [`get_similarity_match`](../tools/get_similarity_match.md) | Top-3 historical regime matches & observed about 4h BTC outcomes | free tier, pass, quota, or $0.01 |
-| [`get_liq_radar`](../tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (1 credit; commodity layer) | free tier, pass, quota, or $0.01 |
+| [`get_mm_hunt_score`](../tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | intro, pass, quota, or $0.001 |
+| [`get_similarity_match`](../tools/get_similarity_match.md) | Top-3 historical regime matches & observed about 4h BTC outcomes | intro, pass, quota, or $0.001 |
+| [`get_liq_radar`](../tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (1 credit; commodity layer) | intro, pass, quota, or $0.001 |
 | [`get_vault_proof`](../tools/get_vault_proof.md) | On-chain vault proof + signed cycle snapshot hash | Free |
 
 ### Execution
@@ -188,8 +188,8 @@ Full walkthrough: [quickstart.md](quickstart.md)
 | Endpoint | Description |
 |----------|-------------|
 | `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
-| `GET /api/m2m/pass/status` | Agent Pass / Pro Pass pricing + free tier params |
-| `GET /api/m2m/free-tier/remaining` | Remaining free credits today |
+| `GET /api/m2m/pass/status` | Agent Pass pricing + intro/free params |
+| `GET /api/m2m/free-tier/remaining` | Remaining free / intro calls |
 | `GET /api/m2m/quota/status` | Quota program params |
 | `GET /api/m2m/quota/balance?wallet=0x…` | Quota balance for wallet |
 | `GET /api/m2m/stats/usage` | Public 24h usage counters |

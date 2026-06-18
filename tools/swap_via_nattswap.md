@@ -28,4 +28,4 @@ Swap volume may qualify for **Decision Core quota credits** — see `GET https:/
 | Tool | Role |
 |------|------|
 | `swap_quote` | Raw Li.Fi JSON only |
-| `get_agent_manifest` | Pricing, free tier, quota program |
+| `get_agent_manifest` | Pricing, free tools, quota program |

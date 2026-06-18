@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
     "version": "2.5.11",
-    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nPricing: flat $0.001 per call via x402 (USDC on Base) — no subscription, no credit pool. The 5 Decision Core tools (cycle signal, MM hunt, liquidation radar, MM trap state, regime similarity) are $0.001 each; HOLD on get_btc_usdc_signal is not charged. Free: manifest and signed vault proof. Cross-chain swaps route through Li.Fi (you sign your own tx). Heavy use: swap-earned quota or Agent Pass.\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n9 tools · v2.5.11 · Streamable HTTP. Call get_agent_manifest first.\n\nPricing: flat $0.001 per call via x402 (USDC on Base) — no subscription required. The 5 Decision Core tools (cycle signal, MM hunt, liquidation radar, MM trap state, regime similarity) are $0.001 each; HOLD on get_btc_usdc_signal is not charged. Free: manifest and signed vault proof. Cross-chain swaps route through Li.Fi (you sign your own tx). Heavy use: swap-earned quota or $5/mo Agent Pass (~15,000 credits).\n\nHumans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: \"Call get_vault_proof, then get_mm_trap_state — is the MM trapping?\"\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -19,9 +19,9 @@
   "privacy_note": "Tool usage (wallet address, tool name, timestamp, market context) is logged to improve HyperNatt Terminal. No prompt content. No resale.",
   "pass_program": {
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
-    "agent_pass_usd": 19,
-    "agent_pass_credits": 2000,
-    "note": "Flat $0.001/call via x402 on Base — no subscription, no free tier. HOLD on get_btc_usdc_signal is not charged. Agent Pass and swap-earned quota available for bulk usage."
+    "agent_pass_usd": 5,
+    "agent_pass_credits": 15000,
+    "note": "Pay-per-call $0.001/call via x402 on Base (no subscription required). Optional Agent Pass $5/mo (~15,000 Decision Core credits, ~67% below paygo) for heavy use. HOLD on get_btc_usdc_signal is not charged. Swap-earned quota also available."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
@@ -143,7 +143,7 @@
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain token swap via Li.Fi across Li.Fi-routed chains (any pair — not limited to BTC/USDC). USE WHEN: bridge, fund gas, treasury routing. NOT WHEN: Decision Core BTC reads (get_btc_usdc_signal / trap / hunt) — vault signals stay BTC/USDC only. RETURNS: Li.Fi route JSON + step-by-step agent execution instructions + recommended_action. MCP free; on-chain swap costs gas + integrator fee. Side effects: MCP read-only until wallet signs.",
+      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid (any pair — not limited to BTC/USDC). USE WHEN: bridge, fund gas, treasury routing. NOT WHEN: Decision Core BTC reads (get_btc_usdc_signal / trap / hunt) — vault signals stay BTC/USDC only. RETURNS: Li.Fi route JSON + step-by-step agent execution instructions + recommended_action. MCP free; on-chain swap costs gas + integrator fee. Side effects: MCP read-only until wallet signs.",
       "inputSchema": {
         "type": "object",
         "properties": {

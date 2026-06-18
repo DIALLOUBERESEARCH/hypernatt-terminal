@@ -11,16 +11,17 @@ Machine-readable version: the `security_v1` block in `get_agent_manifest`.
 
 **No.** It has no custody and never sees your keys.
 
-- **Decision Core reads are read-only** and need **no wallet at all** (free tier).
+- **Decision Core reads are read-only**; the **first call per tool is free** (intro,
+  no wallet).
 - **Swap tools are advisory**: `swap_via_nattswap` / `swap_quote` *return* a Li.Fi
   quote and step-by-step instructions. **Your agent decides and signs its own
   transaction.** The server never holds keys and never broadcasts anything.
 
 ## Does it hold API keys I could leak?
 
-**No keys.** Payment is **x402, per call** ($0.01 USDC/credit on Base), controlled
-by your agent — no accounts, no static API keys, no subscription lock-in. The free
-daily pool needs no wallet on the MCP session.
+**No keys.** Payment is **x402, per call** ($0.001 USDC/credit on Base), controlled
+by your agent — no accounts, no static API keys, no subscription lock-in. The intro-free
+call per tool needs no wallet on the MCP session.
 
 ## What data does it see / store?
 

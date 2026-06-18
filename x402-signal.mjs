@@ -3,7 +3,7 @@
  * F#42N — summary v2 + interpretation_contract_v1 on compact MCP responses.
  */
 import axios from "axios";
-import { verifyPaymentWithFacilitator } from "./x402-facilitator-client.mjs";
+import { verifyPaymentWithFacilitator, formatUsdLabel } from "./x402-facilitator-client.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -70,7 +70,7 @@ export function collectForbiddenSummaryKeys(obj, prefix = "") {
 }
 
 export function buildPaymentRequirements() {
-    const priceLabel = `$${SIGNAL_PRICE_USDC.toFixed(2)}`;
+    const priceLabel = `$${formatUsdLabel(SIGNAL_PRICE_USDC)}`;
     return {
         scheme: "exact",
         network: BASE_MAINNET,
@@ -91,7 +91,7 @@ export function buildPaymentRequired(extraError) {
         x402Version: 2,
         error:
             extraError ||
-            `X-PAYMENT required. Pay $${SIGNAL_PRICE_USDC.toFixed(2)} USDC on Base (treasury ${SIGNAL_PAYTO}).`,
+            `X-PAYMENT required. Pay $${formatUsdLabel(SIGNAL_PRICE_USDC)} USDC on Base (treasury ${SIGNAL_PAYTO}).`,
         accepts: [buildPaymentRequirements()],
         mcp_hint:
             "Retry get_btc_usdc_signal with x_payment (base64 JSON payment payload) or send X-Payment header on POST /messages.",

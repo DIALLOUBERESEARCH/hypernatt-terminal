@@ -5,7 +5,7 @@
  * price env, payTo env, internal route and description differ.
  */
 import axios from "axios";
-import { verifyPaymentWithFacilitator } from "./x402-facilitator-client.mjs";
+import { verifyPaymentWithFacilitator, formatUsdLabel } from "./x402-facilitator-client.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -60,7 +60,7 @@ export function createDataProductX402(cfg) {
     const payTo = (process.env[cfg.payToEnv] || DEFAULT_TREASURY).toLowerCase();
 
     function buildPaymentRequirements() {
-        const priceLabel = `$${priceUsdc.toFixed(2)}`;
+        const priceLabel = `$${formatUsdLabel(priceUsdc)}`;
         return {
             scheme: "exact",
             network: BASE_MAINNET,
@@ -80,7 +80,7 @@ export function createDataProductX402(cfg) {
             x402Version: 2,
             error:
                 extraError ||
-                `X-PAYMENT required. Pay $${priceUsdc.toFixed(2)} USDC on Base (treasury ${payTo}).`,
+                `X-PAYMENT required. Pay $${formatUsdLabel(priceUsdc)} USDC on Base (treasury ${payTo}).`,
             accepts: [buildPaymentRequirements()],
             mcp_hint: `Retry ${cfg.toolName} with x_payment (base64 JSON payment payload) or send X-Payment header on POST /messages.`,
         };

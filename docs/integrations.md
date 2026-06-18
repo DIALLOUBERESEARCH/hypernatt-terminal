@@ -27,8 +27,8 @@ Example prompt:
 
 > Call get_agent_manifest, then get_mm_trap_state — is the MM trapping BTC right now?
 
-`get_agent_manifest` and `get_vault_proof` are free. Decision Core reads use a free
-daily pool first (no wallet), then x402.
+`get_agent_manifest` and `get_vault_proof` are free. The first call per Decision Core tool
+is free (intro, no wallet); then x402 — no daily credit pool.
 
 ---
 
@@ -41,12 +41,12 @@ curl -s https://hypernatt.com/api/m2m/agent/manifest
 # Verifiable live vault data (edge measurement preliminary — verify on-chain):
 curl -s https://hypernatt.com/api/m2m/proof-of-edge
 
-# A Decision Core read — served from the free daily pool, no wallet:
+# A Decision Core read — first call per tool is free (intro), no wallet:
 curl -s https://hypernatt.com/api/m2m/mm-trap-state
 ```
 
-When the free pool is exhausted, the paid endpoints return **HTTP 402** with x402
-payment instructions. Pay **$0.01 USDC on Base** and retry with the `X-Payment`
+Once the intro-free call per tool is used, the paid endpoints return **HTTP 402** with x402
+payment instructions. Pay **$0.001 USDC on Base** and retry with the `X-Payment`
 header (or pass `agent_wallet` to use swap-earned quota).
 
 Paid endpoints: `/api/m2m/{signal,mm-hunt,similarity-match,liq-radar,mm-trap-state}`.
@@ -56,10 +56,10 @@ Paid endpoints: `/api/m2m/{signal,mm-hunt,similarity-match,liq-radar,mm-trap-sta
 ## 3. Coinbase AgentKit / x402  [endpoint verified · SDK reference]
 
 HyperNatt endpoints speak x402 natively (402 -> pay -> retry). An x402-capable
-client pays the $0.01 USDC on Base automatically and retries — no API keys.
+client pays the $0.001 USDC on Base automatically and retries — no API keys.
 
 - **Verified (our side):** the endpoints in section 2 return 402 with x402
-  instructions once the free pool is used, and accept the `X-Payment` retry.
+  instructions once the intro-free call is used, and accept the `X-Payment` retry.
 - **Reference (SDK side, not smoke-tested here):** wire your AgentKit / CDP x402
   client to the HyperNatt endpoint and let it settle on Base. See the Coinbase
   Developer Platform x402 docs for the client setup.
