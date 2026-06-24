@@ -57,10 +57,15 @@ async function buildVerifyHeaders() {
     return buildAuthHeaders(VERIFY_PATH);
 }
 
-function normalizePaymentRequirements(req) {
+export function normalizePaymentRequirements(req) {
     const amount = req?.amount ?? req?.maxAmountRequired ?? "0";
-    const payTo = String(req.payTo || "").toLowerCase();
-    const asset = String(req.asset || "").toLowerCase();
+    // Solana (SVM) payTo/asset are base58 and CASE-SENSITIVE -> never lowercase.
+    // EVM hex addresses stay lowercased (unchanged behavior). F#67.
+    const isSvm =
+        typeof req?.network === "string" &&
+        req.network.trim().toLowerCase().startsWith("solana");
+    const payTo = isSvm ? String(req.payTo || "") : String(req.payTo || "").toLowerCase();
+    const asset = isSvm ? String(req.asset || "") : String(req.asset || "").toLowerCase();
     return {
         scheme: req.scheme,
         network: req.network,
@@ -68,6 +73,8 @@ function normalizePaymentRequirements(req) {
         amount: String(amount),
         payTo,
         maxTimeoutSeconds: req.maxTimeoutSeconds ?? 60,
+        // EVM default extra (eip3009) only when none provided; Solana always
+        // provides extra:{feePayer}, which is preserved here unchanged.
         extra: req.extra ?? {
             name: "USD Coin",
             version: "2",

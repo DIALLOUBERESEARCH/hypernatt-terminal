@@ -47,7 +47,7 @@ import {
     MM_TRAP_STATE_X402,
 } from "./x402-data-products.mjs";
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
-import { extractPayerWallet, recordX402Event } from "./x402-telemetry.mjs";
+import { extractPayerWallet, networkFromPayload, recordX402Event } from "./x402-telemetry.mjs";
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
 import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
 import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
@@ -309,6 +309,7 @@ async function processPaidToolPayment({
             tool,
             payer_wallet: extractPayerWallet(paymentPayload),
             agent_id: extractPayerWallet(paymentPayload),
+            network: networkFromPayload(paymentPayload),
             price_usdc: priceUsdc,
             detail: String(verification.error || "").slice(0, 500),
             facilitator_error: String(verification.error || "").slice(0, 500),
@@ -331,6 +332,7 @@ async function processPaidToolPayment({
         tool,
         payer_wallet: wallet,
         agent_id: wallet,
+        network: networkFromPayload(paymentPayload),
         price_usdc: priceUsdc,
     });
 
@@ -348,6 +350,7 @@ async function processPaidToolPayment({
                     tool,
                     payer_wallet: wallet,
                     agent_id: wallet,
+                    network: networkFromPayload(paymentPayload),
                     price_usdc: priceUsdc,
                     tx_hash: result.txHash || null,
                 });
@@ -409,6 +412,10 @@ async function finalizeSignalMcpBilling(payment, payload) {
                     tool: "get_btc_usdc_signal",
                     payer_wallet: payment.wallet,
                     agent_id: payment.wallet,
+                    network:
+                        networkFromPayload(payment.paymentPayload) ||
+                        payment.paymentRequirements?.network ||
+                        null,
                     price_usdc: SIGNAL_PRICE_USDC,
                     tx_hash: result.txHash || null,
                 });

@@ -7,6 +7,28 @@ Machine-readable version: the `security_v1` block in `get_agent_manifest`.
 > Treat every MCP server as untrusted by default — including this one — and
 > verify the claims below yourself. We are not independently audited.
 
+## Official channels & anti-impersonation
+
+HyperNatt is a small, verifiable project. Scammers may impersonate it — for
+example by launching a fake token and pointing to our real links to look
+legitimate. Verify anything claiming to be HyperNatt against this list.
+**Only these channels are official:**
+
+- Website: https://hypernatt.com
+- Code (GitHub org): https://github.com/DIALLOUBE-RESEARCH
+- MCP server: https://hypernatt.com/mcp/protocol
+- Telegram bot: https://t.me/hypernatt_bot
+- Contact: contact@hypernatt.com
+- Live on-chain stats: https://hypernatt.com/stats
+
+**What does NOT exist today:** HyperNatt has **no official X/Twitter account**
+and runs **no ICO, presale, airdrop, or public token sale**. NDAT is an
+internal reward for vault depositors, not a public token offering. Any X
+account, token sale, or "official" presence not listed above is **not
+HyperNatt** — even if it copies our name, branding, or links back to this
+site. When in doubt, verify on-chain and reach us only through the channels
+above.
+
 ## Can this server move or drain my funds?
 
 **No.** It has no custody and never sees your keys.

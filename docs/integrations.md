@@ -46,7 +46,7 @@ curl -s https://hypernatt.com/api/m2m/mm-trap-state
 ```
 
 Once the intro-free call per tool is used, the paid endpoints return **HTTP 402** with x402
-payment instructions. Pay **$0.001 USDC on Base** and retry with the `X-Payment`
+payment instructions. Pay **$0.001 USDC on Base or Solana** and retry with the `X-Payment`
 header (or pass `agent_wallet` to use swap-earned quota).
 
 Paid endpoints: `/api/m2m/{signal,mm-hunt,similarity-match,liq-radar,mm-trap-state}`.
@@ -56,12 +56,12 @@ Paid endpoints: `/api/m2m/{signal,mm-hunt,similarity-match,liq-radar,mm-trap-sta
 ## 3. Coinbase AgentKit / x402  [endpoint verified · SDK reference]
 
 HyperNatt endpoints speak x402 natively (402 -> pay -> retry). An x402-capable
-client pays the $0.001 USDC on Base automatically and retries — no API keys.
+client pays the $0.001 USDC on Base or Solana automatically and retries — no API keys.
 
 - **Verified (our side):** the endpoints in section 2 return 402 with x402
   instructions once the intro-free call is used, and accept the `X-Payment` retry.
 - **Reference (SDK side, not smoke-tested here):** wire your AgentKit / CDP x402
-  client to the HyperNatt endpoint and let it settle on Base. See the Coinbase
+  client to the HyperNatt endpoint and let it settle on Base or Solana. See the Coinbase
   Developer Platform x402 docs for the client setup.
 
 ---

@@ -3,6 +3,8 @@
  */
 import axios from "axios";
 import { verifyPaymentWithFacilitator, formatUsdLabel } from "./x402-facilitator-client.mjs";
+import { buildAccepts } from "./x402-networks.mjs";
+import { attachBuilderCodeToPaymentRequired } from "./x402-builder-code.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -54,15 +56,15 @@ export function buildPaymentRequirements() {
 }
 
 export function buildPaymentRequired(extraError) {
-    return {
+    return attachBuilderCodeToPaymentRequired({
         x402Version: 2,
         error:
             extraError ||
             `X-PAYMENT required. Pay $${formatUsdLabel(MM_HUNT_PRICE_USDC)} USDC on Base (treasury ${MM_HUNT_PAYTO}).`,
-        accepts: [buildPaymentRequirements()],
+        accepts: buildAccepts(buildPaymentRequirements()),
         mcp_hint:
             "Retry get_mm_hunt_score with x_payment (base64 JSON payment payload) or send X-Payment header on POST /messages.",
-    };
+    });
 }
 
 export function parsePaymentHeader(raw) {
