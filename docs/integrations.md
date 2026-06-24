@@ -78,6 +78,31 @@ side is the standard MCP + REST + x402 surface described above.
 
 ---
 
+## 5. Hermes Agent (Nous Research)  [verified config · runtime reference]
+
+Hermes discovers MCP tools at startup from `~/.hermes/config.yaml`. Streamable HTTP is supported.
+
+```yaml
+mcp_servers:
+  hypernatt-terminal:
+    url: https://hypernatt.com/mcp/protocol
+    transport: streamable-http
+```
+
+Restart gateway or CLI after editing config. Ensure the MCP toolset is enabled (Hermes skill `native-mcp`).
+
+**Optional:** install the agentskills.io onboarding skill from this repo:
+
+```bash
+hermes skills install github/DIALLOUBE-RESEARCH/hypernatt-terminal/skills/hypernatt-terminal
+```
+
+Skill path: [../skills/hypernatt-terminal/SKILL.md](../skills/hypernatt-terminal/SKILL.md)
+
+Listings: awesome-hermes-agent, Hermes Atlas (issue suggest-repo), Smithery, Glama.
+
+---
+
 ## Notes
 
 - Decision Core reads are **read-only context, not trade recommendations**.

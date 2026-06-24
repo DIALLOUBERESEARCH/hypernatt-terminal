@@ -43,7 +43,8 @@ Read-only BTC/USDC context, not trade advice. No custody. Verify on-chain.
 ## Documentation
 
 - [Quickstart](docs/quickstart.md) — connect Claude / Cursor in 30 seconds
-- [Integrations](docs/integrations.md) — MCP clients, REST + x402, agent frameworks
+- [Integrations](docs/integrations.md) — MCP clients, REST + x402, Hermes, agent frameworks
+- [Hermes skill](skills/hypernatt-terminal/SKILL.md) — agentskills.io onboarding (optional)
 - [Security & trust](SECURITY.md) — no custody, no keys, read-only; verify yourself
 - [Example responses](docs/example-responses.md) — live JSON samples
 - [Tool reference](tools/README.md) — per-tool docs
