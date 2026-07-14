@@ -53,6 +53,8 @@ Read-only BTC/USDC context, not trade advice. No custody. Verify on-chain.
 
 [![DIALLOUBE-RESEARCH/hypernatt-terminal MCP server](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
 
+[![HyperNatt Terminal on x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
