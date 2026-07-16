@@ -37,6 +37,20 @@ function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
 
 export function buildAgentPaymentRequiredBlock(input) {
     const daily = input.dailyCap ?? dailyCap();
+    const swapTool =
+        input.tool === "swap_quote" || input.tool === "swap_via_nattswap";
+    const nextSteps = swapTool
+        ? [
+              "Call get_agent_manifest and read wallet_onboarding_v1 under Execution",
+              "Use swap_via_nattswap MCP with YOUR agent wallet as fromAddress (not vault proof address)",
+              "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/swap-agentkit.md",
+              "After on-chain swap: POST /api/m2m/swap/register for quota credits",
+          ]
+        : [
+              "Call get_agent_manifest for live free_tier_status_v1 and pricing",
+              "Register a NattSwap to earn bonus credits",
+              "Retry tomorrow UTC or pass x_payment for paygo",
+          ];
     return {
         version: "1",
         reason_code: input.reasonCode,
@@ -46,11 +60,7 @@ export function buildAgentPaymentRequiredBlock(input) {
         daily_cap: daily,
         intro_free_available: input.introFreeAvailable ?? {},
         free_tools_always_work: FREE_TOOLS_ALWAYS_WORK,
-        next_steps_en: [
-            "Call get_agent_manifest for live free_tier_status_v1 and pricing",
-            "Register a NattSwap to earn bonus credits",
-            "Retry tomorrow UTC or pass x_payment for paygo",
-        ],
+        next_steps_en: nextSteps,
     };
 }
 

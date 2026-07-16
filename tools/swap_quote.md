@@ -24,6 +24,15 @@ Paid HTTP quotes include:
 
 Use this to chain preview (HTTP) → execution (MCP).
 
+## Execution readiness (F#50N)
+
+Quotes include `execution_readiness` and `swap_execution_playbook_v1`:
+
+- `can_execute: false` → do **not** broadcast; fix `blockers` (often wrong `fromAddress` or public vault paste).
+- Prefer **`swap_via_nattswap`** for guided steps.
+
+Guide: [swap-agentkit.md](../docs/swap-agentkit.md)
+
 ## Inputs
 
 Same as [`swap_via_nattswap`](swap_via_nattswap.md): `fromChain`, `toChain`, `fromToken`, `toToken`, `fromAmount`, `fromAddress`, `toAddress`, optional `slippage`.

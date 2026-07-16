@@ -15,4 +15,5 @@ Per-tool reference for **hypernatt-terminal** MCP **v2.5.11**.
 | `swap_quote` | Execution | Free | [swap_quote.md](swap_quote.md) |
 
 **MCP endpoint:** https://hypernatt.com/mcp/protocol  
-**Quickstart:** [../docs/quickstart.md](../docs/quickstart.md)
+**Quickstart:** [../docs/quickstart.md](../docs/quickstart.md)  
+**Swap execution:** [../docs/swap-agentkit.md](../docs/swap-agentkit.md)

@@ -135,6 +135,8 @@ Public price: **$0.001 USDC** via **x402** on **Base** (`eip155:8453`). With quo
 
 Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes.
 
+**Before swapping:** use **your agent hot wallet** as `fromAddress` — never the vault address from `get_vault_proof`. Quotes return `execution_readiness` (`can_execute`, `blockers`) and `swap_execution_playbook_v1`. Full guide: [swap-agentkit.md](swap-agentkit.md).
+
 ---
 
 ## Step 3 — Decision Core ($0.001 each, or quota)

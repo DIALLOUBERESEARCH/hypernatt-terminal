@@ -133,8 +133,12 @@ No daily credit pool. `initialize` and `tools/list` must stay free (standard MCP
 | `get_mm_hunt_score` | 1 | Hunt pressure |
 | `get_similarity_match` | 1 | Regime analogy |
 | `get_liq_radar` | 1 | Liq clusters |
-| `swap_quote` | Free | Quote only |
+| `swap_quote` | Free | Quote only — read `execution_readiness` |
 | `swap_via_nattswap` | Free | Agent signs own tx; 0.5% fee on execution |
+
+**Swap execution:** read `sections.Execution.wallet_onboarding_v1` in manifest and
+[docs/swap-agentkit.md](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/swap-agentkit.md).
+Never use `get_vault_proof.vault_address` as `fromAddress`.
 
 Per-tool docs: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/tree/main/tools
 

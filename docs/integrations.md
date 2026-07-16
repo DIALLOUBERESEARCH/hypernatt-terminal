@@ -49,7 +49,12 @@ Once the intro-free call per tool is used, the paid endpoints return **HTTP 402*
 payment instructions. Pay **$0.001 USDC on Base or Solana** and retry with the `X-Payment`
 header (or pass `agent_wallet` to use swap-earned quota).
 
-Paid endpoints: `/api/m2m/{signal,mm-hunt,similarity-match,liq-radar,mm-trap-state}`.
+Paid endpoints: `/api/m2m/{signal,mm-hunt,similarity-match,liq-radar,mm-trap-state}` and
+`GET /api/m2m/swap/quote` ($0.001 — quote only; execution is separate).
+
+**Swaps (execution):** prefer MCP `swap_via_nattswap` (free at API layer). Full guide:
+[swap-agentkit.md](swap-agentkit.md). Never use `get_vault_proof.vault_address` as
+`fromAddress` — use your agent signing wallet.
 
 ---
 
@@ -63,6 +68,8 @@ client pays the $0.001 USDC on Base or Solana automatically and retries — no A
 - **Reference (SDK side, not smoke-tested here):** wire your AgentKit / CDP x402
   client to the HyperNatt endpoint and let it settle on Base or Solana. See the Coinbase
   Developer Platform x402 docs for the client setup.
+- **Swaps:** x402 pays the **quote API** only. Signing the Li.Fi `transactionRequest`
+  requires your agent wallet + gas on the source chain — see [swap-agentkit.md](swap-agentkit.md).
 
 ---
 
