@@ -1,0 +1,9 @@
+{
+  "name": "hypernatt-terminal-examples",
+  "private": true,
+  "type": "module",
+  "description": "Optional CDP execute example — npm install only for cdp_swap_execute.mjs",
+  "dependencies": {
+    "@coinbase/cdp-sdk": "^1.51.2"
+  }
+}

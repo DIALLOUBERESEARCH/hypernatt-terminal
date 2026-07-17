@@ -23,6 +23,7 @@ Optional but recommended: [Coinbase Payments MCP](https://www.coinbase.com/devel
 
 ```bash
 python examples/swap_readiness_check.py
+python examples/swap_after_signal.py --compare-vault
 ```
 
 Or:
