@@ -3,6 +3,10 @@
  * Scope: MCP terminal paid tools only — not HL vault / trading-service.
  */
 import axios from "axios";
+import {
+    formatFacilitatorErrorForStorage,
+    parseCdpFacilitatorError,
+} from "./x402-facilitator-error.mjs";
 import { createAuthHeader, createCorrelationHeader } from "@coinbase/x402";
 
 const DEFAULT_FACILITATOR =
@@ -126,18 +130,11 @@ export async function verifyPaymentWithFacilitator(
             error: response.data?.invalidReason || "Payment verification failed",
         };
     } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        const response =
-            err && typeof err === "object" && "response" in err
-                ? err.response
-                : null;
-        const status = response?.status;
-        const body =
-            response?.data != null
-                ? JSON.stringify(response.data).slice(0, 500)
-                : "";
-        const suffix = status ? ` HTTP ${status}${body ? `: ${body}` : ""}` : "";
-        return { isValid: false, error: `${message}${suffix}` };
+        const parsed = parseCdpFacilitatorError(err);
+        return {
+            isValid: false,
+            error: formatFacilitatorErrorForStorage(parsed),
+        };
     }
 }
 
@@ -181,7 +178,10 @@ export async function settlePaymentWithFacilitator(
             error: response.data?.errorReason,
         };
     } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        return { success: false, error: message };
+        const parsed = parseCdpFacilitatorError(err);
+        return {
+            success: false,
+            error: formatFacilitatorErrorForStorage(parsed),
+        };
     }
 }

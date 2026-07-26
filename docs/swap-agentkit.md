@@ -43,11 +43,11 @@ exchange cold wallets). Quotes succeed but **you cannot sign** those txs.
    - `fromAddress` / `toAddress` = your wallets
    - `fromChain`, `toChain`, tokens, `fromAmount` (atomic units)
 4. **Readiness** — if `execution_readiness.can_execute` is `false`, fix `blockers` first.
-5. **Approve** — if ERC-20, approve Li.Fi Diamond (`instructions.lifiDiamond`).
-6. **Sign & send** — broadcast `transactionRequest` on the source chain.
-7. **Poll** — `GET /api/m2m/swap/status/:txHash?fromChain=...` (bridges: 1–30 min).
-8. **Register** — `POST /api/m2m/swap/register` with `agentAddress`, `txHash`, `fromChain`.
-9. **Quota** — `GET /api/m2m/quota/status` for bonus Decision Core credits.
+5. **Prefer `swap_actions_v1`** (F#54N) — sign `actions` in order (`approve` then `swap`).
+   Fallback: approve Li.Fi Diamond then broadcast `transactionRequest`.
+6. **Poll** — `GET /api/m2m/swap/status/:txHash?fromChain=...` (bridges: 1–30 min).
+7. **Register** — use `register_hint` from `swap_actions_v1` or `POST /api/m2m/swap/register`.
+8. **Quota** — `GET /api/m2m/quota/status` for bonus Decision Core credits.
 
 ## Coinbase CDP / x402 buyer wallet
 

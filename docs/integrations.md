@@ -7,6 +7,10 @@ Two ways in:
 - **MCP** (any MCP client): `https://hypernatt.com/mcp/protocol`
 - **REST + x402** (any HTTP agent): `https://hypernatt.com/api/m2m/...`
 
+**Trading your own Hyperliquid account?** Pair this Decision Core with **your** HL
+agent-wallet exec tools — no vault deposit. Guide:
+[agent-hl-sovereignty.md](agent-hl-sovereignty.md).
+
 Sections marked **[verified]** run as-is. Sections marked **[reference]** point to
 each framework's own docs and were not smoke-tested here.
 
@@ -95,6 +99,10 @@ mcp_servers:
     url: https://hypernatt.com/mcp/protocol
     transport: streamable-http
 ```
+
+**Sovereignty pattern (2 MCP):** keep HyperNatt for Decision Core, add a **separate**
+Hyperliquid execution MCP/SDK with **your** agent wallet — see
+[agent-hl-sovereignty.md](agent-hl-sovereignty.md). HyperNatt never places HL orders.
 
 Restart gateway or CLI after editing config. Ensure the MCP toolset is enabled (Hermes skill `native-mcp`).
 

@@ -92,6 +92,7 @@ Decision Core tools only need x402 USDC on **Base**. **Swaps need a signing wall
 | 1 | Use **Coinbase Payments MCP** or **AgentKit** / viem — not read-only MCP alone |
 | 2 | `fromAddress` = **your** agent wallet — **never** `get_vault_proof.vault_address` |
 | 3 | Read `execution_readiness` on every quote — do not broadcast if `can_execute: false` |
+| 4 | Prefer `swap_actions_v1.actions` in order (`approve` → `swap`) when present |
 | 4 | Walkthrough: [docs/agent-swap-demo.md](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/agent-swap-demo.md) |
 
 Checklist script (no deps): `python examples/swap_readiness_check.py`

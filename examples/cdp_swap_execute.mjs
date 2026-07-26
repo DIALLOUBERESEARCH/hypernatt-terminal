@@ -126,30 +126,54 @@ async function main() {
     process.exit(dryRun ? 0 : 1);
   }
 
-  const txReq = data.transactionRequest || data.route?.transactionRequest;
-  if (!txReq) {
-    console.log("[stop] no transactionRequest in quote");
-    process.exit(1);
+  // F#54N — prefer ordered swap_actions_v1 (approve? → swap); fallback to raw txReq
+  const actionsPayload = data.swap_actions_v1;
+  const signable = Array.isArray(actionsPayload?.actions)
+    ? actionsPayload.actions.filter((a) => a.type === "approve" || a.type === "swap")
+    : [];
+
+  if (signable.length === 0) {
+    const txReq = data.transactionRequest || data.route?.transactionRequest;
+    if (!txReq) {
+      console.log("[stop] no swap_actions_v1 and no transactionRequest");
+      process.exit(1);
+    }
+    signable.push({ type: "swap", transactionRequest: txReq });
   }
 
   if (dryRun) {
-    console.log("[dry-run] would broadcast transactionRequest on Base");
-    console.log(JSON.stringify(txReq, null, 2).slice(0, 800));
+    console.log(
+      `[dry-run] would broadcast ${signable.length} tx(s) in order:`,
+      signable.map((a) => a.type).join(" -> "),
+    );
+    for (const a of signable) {
+      console.log(`[dry-run:${a.type}]`, JSON.stringify(a.transactionRequest, null, 2).slice(0, 400));
+    }
+    if (actionsPayload?.actions?.some((a) => a.type === "register_hint")) {
+      console.log("[dry-run] then POST register_hint after confirm");
+    }
     return;
   }
 
-  console.log("[execute] sending via CDP evm.sendTransaction on base...");
-  const { transactionHash } = await cdp.evm.sendTransaction({
-    address,
-    network: "base",
-    transaction: {
-      to: txReq.to,
-      data: txReq.data,
-      value: txReq.value ? BigInt(txReq.value) : 0n,
-    },
-  });
-  console.log(`[tx] ${transactionHash}`);
-  console.log(`[register] POST /api/m2m/swap/register agentAddress=${address} txHash=${transactionHash}`);
+  for (const a of signable) {
+    const txReq = a.transactionRequest;
+    console.log(`[execute:${a.type}] sending via CDP evm.sendTransaction on base...`);
+    const { transactionHash } = await cdp.evm.sendTransaction({
+      address,
+      network: "base",
+      transaction: {
+        to: txReq.to,
+        data: txReq.data,
+        value: txReq.value ? BigInt(txReq.value) : 0n,
+      },
+    });
+    console.log(`[tx:${a.type}] ${transactionHash}`);
+    if (a.type === "swap") {
+      console.log(
+        `[register] POST /api/m2m/swap/register agentAddress=${address} txHash=${transactionHash}`,
+      );
+    }
+  }
 }
 
 main().catch((err) => {

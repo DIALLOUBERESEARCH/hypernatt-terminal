@@ -47,6 +47,17 @@ import {
     MM_TRAP_STATE_X402,
 } from "./x402-data-products.mjs";
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
+import {
+    isTerminalX402FunnelEnabled,
+    settleTerminalPayment,
+} from "./x402-funnel-terminal.mjs";
+import {
+    assertSessionClient,
+    clientKeyFromHttpRequest,
+    isSessionBindEnabled,
+    registerSessionClient,
+    removeSessionClient,
+} from "./mcp-session-bind.mjs";
 import { extractPayerWallet, networkFromPayload, recordX402Event } from "./x402-telemetry.mjs";
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
 import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
@@ -64,7 +75,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.5.11";
+const TERMINAL_VERSION = "2.5.12";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -108,6 +119,9 @@ const sessionPayments = new Map();
 
 /** sessionId -> { ip, userAgent } for paywall client_key fallback */
 const sessionClientMeta = new Map();
+
+/** F85N — sessionId -> { clientKey, at } */
+const sessionClientKeys = new Map();
 
 /** sessionId -> active MCP transport */
 const transports = new Map();
@@ -302,6 +316,83 @@ async function processPaidToolPayment({
         };
     }
 
+    const wallet = extractPayerWallet(paymentPayload);
+    const serverRequirements = buildReqs();
+
+    if (isTerminalX402FunnelEnabled()) {
+        const settled = await settleTerminalPayment({
+            paymentPayload,
+            serverRequirements,
+        });
+        if (!settled.ok) {
+            const detail = String(settled.error || "").slice(0, 500);
+            recordX402Event({
+                event_type:
+                    settled.reason === "payment_invalid"
+                        ? "payment_invalid"
+                        : "402_shown",
+                tool,
+                payer_wallet: wallet,
+                agent_id: wallet,
+                network: networkFromPayload(paymentPayload),
+                price_usdc: priceUsdc,
+                detail,
+                facilitator_error: detail,
+            });
+            return {
+                errorResult: paymentErrorResult(
+                    () =>
+                        buildRequired(
+                            settled.reason === "payment_already_used"
+                                ? "Payment already used"
+                                : settled.error || "Payment failed",
+                        ),
+                    {
+                        reasonCode: "PAYMENT_REQUIRED",
+                        tool,
+                        priceUsdc,
+                    },
+                ),
+            };
+        }
+
+        recordX402Event({
+            event_type: "payment_verified",
+            tool,
+            payer_wallet: wallet,
+            agent_id: wallet,
+            network: networkFromPayload(paymentPayload),
+            price_usdc: priceUsdc,
+        });
+        recordX402Event({
+            event_type: "payment_settled",
+            tool,
+            payer_wallet: wallet,
+            agent_id: wallet,
+            network: networkFromPayload(paymentPayload),
+            price_usdc: priceUsdc,
+            tx_hash: settled.txHash || null,
+        });
+
+        if (!isSignal) {
+            return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
+        }
+
+        return {
+            ok: true,
+            wallet,
+            betaBypass: false,
+            deferBilling: true,
+            deferSettle: false,
+            x402Settled: true,
+            paymentPayload,
+            paymentRequirements: serverRequirements,
+            clientKey: pre.clientKey,
+            clientMeta: meta,
+            mcpClientId: clientId,
+        };
+    }
+
     const verification = await verify(paymentPayload);
     if (!verification.isValid) {
         recordX402Event({
@@ -326,7 +417,6 @@ async function processPaidToolPayment({
         };
     }
 
-    const wallet = extractPayerWallet(paymentPayload);
     recordX402Event({
         event_type: "payment_verified",
         tool,
@@ -398,14 +488,15 @@ async function finalizeSignalMcpBilling(payment, payload) {
         };
     }
 
-    if (payment.deferSettle && payment.paymentPayload) {
-        settlePaymentWithFacilitator(
-            payment.paymentPayload,
-            payment.paymentRequirements,
-        ).then((result) => {
-            if (result.success) {
+    if (payment.deferSettle && payment.paymentPayload && !payment.x402Settled) {
+        if (isTerminalX402FunnelEnabled()) {
+            const result = await settleTerminalPayment({
+                paymentPayload: payment.paymentPayload,
+                serverRequirements: payment.paymentRequirements,
+            });
+            if (result.ok) {
                 console.log(
-                    `[F#32N] 💰 get_btc_usdc_signal settled: ${result.txHash || "simulated"}`,
+                    `[F85N] get_btc_usdc_signal settled: ${result.txHash || "simulated"}`,
                 );
                 recordX402Event({
                     event_type: "payment_settled",
@@ -420,7 +511,30 @@ async function finalizeSignalMcpBilling(payment, payload) {
                     tx_hash: result.txHash || null,
                 });
             }
-        });
+        } else {
+            settlePaymentWithFacilitator(
+                payment.paymentPayload,
+                payment.paymentRequirements,
+            ).then((result) => {
+                if (result.success) {
+                    console.log(
+                        `[F#32N] 💰 get_btc_usdc_signal settled: ${result.txHash || "simulated"}`,
+                    );
+                    recordX402Event({
+                        event_type: "payment_settled",
+                        tool: "get_btc_usdc_signal",
+                        payer_wallet: payment.wallet,
+                        agent_id: payment.wallet,
+                        network:
+                            networkFromPayload(payment.paymentPayload) ||
+                            payment.paymentRequirements?.network ||
+                            null,
+                        price_usdc: SIGNAL_PRICE_USDC,
+                        tx_hash: result.txHash || null,
+                    });
+                }
+            });
+        }
     }
 
     return payment;
@@ -1014,6 +1128,19 @@ export function mountMcpSignalRoutes(app) {
             const sessionId = req.headers["mcp-session-id"];
             capturePaymentHeader(req, sessionId);
 
+            if (
+                isSessionBindEnabled() &&
+                sessionId &&
+                !assertSessionClient(
+                    sessionClientKeys,
+                    String(sessionId),
+                    clientKeyFromHttpRequest(req),
+                )
+            ) {
+                res.status(403).json({ error: "session_client_mismatch" });
+                return;
+            }
+
             if (isStaleMcpSession(sessionId, transports)) {
                 recordX402Event({
                     event_type: "discovery",
@@ -1062,6 +1189,11 @@ export function mountMcpSignalRoutes(app) {
                             ).split(",")[0],
                             userAgent: String(req.headers["user-agent"] || ""),
                         });
+                        registerSessionClient(
+                            sessionClientKeys,
+                            id,
+                            clientKeyFromHttpRequest(req),
+                        );
                     },
                 });
                 transport.onclose = () => {
@@ -1069,6 +1201,7 @@ export function mountMcpSignalRoutes(app) {
                         transports.delete(transport.sessionId);
                         sessionPayments.delete(transport.sessionId);
                         sessionClientMeta.delete(transport.sessionId);
+                        removeSessionClient(sessionClientKeys, transport.sessionId);
                         recordSessionClosed("streamable_transport_close");
                     }
                 };
