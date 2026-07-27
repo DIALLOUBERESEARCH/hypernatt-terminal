@@ -1,18 +1,14 @@
 # HyperNatt Terminal
 
-HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack): MM trap/sweep/reclaim, hunt score, cycle signal, regime similarity, liquidation radar, signed vault proof, and Li.Fi cross-chain swap.
+HyperNatt Terminal — BTC **trading hub** for AI agents: TA + orderflow + liq both sides + MM hunt/trap + regime + ignition + entry-quality + Li.Fi swap.
 
-Full HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.
+Full HyperNatt platform: https://hypernatt.com — read-only BTC/USDC context, not trade advice. No custody.
 
-Security: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).
+**15 tools · v2.6.0** · Streamable HTTP. Call `get_agent_manifest` first, then **`get_trading_hub`** (you choose when to refresh — no mandatory poll).
 
-15 tools · v2.6.0 · Streamable HTTP. Call get_agent_manifest first.
+Pricing: flat $0.001/call via x402 (Base + Solana). Free: manifest + vault proof. $5/mo Agent Pass (~15k credits).
 
-Pricing: flat $0.001 per call via x402 (USDC on Base + Solana) - no subscription required. The 5 Decision Core tools are $0.001 each; first call per tool is free (intro); HOLD on get_btc_usdc_signal is not charged; no daily credit pool. Free: manifest, signed vault proof, swap quotes. Cross-chain swaps route through Li.Fi (you sign your own tx; 0.5% fee). Heavy use: swap-earned quota or the $5/mo Agent Pass (~15,000 Decision Core credits, ~67% below paygo).
-
-Humans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: "Call get_vault_proof, then get_mm_trap_state — is the MM trapping?"
-
-Documentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
+Guide: [docs/agent-trading-hub.md](docs/agent-trading-hub.md) · Documentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
 
 ---
 
