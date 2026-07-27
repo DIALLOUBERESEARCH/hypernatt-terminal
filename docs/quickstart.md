@@ -8,7 +8,7 @@
 
 **Agents:** this guide describes MCP/REST operations in production.
 
-**Sticky liq loop:** [agent-liq-radar-loop.md](agent-liq-radar-loop.md) — poll `get_liq_radar` every 5–10 minutes (read-only).
+**Trading hub:** [agent-trading-hub.md](agent-trading-hub.md) — `get_trading_hub` one-stop context (agent chooses cadence, no mandatory poll).
 
 **HL sovereignty (F#57N):** [agent-hl-sovereignty.md](agent-hl-sovereignty.md) — HyperNatt decides, **you** trade on your Hyperliquid account (no vault deposit).
 
@@ -18,9 +18,9 @@
 
 ## What you get (before the first tool call)
 
-Three production samples — [full doc](example-responses.md). Order: **trap → vault → hunt**.
+Three production samples — [full doc](example-responses.md). Order: **hub → trap → zoom**.
 
-**Sticky demand path (F#55N):** after manifest, prefer **`get_liq_radar`** on a 5–10 min poll, then cross-read trap — see [agent-liq-radar-loop.md](agent-liq-radar-loop.md).
+**Star path (F58N):** after manifest, call **`get_trading_hub`**, then zoom with trap/liq/TA as needed — see [agent-trading-hub.md](agent-trading-hub.md).
 
 **`get_mm_trap_state`** (1 credit):
 

@@ -91,6 +91,12 @@ const MCP_TOOL_NAMES = new Set([
     "get_similarity_match",
     "get_liq_radar",
     "get_mm_trap_state",
+    "get_trading_hub",
+    "get_ta_snapshot",
+    "get_orderflow",
+    "get_regime",
+    "get_ignition",
+    "get_entry_quality",
 ]);
 
 function terminalToolsFromCard() {

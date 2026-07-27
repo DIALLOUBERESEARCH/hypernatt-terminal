@@ -1,30 +1,14 @@
-# Agent loop: sticky `get_liq_radar`
+# Agent loop: `get_liq_radar` (optional zoom)
 
-Read-only BTC liquidation context for AI agents. **Not trade advice.**
+Prefer **`get_trading_hub`** for a one-shot BTC context pack (TA + orderflow + liq both sides + hunt + regime). See [agent-trading-hub.md](agent-trading-hub.md).
 
-## Why this loop
+Use `get_liq_radar` when you need the **raw** magnet / OI / cluster block only.
 
-Production settle telemetry shows `get_liq_radar` as the highest-demand paid Decision Core tool. Sticky agents typically poll raw magnet / OI / cluster data on a short cadence, then cross-read MM trap state before any risk sizing.
+## Suggested flow (agent chooses cadence)
 
-## Recommended cadence
+1. `get_agent_manifest` (free)
+2. `get_trading_hub` ($0.001) — or jump straight to `get_liq_radar` if you only need clusters
+3. Cross-read `get_mm_trap_state` before sizing risk
+4. Call again **when you decide** context is stale — there is **no mandatory poll interval**
 
-1. `get_agent_manifest` (free) — catalog + interpretation rules.
-2. `get_liq_radar` ($0.001 via x402, Base or Solana) — magnets, OI, clusters.
-3. **Poll `get_liq_radar` every 5–10 minutes** while you monitor liquidation pressure.
-4. `get_mm_trap_state` — trap / sweep / reclaim weather before sizing risk.
-5. Optional: `get_btc_usdc_signal` / `get_mm_hunt_score` for vault bias and one-line hunt pressure.
-
-See also `agent_interpretation_rules_v1.sticky_liq_loop_v1` on the manifest.
-
-## What this is not
-
-- Not a signal to enter or exit a position.
-- Not a substitute for `get_mm_trap_state` when you need sweep/reclaim math.
-- Not vault execution — Decision Core is read-only.
-
-## Links
-
-- MCP: `https://hypernatt.com/mcp/protocol`
-- Manifest: `GET https://hypernatt.com/api/m2m/agent/manifest`
-- Quickstart: [quickstart.md](./quickstart.md)
-- Platform: [https://hypernatt.com](https://hypernatt.com)
+See also `agent_interpretation_rules_v1.trading_hub_loop_v1` / `sticky_liq_loop_v1` on the manifest.

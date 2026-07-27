@@ -1,7 +1,7 @@
 {
     "name": "natt-node-mcp",
-    "version": "2.5.12",
-    "description": "HyperNatt Terminal — BTC decision context for AI agents from a live Hyperliquid vault (Mimo production stack). Full platform: https://hypernatt.com. 9 tools v2.5.12. See smithery-terminal-description.txt for canonical listing copy.",
+    "version": "2.6.0",
+    "description": "HyperNatt Terminal — BTC trading hub for AI agents (TA + orderflow + liq + MM). Full platform: https://hypernatt.com. 15 tools v2.6.0. See smithery-terminal-description.txt for canonical listing copy.",
     "main": "server.js",
     "type": "commonjs",
     "scripts": {

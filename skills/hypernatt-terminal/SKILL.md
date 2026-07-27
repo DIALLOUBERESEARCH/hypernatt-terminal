@@ -28,7 +28,7 @@ Production MCP seller for AI agents.
 | Source | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
 
-**Version:** 9 tools · v2.5.11 · Streamable HTTP.
+**Version:** 15 tools · v2.6.0 · Streamable HTTP.
 
 HyperNatt is the live trading + AI platform. **hypernatt-terminal** is one agent-facing brick — not the whole product.
 
@@ -138,7 +138,7 @@ No daily credit pool. `initialize` and `tools/list` must stay free (standard MCP
 
 ---
 
-## Tool surface (9 tools)
+## Tool surface (15 tools)
 
 | Tool | Credits | Notes |
 |------|---------|-------|

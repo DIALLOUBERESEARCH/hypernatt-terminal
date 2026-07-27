@@ -1,6 +1,5 @@
 /**
- * Build-time gate: server-card.json must list exactly 9 terminal tools.
- * Glama/Smithery introspection uses the same registry via createMcpServer().
+ * Build-time gate: server-card.json must list exactly 15 terminal tools (F58N).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -10,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const cardPath = path.join(root, "server-card.json");
 
-const EXPECTED_COUNT = 9;
+const EXPECTED_COUNT = 15;
 const EXPECTED_TOOLS = [
     "get_agent_manifest",
     "get_vault_proof",
@@ -19,6 +18,12 @@ const EXPECTED_TOOLS = [
     "get_similarity_match",
     "get_liq_radar",
     "get_mm_trap_state",
+    "get_trading_hub",
+    "get_ta_snapshot",
+    "get_orderflow",
+    "get_regime",
+    "get_ignition",
+    "get_entry_quality",
     "swap_via_nattswap",
     "swap_quote",
 ].sort();

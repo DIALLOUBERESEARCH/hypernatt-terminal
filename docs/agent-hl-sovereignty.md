@@ -64,7 +64,7 @@ Restart Hermes after edit. Enable MCP toolset (`native-mcp` skill if needed).
 
 1. `get_agent_manifest` (free)
 2. `get_vault_proof` (free) — verify we are live (optional)
-3. Sticky: poll `get_liq_radar` every 5–10 min — [agent-liq-radar-loop.md](agent-liq-radar-loop.md)
+3. Call `get_trading_hub` when you need full BTC context — [agent-trading-hub.md](agent-trading-hub.md) (you choose cadence; no mandatory poll)
 4. Cross-read `get_mm_trap_state` before sizing risk
 5. Optional: `get_btc_usdc_signal` / `get_mm_hunt_score`
 6. **Your** HL exec tools place/cancel — HyperNatt never does

@@ -45,6 +45,12 @@ import {
 import {
     LIQ_RADAR_X402,
     MM_TRAP_STATE_X402,
+    TRADING_HUB_X402,
+    TA_SNAPSHOT_X402,
+    ORDERFLOW_X402,
+    REGIME_X402,
+    IGNITION_X402,
+    ENTRY_QUALITY_X402,
 } from "./x402-data-products.mjs";
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 import {
@@ -75,7 +81,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.5.12";
+const TERMINAL_VERSION = "2.6.0";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -95,6 +101,23 @@ const PUBLIC_LIQ_RADAR_URL =
 const PUBLIC_MM_TRAP_STATE_URL =
     process.env.PUBLIC_MM_TRAP_STATE_URL ||
     "https://hypernatt.com/api/m2m/mm-trap-state";
+const PUBLIC_TRADING_HUB_URL =
+    process.env.PUBLIC_TRADING_HUB_URL ||
+    "https://hypernatt.com/api/m2m/trading-hub";
+const PUBLIC_TA_SNAPSHOT_URL =
+    process.env.PUBLIC_TA_SNAPSHOT_URL ||
+    "https://hypernatt.com/api/m2m/ta-snapshot";
+const PUBLIC_ORDERFLOW_URL =
+    process.env.PUBLIC_ORDERFLOW_URL ||
+    "https://hypernatt.com/api/m2m/orderflow";
+const PUBLIC_REGIME_URL =
+    process.env.PUBLIC_REGIME_URL || "https://hypernatt.com/api/m2m/regime";
+const PUBLIC_IGNITION_URL =
+    process.env.PUBLIC_IGNITION_URL ||
+    "https://hypernatt.com/api/m2m/ignition";
+const PUBLIC_ENTRY_QUALITY_URL =
+    process.env.PUBLIC_ENTRY_QUALITY_URL ||
+    "https://hypernatt.com/api/m2m/entry-quality";
 
 import { toolDescriptionFromCard, getServerCard } from "./server-card-tools.mjs";
 
@@ -982,6 +1005,68 @@ export function createMcpServer() {
         PUBLIC_MM_TRAP_STATE_URL,
     );
 
+    // F58N — trading hub pack
+    registerDataProductTool(
+        "get_trading_hub",
+        toolDescriptionFromCard(
+            "get_trading_hub",
+            "One-stop BTC trading context: TA + orderflow + liq both sides + hunt + regime. Agent chooses when to refresh.",
+        ),
+        TRADING_HUB_X402,
+        "hypernatt_trading_hub_v1",
+        PUBLIC_TRADING_HUB_URL,
+    );
+    registerDataProductTool(
+        "get_ta_snapshot",
+        toolDescriptionFromCard(
+            "get_ta_snapshot",
+            "BTC TA snapshot — RSI/MACD/ADX/ATR/VWAP/BB.",
+        ),
+        TA_SNAPSHOT_X402,
+        "hypernatt_ta_snapshot_v1",
+        PUBLIC_TA_SNAPSHOT_URL,
+    );
+    registerDataProductTool(
+        "get_orderflow",
+        toolDescriptionFromCard(
+            "get_orderflow",
+            "BTC orderflow — CVD, OB imbalance, icebergs, taker, funding, OI.",
+        ),
+        ORDERFLOW_X402,
+        "hypernatt_orderflow_v1",
+        PUBLIC_ORDERFLOW_URL,
+    );
+    registerDataProductTool(
+        "get_regime",
+        toolDescriptionFromCard(
+            "get_regime",
+            "BTC regime — season/trend, ADX, session bucket, structure zone.",
+        ),
+        REGIME_X402,
+        "hypernatt_regime_v1",
+        PUBLIC_REGIME_URL,
+    );
+    registerDataProductTool(
+        "get_ignition",
+        toolDescriptionFromCard(
+            "get_ignition",
+            "BTC ignition — VID / micro entry / vol spike / ADX RoC.",
+        ),
+        IGNITION_X402,
+        "hypernatt_ignition_v1",
+        PUBLIC_IGNITION_URL,
+    );
+    registerDataProductTool(
+        "get_entry_quality",
+        toolDescriptionFromCard(
+            "get_entry_quality",
+            "BTC entry-quality flags — FOMO / anti-top / early / exhaustion / clean / whale.",
+        ),
+        ENTRY_QUALITY_X402,
+        "hypernatt_entry_quality_v1",
+        PUBLIC_ENTRY_QUALITY_URL,
+    );
+
     return server;
 }
 
@@ -1071,6 +1156,12 @@ export function mountMcpSignalRoutes(app) {
                 "get_mm_hunt_score",
                 "get_similarity_match",
                 "get_liq_radar",
+                "get_trading_hub",
+                "get_ta_snapshot",
+                "get_orderflow",
+                "get_regime",
+                "get_ignition",
+                "get_entry_quality",
                 "swap_via_nattswap",
                 "swap_quote",
             ],
@@ -1272,6 +1363,9 @@ export function mountMcpSignalRoutes(app) {
     );
     console.log(
         `[MCP Terminal] x402 get_mm_trap_state @ $${MM_TRAP_STATE_X402.priceUsdc} → ${MM_TRAP_STATE_X402.payTo}`,
+    );
+    console.log(
+        `[MCP Terminal] x402 F58N hub @ $${TRADING_HUB_X402.priceUsdc} → ${TRADING_HUB_X402.payTo}`,
     );
     console.log(
         `[MCP Terminal] x402 get_btc_usdc_signal @ $${SIGNAL_PRICE_USDC} → ${SIGNAL_PAYTO}`,

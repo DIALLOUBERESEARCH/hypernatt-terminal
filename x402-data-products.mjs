@@ -135,3 +135,50 @@ export const MM_TRAP_STATE_X402 = createDataProductX402({
         "Live Market Maker manipulation weather — trap/sweep/reclaim detection via MCP",
     internalPath: "/api/m2m/internal/mm-trap-state",
 });
+
+/** F58N — trading hub + slices (shared price/payTo env). */
+function createF58nProduct(toolName, description, internalPath) {
+    return createDataProductX402({
+        toolName,
+        priceEnv: "F58N_TRADING_HUB_X402_PRICE_USDC",
+        payToEnv: "F58N_TRADING_HUB_X402_PAYTO",
+        description,
+        internalPath,
+    });
+}
+
+export const TRADING_HUB_X402 = createF58nProduct(
+    "get_trading_hub",
+    "One-stop BTC trading context (TA + orderflow + liq both sides + hunt + regime)",
+    "/api/m2m/internal/trading-hub",
+);
+
+export const TA_SNAPSHOT_X402 = createF58nProduct(
+    "get_ta_snapshot",
+    "BTC TA snapshot (RSI/MACD/ADX/ATR/VWAP)",
+    "/api/m2m/internal/ta-snapshot",
+);
+
+export const ORDERFLOW_X402 = createF58nProduct(
+    "get_orderflow",
+    "BTC orderflow (CVD, icebergs, taker, funding)",
+    "/api/m2m/internal/orderflow",
+);
+
+export const REGIME_X402 = createF58nProduct(
+    "get_regime",
+    "BTC regime (season, ADX, session, structure zone)",
+    "/api/m2m/internal/regime",
+);
+
+export const IGNITION_X402 = createF58nProduct(
+    "get_ignition",
+    "BTC ignition (VID / micro entry / vol spike)",
+    "/api/m2m/internal/ignition",
+);
+
+export const ENTRY_QUALITY_X402 = createF58nProduct(
+    "get_entry_quality",
+    "BTC entry-quality flags (FOMO / anti-top / clean)",
+    "/api/m2m/internal/entry-quality",
+);
