@@ -30,7 +30,7 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 3 terminal tools with prices, live usage stats, and journeys. Prefer get_liq_radar next. Free.",
+      "description": "Start here (free): catalog of 3 terminal tools + value_proposition_v1 + use_scenarios_v1 + glossary_v1 under agent_interpretation_rules_v1. Then call get_liq_radar for the forced-order map.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -43,7 +43,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Liquidation radar — magnet score, OI build-up, long/short ratio, liquidation clusters above/below, 1h/24h liquidations. Multi-crypto whitelist: BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC). USE WHEN: microstructure / cascade context. RETURNS: hypernatt_liq_radar payload. Redacted, read-only. COST: $0.001 flat via x402 (Base or Solana). Side effects: none.",
+      "description": "Forced-order / liquidation map — magnet bias, OI build-up, L/S ratio, clusters above/below, real liqs 1h/24h. Whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC). Market structure classic public indicators do not show. USE WHEN: terrain / timing / sizing context. NOT a trade signal or Fuel Score. RETURNS: hypernatt_liq_radar_v2. COST: $0.001 x402 (Base or Solana). Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {

@@ -133,7 +133,7 @@ export const LIQ_RADAR_X402 = createDataProductX402({
     priceEnv: "LIQ_RADAR_X402_PRICE_USDC",
     payToEnv: "LIQ_RADAR_X402_PAYTO",
     description:
-        "Liquidation radar (BTC ETH SOL BNB XRP HYPE ZEC; omit=BTC) via MCP",
+        "Forced-order / liq map (BTC ETH SOL BNB XRP HYPE ZEC; omit=BTC) via MCP",
     internalPath: "/api/m2m/internal/liq-radar",
 });
 

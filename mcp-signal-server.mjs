@@ -395,7 +395,7 @@ export function createMcpServer() {
         {
             description: toolDescriptionFromCard(
                 "get_liq_radar",
-                "Liquidation radar — multi-crypto whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC).",
+                "Forced-order / liquidation map — whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC). Not a trade signal.",
             ),
             inputSchema: {
                 x_payment: z
