@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY server.js stdio.mjs mcp-signal-server.mjs mcp-session-resilience.mjs agent-payment-error.mjs mcp-free-tools.mjs mcp-growth-tools.mjs base-tokens.mjs \
-    x402-signal.mjs x402-mm-hunt.mjs x402-similarity.mjs x402-data-products.mjs \
+    x402-data-products.mjs \
     x402-facilitator-client.mjs x402-telemetry.mjs x402-beta.mjs x402-quota.mjs server-card-tools.mjs server-card.json server.json ./
 COPY scripts/verify-mcp-tool-count.mjs ./scripts/verify-mcp-tool-count.mjs
 RUN node scripts/verify-mcp-tool-count.mjs
@@ -15,9 +15,7 @@ ENV NODE_ENV=production
 ENV MCP_PORT=8011
 ENV GATEWAY_URL=https://hypernatt.com
 ENV M2M_SERVICE_URL=https://hypernatt.com
-ENV PUBLIC_SIGNAL_URL=https://hypernatt.com/api/m2m/signal
-ENV PUBLIC_MM_HUNT_URL=https://hypernatt.com/api/m2m/mm-hunt
-ENV PUBLIC_SIMILARITY_URL=https://hypernatt.com/api/m2m/similarity-match
+ENV PUBLIC_LIQ_RADAR_URL=https://hypernatt.com/api/m2m/liq-radar
 
 EXPOSE 8011
 

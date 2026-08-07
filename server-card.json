@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — Liq Radar + Swap for AI Agents",
     "version": "2.7.0",
-    "description": "HyperNatt Terminal — agent MCP for liquidation radar + cross-chain swap. Multi-crypto get_liq_radar (whitelist BTC ETH SOL BNB XRP HYPE ZEC; omit symbol = BTC). Li.Fi swap via swap_via_nattswap. Not a generic market-data wrapper — read-only Decision Core context, not trade advice. No custody.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: after manifest, call get_liq_radar (optional symbol). Pricing: $0.001 per call via x402 (USDC on Base + Solana). Free: get_agent_manifest. Swap is free at MCP layer (gas on-chain).\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "HyperNatt Terminal — agent MCP for liquidation radar + cross-chain swap. Multi-crypto get_liq_radar (whitelist BTC ETH SOL BNB XRP HYPE ZEC; omit symbol = BTC). Li.Fi swap via swap_via_nattswap. Not a generic market-data wrapper — read-only liquidation context, not trade advice. No custody.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick.\n\nSecurity: no custody, no key access, read-only data, x402 you control, public code — verify yourself (SECURITY.md).\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: after manifest, call get_liq_radar (optional symbol). Pricing: free get_agent_manifest; get_liq_radar $0.001/call via x402 (Base + Solana). Swap free at MCP layer (gas on-chain).\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -20,12 +20,12 @@
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
     "agent_pass_usd": 5,
     "agent_pass_credits": 15000,
-    "note": "Pay-per-call $0.001/call via x402 on Base + Solana (no subscription required). Optional Agent Pass $5/mo (~15,000 Decision Core credits, ~67% below paygo) for heavy use. Swap-earned quota also available."
+    "note": "Default: pay-per-call $0.001 via x402. Optional Agent Pass $5/mo (~15,000 credits) for heavy use — not required."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
     "balance_url": "https://hypernatt.com/api/m2m/quota/balance",
-    "note": "Bonus Decision Core credits from NattSwap swap volume (about 20 per $100). Status: GET /api/m2m/quota/status · balance: GET /api/m2m/quota/balance?wallet=0x…"
+    "note": "Optional bonus credits from swap volume. Status: GET /api/m2m/quota/status · balance: GET /api/m2m/quota/balance?wallet=0x…"
   },
   "tools": [
     {

@@ -32,7 +32,8 @@ site. When in doubt, reach us only through the channels above.
 **3 tools · v2.7.0:** `get_agent_manifest` (free), `get_liq_radar` ($0.001 x402
 on Base + Solana), `swap_via_nattswap` (free at MCP; gas + Li.Fi fee on-chain).
 
-Agent Pass for heavy use: **$5/mo** (~15,000 credits).
+Default path: free manifest + pay-per-call. Optional heavy use: Agent Pass
+**$5/mo** or swap-earned quota (not required).
 
 ## Can this server move or drain my funds?
 

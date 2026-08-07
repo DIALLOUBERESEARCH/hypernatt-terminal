@@ -8,11 +8,18 @@ Private monorepo history is separate (see README mirror note).
 ### Fixed
 - Stopped presenting `https://hypernatt.com/stats` as Terminal MCP track record
   (vault / platform P&L is a **separate** HyperNatt product).
+- Removed residual `/stats` + FOMO (`unlock_premium` / `you_missed_this`) from
+  live `proof_of_edge` (F#101N).
 - Aligned public docs/examples with live surface: **3 tools** only
   (`get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`).
 - Purged leftover trap/signal examples and demounted tool docs from the public mirror.
 - Payment-error copy: Agent Pass **$5**, free tools = manifest + swap (no vault_proof / $19).
 - npm audit: bumped axios + overrides — **0 vulnerabilities** on the MCP package.
+
+### Removed
+- Orphan x402 modules for demounted tools (F#102N): `x402-signal.mjs`,
+  `x402-mm-hunt.mjs`, `x402-similarity.mjs` (+ their unit tests). Not imported by
+  the live 3-tool MCP server.
 
 ### Added
 - README packaging: badges, **What we do NOT claim**, Start here, Security + seller skill link.
@@ -25,6 +32,9 @@ Private monorepo history is separate (see README mirror note).
 
 ### Changed
 - Title / positioning: **Liq Radar + Swap** (not BTC Decision Terminal).
+- Manifest section rename: **Liquidation radar** (was Decision Core).
+- Public paywall framing: **free + pay-per-call** first; Pass/quota demoted to power-user.
+- README: 4 badges max, solo-builder tone (F#101N).
 - Version **2.7.0** · Streamable HTTP · whitelist BTC ETH SOL BNB XRP HYPE ZEC.
 
 ## [2.6.0] — 2026-07
