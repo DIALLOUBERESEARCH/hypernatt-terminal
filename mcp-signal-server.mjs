@@ -581,9 +581,8 @@ export function mountMcpSignalRoutes(app) {
                 network: "eip155:8453",
             },
             homepage: "https://hypernatt.com",
-            stats_url: "https://hypernatt.com/stats",
             ecosystem_note:
-                "HyperNatt platform at hypernatt.com; hypernatt-terminal MCP is one agent integration brick.",
+                "HyperNatt platform at hypernatt.com; hypernatt-terminal MCP is one agent integration brick. Vault pages are not Terminal MCP P&L.",
             products: ["hypernatt_liq_radar_v1"],
         });
     });

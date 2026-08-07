@@ -7,10 +7,9 @@
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
-    "stats_url": "https://hypernatt.com/stats",
     "mcp_url": "https://hypernatt.com/mcp/protocol",
     "pass_status_url": "https://hypernatt.com/api/m2m/pass/status",
-    "note": "Discover the full HyperNatt product on the homepage; use this server card for the agent terminal only."
+    "note": "Discover the full HyperNatt product on the homepage; use this server card for the agent terminal only. Vault/platform track record is NOT this MCP's P&L."
   },
   "authentication": {
     "required": false,

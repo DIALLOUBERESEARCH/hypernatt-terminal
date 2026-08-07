@@ -19,15 +19,13 @@ legitimate. Verify anything claiming to be HyperNatt against this list.
 - MCP server: https://hypernatt.com/mcp/protocol
 - Telegram bot: https://t.me/hypernatt_bot
 - Contact: contact@hypernatt.com
-- Live on-chain stats: https://hypernatt.com/stats
 
 **What does NOT exist today:** HyperNatt has **no official X/Twitter account**
 and runs **no ICO, presale, airdrop, or public token sale**. NDAT is an
 internal reward for vault depositors, not a public token offering. Any X
 account, token sale, or "official" presence not listed above is **not
 HyperNatt** — even if it copies our name, branding, or links back to this
-site. When in doubt, verify on-chain and reach us only through the channels
-above.
+site. When in doubt, reach us only through the channels above.
 
 ## Surface (truth)
 
@@ -77,10 +75,12 @@ not sufficient** — not a claim of unhackability.
 ## How do I verify all this?
 
 - **Read the source** — https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
-- **On-chain / stats** — https://hypernatt.com/stats
 - **Free catalog** — `curl -s https://hypernatt.com/api/m2m/agent/manifest`
 - **Real 402** — `curl -i https://hypernatt.com/api/m2m/liq-radar`
 - **Networks** — `curl -s https://hypernatt.com/.well-known/x402`
+- **Optional operator vault** (Hyperliquid) — proves a live vault exists; **not**
+  Terminal MCP P&L:
+  https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8
 
 ## Reporting a vulnerability
 
@@ -89,6 +89,11 @@ respond to good-faith reports.
 
 ## What we do NOT claim
 
-We do **not** claim to be unhackable, bank-grade, or independently audited. We
-claim only what is verifiable above. If a statement here is ever contradicted by
-the code, the **code wins** — tell us.
+We do **not** claim to be unhackable, bank-grade, or independently audited.
+
+We do **not** claim HyperNatt vault / platform performance pages
+(e.g. `/stats`) as **HyperNatt Terminal MCP** results. This MCP is liq radar +
+swap for agents — a separate brick from vault trading track record.
+
+We claim only what is verifiable above. If a statement here is ever contradicted
+by the code, the **code wins** — tell us.

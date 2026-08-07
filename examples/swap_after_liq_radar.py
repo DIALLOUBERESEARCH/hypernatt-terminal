@@ -222,7 +222,7 @@ def main() -> int:
     elif not args.compare_vault:
         print("\nTip: --compare-vault shows vault blocked; AGENT_WALLET=0x... --quote for agent path")
 
-    print("\nNot trade advice. Verify: https://hypernatt.com/stats")
+    print("\nNot trade advice. See SECURITY.md — vault pages are not Terminal MCP P&L.")
     return 0
 
 

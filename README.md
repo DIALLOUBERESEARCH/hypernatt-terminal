@@ -35,6 +35,7 @@ Heavy use: swap-earned quota or **$5/mo** Agent Pass (~15,000 credits).
 | Custody of keys or funds | Agent signs own txs; server never broadcasts |
 | Trade advice / guaranteed edge | Read-only JSON context + interpretation bounds |
 | 9 or 15 MCP tools | **Exactly 3 tools** · v2.7.0 |
+| Vault / `/stats` page = Terminal MCP P&L | Separate HyperNatt vault product — not this MCP |
 | Independent security audit / bank-grade | Public code + [SECURITY.md](./SECURITY.md) + [x402 seller skill](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill) |
 
 ## Start here
