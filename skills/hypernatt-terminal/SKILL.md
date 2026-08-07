@@ -2,11 +2,10 @@
 name: hypernatt-terminal
 description: >-
   Onboarding skill for HyperNatt Terminal remote MCP (exactly 3 tools v2.7.0):
-  get_agent_manifest, get_liq_radar, swap_via_nattswap. Documentation + call
-  order only — no local executables, no shell, no file writes. Read-only
-  market microstructure context. Not trade advice. get_liq_radar = $0.001 USDC
-  via x402.
-version: 1.2.1
+  get_agent_manifest, get_liq_radar, swap_via_nattswap. Docs + call order only -
+  no local exec/shell/files. Read-only market microstructure for crypto trading
+  agents (any venue). Not trade advice. get_liq_radar = $0.001 USDC via x402.
+version: 1.3.0
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -21,7 +20,6 @@ permissions:
     - mcp
 metadata:
   openclaw:
-    emoji: "🦈"
     requires:
       bins: []
     envVars: []
@@ -32,11 +30,12 @@ metadata:
         MCP,
         x402,
         crypto,
-        hyperliquid,
-        liquidation-radar,
-        market-microstructure,
         trading,
         perpetual,
+        liquidation,
+        microstructure,
+        market-data,
+        ai-agents,
       ]
     related_skills: [native-mcp, mcporter, hypernatt-liq-radar]
 ---
@@ -46,7 +45,7 @@ metadata:
 **What this skill is:** onboarding text for a **remote** MCP server.
 
 **What this skill is NOT:** a local bot, vault control, or a 14-tool terminal.
-Live surface = **exactly 3 tools · v2.7.0**.
+Live surface = **exactly 3 tools | v2.7.0**.
 
 ## Declared capabilities (honest)
 
@@ -79,11 +78,21 @@ Live surface = **exactly 3 tools · v2.7.0**.
 
 Whitelist: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
+## Example
+
+```bash
+# Free catalog
+curl -s https://hypernatt.com/api/m2m/agent/manifest | head
+
+# Paid via MCP runtime + x402 wallet (pseudo):
+# tools/call get_liq_radar  {"symbol":"ETH"}
+```
+
 ## Trading-agent loop
 
 1. Add MCP URL to the agent runtime.
-2. Call `get_liq_radar` **before** sizing/entering a perp.
-3. Execute on a **separate** venue skill — HyperNatt does not open perps.
+2. Call `get_liq_radar` **before** sizing/entering a perp (any venue).
+3. Execute on a **separate** venue skill - HyperNatt does not open perps.
 4. Optional `swap_via_nattswap` to bridge/fund.
 
 ## Wallet / x402
@@ -100,6 +109,6 @@ This skill never asks for private keys or scrapes env secrets.
 
 ## Honest claims
 
-- Not trade advice · no custody · no performance promise
+- Not trade advice - no custody - no performance promise
 - Do not advertise more than 3 MCP tools
 - Vault/platform pages are not Terminal MCP P&L
