@@ -21,11 +21,9 @@ permissions:
     - mcp
 metadata:
   openclaw:
-    emoji: "📡"
     requires:
       bins: []
     envVars: []
-    primaryEnv: null
   hermes:
     tags:
       [
