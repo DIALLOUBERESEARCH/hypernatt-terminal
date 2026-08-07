@@ -1,5 +1,6 @@
 /**
- * F#22 — MCP SSE + Streamable HTTP server for get_btc_usdc_signal (x402).
+ * F#22 / F99N — MCP SSE + Streamable HTTP server.
+ * Surface: get_agent_manifest, get_liq_radar, swap_via_nattswap (exactly 3).
  *
  * Public (nginx strips /mcp prefix):
  *   GET  /mcp/sse       -> container /sse
@@ -12,46 +13,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import {
-    buildPaymentRequired,
-    buildPaymentRequirements,
-    fetchSignalPayload,
-    parsePaymentHeader,
-    summarizeCyclePayload,
-    verifyPayment,
-    SIGNAL_PAYTO,
-    SIGNAL_PRICE_USDC,
-} from "./x402-signal.mjs";
-import {
-    buildPaymentRequired as buildMmHuntPaymentRequired,
-    buildPaymentRequirements as buildMmHuntPaymentRequirements,
-    fetchMmHuntPayload,
-    parsePaymentHeader as parseMmHuntPaymentHeader,
-    summarizeMmHuntPayload,
-    verifyPayment as verifyMmHuntPayment,
-    MM_HUNT_PAYTO,
-    MM_HUNT_PRICE_USDC,
-} from "./x402-mm-hunt.mjs";
-import {
-    buildPaymentRequired as buildSimilarityPaymentRequired,
-    buildPaymentRequirements as buildSimilarityPaymentRequirements,
-    fetchSimilarityPayload,
-    parsePaymentHeader as parseSimilarityPaymentHeader,
-    summarizeSimilarityPayload,
-    verifyPayment as verifySimilarityPayment,
-    SIMILARITY_PAYTO,
-    SIMILARITY_PRICE_USDC,
-} from "./x402-similarity.mjs";
-import {
-    LIQ_RADAR_X402,
-    MM_TRAP_STATE_X402,
-    TRADING_HUB_X402,
-    TA_SNAPSHOT_X402,
-    ORDERFLOW_X402,
-    REGIME_X402,
-    IGNITION_X402,
-    ENTRY_QUALITY_X402,
-} from "./x402-data-products.mjs";
+import { LIQ_RADAR_X402 } from "./x402-data-products.mjs";
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 import {
     isTerminalX402FunnelEnabled,
@@ -68,10 +30,7 @@ import { extractPayerWallet, networkFromPayload, recordX402Event } from "./x402-
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
 import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
 import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
-import {
-    registerTerminalSwapTools,
-    registerVaultProofTool,
-} from "./mcp-free-tools.mjs";
+import { registerTerminalSwapTools } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
 import {
     bindActiveSessionCounter,
@@ -81,43 +40,16 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.6.0";
+const TERMINAL_VERSION = "2.7.0";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
     process.env.M2M_INTERNAL_SECRET ||
     process.env.NATTSQUARE_INTERNAL_SECRET ||
     "";
-const PUBLIC_SIGNAL_URL =
-    process.env.PUBLIC_SIGNAL_URL || "https://hypernatt.com/api/m2m/signal";
-const PUBLIC_MM_HUNT_URL =
-    process.env.PUBLIC_MM_HUNT_URL || "https://hypernatt.com/api/m2m/mm-hunt";
-const PUBLIC_SIMILARITY_MATCH_URL =
-    process.env.PUBLIC_SIMILARITY_MATCH_URL ||
-    "https://hypernatt.com/api/m2m/similarity-match";
 const PUBLIC_LIQ_RADAR_URL =
     process.env.PUBLIC_LIQ_RADAR_URL ||
     "https://hypernatt.com/api/m2m/liq-radar";
-const PUBLIC_MM_TRAP_STATE_URL =
-    process.env.PUBLIC_MM_TRAP_STATE_URL ||
-    "https://hypernatt.com/api/m2m/mm-trap-state";
-const PUBLIC_TRADING_HUB_URL =
-    process.env.PUBLIC_TRADING_HUB_URL ||
-    "https://hypernatt.com/api/m2m/trading-hub";
-const PUBLIC_TA_SNAPSHOT_URL =
-    process.env.PUBLIC_TA_SNAPSHOT_URL ||
-    "https://hypernatt.com/api/m2m/ta-snapshot";
-const PUBLIC_ORDERFLOW_URL =
-    process.env.PUBLIC_ORDERFLOW_URL ||
-    "https://hypernatt.com/api/m2m/orderflow";
-const PUBLIC_REGIME_URL =
-    process.env.PUBLIC_REGIME_URL || "https://hypernatt.com/api/m2m/regime";
-const PUBLIC_IGNITION_URL =
-    process.env.PUBLIC_IGNITION_URL ||
-    "https://hypernatt.com/api/m2m/ignition";
-const PUBLIC_ENTRY_QUALITY_URL =
-    process.env.PUBLIC_ENTRY_QUALITY_URL ||
-    "https://hypernatt.com/api/m2m/entry-quality";
 
 import { toolDescriptionFromCard, getServerCard } from "./server-card-tools.mjs";
 
@@ -265,55 +197,43 @@ async function processPaidToolPayment({
         };
     }
 
-    const isSignal = tool === "get_btc_usdc_signal";
-
     if (!paymentRaw) {
-        if (!isSignal) {
-            const consumed = await consumePaywall({
-                wallet: headerWallet,
-                tool,
-                clientKey: pre.clientKey,
-                mcpClientId: clientId,
-                ip: meta?.ip,
-                userAgent: meta?.userAgent,
-            });
-            if (consumed.consumed) {
-                console.log(
-                    `[F#40N] ${consumed.method || "paywall"} bypass MCP: ${headerWallet || pre.clientKey?.slice(0, 8)} → ${tool}`,
-                );
-                return {
-                    ok: true,
-                    wallet: headerWallet,
-                    quotaBypass: consumed.method === "quota",
-                    freeBypass: consumed.method === "free",
-                    introBypass: consumed.method === "intro",
-                    passBypass: consumed.method === "pass",
-                    clientKey: pre.clientKey,
-                };
-            }
-            recordX402Event({
-                event_type: "402_shown",
-                tool,
-                price_usdc: priceUsdc,
-            });
+        const consumed = await consumePaywall({
+            wallet: headerWallet,
+            tool,
+            clientKey: pre.clientKey,
+            mcpClientId: clientId,
+            ip: meta?.ip,
+            userAgent: meta?.userAgent,
+        });
+        if (consumed.consumed) {
+            console.log(
+                `[F#40N] ${consumed.method || "paywall"} bypass MCP: ${headerWallet || pre.clientKey?.slice(0, 8)} → ${tool}`,
+            );
             return {
-                errorResult: paymentErrorResult(buildRequired, {
-                    reasonCode: consumed.paywallUnavailable
-                        ? "PAYWALL_UNAVAILABLE"
-                        : "FREE_TIER_EXHAUSTED",
-                    tool,
-                    creditsRemaining: 0,
-                    priceUsdc,
-                }),
+                ok: true,
+                wallet: headerWallet,
+                quotaBypass: consumed.method === "quota",
+                freeBypass: consumed.method === "free",
+                introBypass: consumed.method === "intro",
+                passBypass: consumed.method === "pass",
+                clientKey: pre.clientKey,
             };
         }
+        recordX402Event({
+            event_type: "402_shown",
+            tool,
+            price_usdc: priceUsdc,
+        });
         return {
-            ok: true,
-            wallet: headerWallet,
-            deferBilling: true,
-            clientKey: pre.clientKey,
-            clientMeta: meta,
-            mcpClientId: clientId,
+            errorResult: paymentErrorResult(buildRequired, {
+                reasonCode: consumed.paywallUnavailable
+                    ? "PAYWALL_UNAVAILABLE"
+                    : "FREE_TIER_EXHAUSTED",
+                tool,
+                creditsRemaining: 0,
+                priceUsdc,
+            }),
         };
     }
 
@@ -397,23 +317,7 @@ async function processPaidToolPayment({
             tx_hash: settled.txHash || null,
         });
 
-        if (!isSignal) {
-            return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
-        }
-
-        return {
-            ok: true,
-            wallet,
-            betaBypass: false,
-            deferBilling: true,
-            deferSettle: false,
-            x402Settled: true,
-            paymentPayload,
-            paymentRequirements: serverRequirements,
-            clientKey: pre.clientKey,
-            clientMeta: meta,
-            mcpClientId: clientId,
-        };
+        return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
     }
 
     const verification = await verify(paymentPayload);
@@ -449,118 +353,26 @@ async function processPaidToolPayment({
         price_usdc: priceUsdc,
     });
 
-    if (!isSignal) {
-        settlePaymentWithFacilitator(
-            paymentPayload,
-            paymentPayload?.accepted ?? buildReqs(),
-        ).then((result) => {
-            if (result.success) {
-                console.log(
-                    `[F#32N] 💰 ${tool} settled: ${result.txHash || "simulated"}`,
-                );
-                recordX402Event({
-                    event_type: "payment_settled",
-                    tool,
-                    payer_wallet: wallet,
-                    agent_id: wallet,
-                    network: networkFromPayload(paymentPayload),
-                    price_usdc: priceUsdc,
-                    tx_hash: result.txHash || null,
-                });
-            }
-        });
-        return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
-    }
-
-    return {
-        ok: true,
-        wallet,
-        betaBypass: false,
-        deferBilling: isSignal,
-        deferSettle: isSignal,
+    settlePaymentWithFacilitator(
         paymentPayload,
-        paymentRequirements: paymentPayload?.accepted ?? buildReqs(),
-        clientKey: pre.clientKey,
-    };
-}
-
-async function finalizeSignalMcpBilling(payment, payload) {
-    const meta = payment.clientMeta;
-    const billing = await consumePaywall({
-        wallet: payment.wallet,
-        tool: "get_btc_usdc_signal",
-        clientKey: payment.clientKey,
-        signalPayload: payload,
-        mcpClientId: payment.mcpClientId,
-        ip: meta?.ip,
-        userAgent: meta?.userAgent,
-    });
-
-    if (billing.hold_free) {
-        console.log("[F#40N] HOLD free MCP — no signal charge");
-        return { ...payment, quotaBypass: false, holdFree: true };
-    }
-
-    if (billing.consumed) {
-        return {
-            ...payment,
-            quotaBypass: billing.method === "quota",
-            freeBypass: billing.method === "free",
-            introBypass: billing.method === "intro",
-            passBypass: billing.method === "pass",
-        };
-    }
-
-    if (payment.deferSettle && payment.paymentPayload && !payment.x402Settled) {
-        if (isTerminalX402FunnelEnabled()) {
-            const result = await settleTerminalPayment({
-                paymentPayload: payment.paymentPayload,
-                serverRequirements: payment.paymentRequirements,
-            });
-            if (result.ok) {
-                console.log(
-                    `[F85N] get_btc_usdc_signal settled: ${result.txHash || "simulated"}`,
-                );
-                recordX402Event({
-                    event_type: "payment_settled",
-                    tool: "get_btc_usdc_signal",
-                    payer_wallet: payment.wallet,
-                    agent_id: payment.wallet,
-                    network:
-                        networkFromPayload(payment.paymentPayload) ||
-                        payment.paymentRequirements?.network ||
-                        null,
-                    price_usdc: SIGNAL_PRICE_USDC,
-                    tx_hash: result.txHash || null,
-                });
-            }
-        } else {
-            settlePaymentWithFacilitator(
-                payment.paymentPayload,
-                payment.paymentRequirements,
-            ).then((result) => {
-                if (result.success) {
-                    console.log(
-                        `[F#32N] 💰 get_btc_usdc_signal settled: ${result.txHash || "simulated"}`,
-                    );
-                    recordX402Event({
-                        event_type: "payment_settled",
-                        tool: "get_btc_usdc_signal",
-                        payer_wallet: payment.wallet,
-                        agent_id: payment.wallet,
-                        network:
-                            networkFromPayload(payment.paymentPayload) ||
-                            payment.paymentRequirements?.network ||
-                            null,
-                        price_usdc: SIGNAL_PRICE_USDC,
-                        tx_hash: result.txHash || null,
-                    });
-                }
+        paymentPayload?.accepted ?? buildReqs(),
+    ).then((result) => {
+        if (result.success) {
+            console.log(
+                `[F#32N] 💰 ${tool} settled: ${result.txHash || "simulated"}`,
+            );
+            recordX402Event({
+                event_type: "payment_settled",
+                tool,
+                payer_wallet: wallet,
+                agent_id: wallet,
+                network: networkFromPayload(paymentPayload),
+                price_usdc: priceUsdc,
+                tx_hash: result.txHash || null,
             });
         }
-    }
-
-    return payment;
+    });
+    return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
 }
 
 export function createMcpServer() {
@@ -575,496 +387,97 @@ export function createMcpServer() {
         onchainProof: TERMINAL_ONCHAIN_PROOF,
     };
     registerGrowthTools(server, freeCtx);
-    registerVaultProofTool(server, freeCtx);
     registerTerminalSwapTools(server, freeCtx);
 
+    // F99N — sole paid MCP tool: get_liq_radar (+ optional symbol)
     server.registerTool(
-        "get_btc_usdc_signal",
-        {
-            description: toolDescriptionFromCard(
-                "get_btc_usdc_signal",
-                "Should I enter BTC now? Real-time cycle state from a live Hyperliquid vault.",
-            ),
-            inputSchema: {
-                x_payment: z
-                    .string()
-                    .optional()
-                    .describe(
-                        "Optional x402 payment payload (base64 JSON). Omit to receive 402 payment instructions.",
-                    ),
-                full_payload: z
-                    .boolean()
-                    .optional()
-                    .describe("If true, return full JSON; default summary only."),
-                agent_wallet: z
-                    .string()
-                    .optional()
-                    .describe(
-                        "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota covers this tool's credit weight.",
-                    ),
-            },
-        },
-        async ({ x_payment, full_payload, agent_wallet }, extra) => {
-            let paymentRaw = x_payment;
-            if (!paymentRaw && extra?.sessionId) {
-                paymentRaw = sessionPayments.get(extra.sessionId);
-            }
-
-            const payment = await processPaidToolPayment({
-                tool: "get_btc_usdc_signal",
-                priceUsdc: SIGNAL_PRICE_USDC,
-                paymentRaw,
-                agent_wallet,
-                sessionId: extra?.sessionId,
-                parse: parsePaymentHeader,
-                verify: verifyPayment,
-                buildRequired: buildPaymentRequired,
-                buildRequirements: buildPaymentRequirements,
-            });
-            if (payment.errorResult) {
-                return payment.errorResult;
-            }
-
-            if (!INTERNAL_SECRET) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify({
-                                error: "MCP server missing NATTSQUARE_INTERNAL_SECRET",
-                            }),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            try {
-                const payload = await fetchSignalPayload(M2M_URL, INTERNAL_SECRET);
-                const billed = await finalizeSignalMcpBilling(payment, payload);
-                const out = full_payload ? payload : summarizeCyclePayload(payload);
-                onToolCallRecorded({
-                    wallet: billed.wallet,
-                    tool: "get_btc_usdc_signal",
-                    priceUsdc: billed.holdFree ? 0 : SIGNAL_PRICE_USDC,
-                    sessionId: extra?.sessionId,
-                    betaBypass: billed.betaBypass,
-                    quotaBypass: billed.quotaBypass,
-                });
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                {
-                                    ok: true,
-                                    source: "hypernatt_mimo_cycle_state_v1",
-                                    public_url: PUBLIC_SIGNAL_URL,
-                                    data: out,
-                                },
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                };
-            } catch (err) {
-                const message = err instanceof Error ? err.message : String(err);
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify({
-                                error: "signal_fetch_failed",
-                                message,
-                            }),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-        },
-    );
-
-    server.registerTool(
-        "get_mm_hunt_score",
-        {
-            description: toolDescriptionFromCard(
-                "get_mm_hunt_score",
-                "Is the Market Maker hunting your position? Live liquidation pressure score.",
-            ),
-            inputSchema: {
-                x_payment: z
-                    .string()
-                    .optional()
-                    .describe(
-                        "Optional x402 payment payload (base64 JSON). Omit to receive 402 payment instructions.",
-                    ),
-                full_payload: z
-                    .boolean()
-                    .optional()
-                    .describe("If true, return full JSON with inputs; default summary only."),
-                agent_wallet: z
-                    .string()
-                    .optional()
-                    .describe("Optional EVM wallet (0x + 40 hex). Skips x402 when quota covers credit weight."),
-            },
-        },
-        async ({ x_payment, full_payload, agent_wallet }, extra) => {
-            let paymentRaw = x_payment;
-            if (!paymentRaw && extra?.sessionId) {
-                paymentRaw = sessionPayments.get(extra.sessionId);
-            }
-
-            const payment = await processPaidToolPayment({
-                tool: "get_mm_hunt_score",
-                priceUsdc: MM_HUNT_PRICE_USDC,
-                paymentRaw,
-                agent_wallet,
-                sessionId: extra?.sessionId,
-                parse: parseMmHuntPaymentHeader,
-                verify: verifyMmHuntPayment,
-                buildRequired: buildMmHuntPaymentRequired,
-                buildRequirements: buildMmHuntPaymentRequirements,
-            });
-            if (payment.errorResult) {
-                return payment.errorResult;
-            }
-
-            if (!INTERNAL_SECRET) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify({
-                                error: "MCP server missing NATTSQUARE_INTERNAL_SECRET",
-                            }),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            try {
-                const payload = await fetchMmHuntPayload(
-                    M2M_URL,
-                    INTERNAL_SECRET,
-                    full_payload === true,
-                );
-                const out = full_payload ? payload : summarizeMmHuntPayload(payload);
-                onToolCallRecorded({
-                    wallet: payment.wallet,
-                    tool: "get_mm_hunt_score",
-                    priceUsdc: MM_HUNT_PRICE_USDC,
-                    sessionId: extra?.sessionId,
-                    betaBypass: payment.betaBypass,
-                    quotaBypass: payment.quotaBypass,
-                });
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                {
-                                    ok: true,
-                                    source: "hypernatt_mm_hunt_score_v1",
-                                    public_url: PUBLIC_MM_HUNT_URL,
-                                    data: out,
-                                },
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                };
-            } catch (err) {
-                const message = err instanceof Error ? err.message : String(err);
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify({
-                                error: "mm_hunt_fetch_failed",
-                                message,
-                            }),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-        },
-    );
-
-    server.registerTool(
-        "get_similarity_match",
-        {
-            description: toolDescriptionFromCard(
-                "get_similarity_match",
-                "What happened last time BTC looked like this? Top-3 historical matches.",
-            ),
-            inputSchema: {
-                x_payment: z
-                    .string()
-                    .optional()
-                    .describe(
-                        "Optional x402 payment payload (base64 JSON). Omit to receive 402 payment instructions.",
-                    ),
-                full_payload: z
-                    .boolean()
-                    .optional()
-                    .describe(
-                        "If true, return full JSON with feature vectors; default summary only.",
-                    ),
-                agent_wallet: z
-                    .string()
-                    .optional()
-                    .describe("Optional EVM wallet (0x + 40 hex). Skips x402 when quota covers credit weight."),
-            },
-        },
-        async ({ x_payment, full_payload, agent_wallet }, extra) => {
-            let paymentRaw = x_payment;
-            if (!paymentRaw && extra?.sessionId) {
-                paymentRaw = sessionPayments.get(extra.sessionId);
-            }
-
-            const payment = await processPaidToolPayment({
-                tool: "get_similarity_match",
-                priceUsdc: SIMILARITY_PRICE_USDC,
-                paymentRaw,
-                agent_wallet,
-                sessionId: extra?.sessionId,
-                parse: parseSimilarityPaymentHeader,
-                verify: verifySimilarityPayment,
-                buildRequired: buildSimilarityPaymentRequired,
-                buildRequirements: buildSimilarityPaymentRequirements,
-            });
-            if (payment.errorResult) {
-                return payment.errorResult;
-            }
-
-            if (!INTERNAL_SECRET) {
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify({
-                                error: "MCP server missing NATTSQUARE_INTERNAL_SECRET",
-                            }),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-
-            try {
-                const payload = await fetchSimilarityPayload(
-                    M2M_URL,
-                    INTERNAL_SECRET,
-                    full_payload === true,
-                );
-                const out = full_payload
-                    ? payload
-                    : summarizeSimilarityPayload(payload);
-                onToolCallRecorded({
-                    wallet: payment.wallet,
-                    tool: "get_similarity_match",
-                    priceUsdc: SIMILARITY_PRICE_USDC,
-                    sessionId: extra?.sessionId,
-                    betaBypass: payment.betaBypass,
-                    quotaBypass: payment.quotaBypass,
-                });
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify(
-                                {
-                                    ok: true,
-                                    source: "hypernatt_similarity_match_v1",
-                                    public_url: PUBLIC_SIMILARITY_MATCH_URL,
-                                    data: out,
-                                },
-                                null,
-                                2,
-                            ),
-                        },
-                    ],
-                };
-            } catch (err) {
-                const message = err instanceof Error ? err.message : String(err);
-                return {
-                    content: [
-                        {
-                            type: "text",
-                            text: JSON.stringify({
-                                error: "similarity_match_fetch_failed",
-                                message,
-                            }),
-                        },
-                    ],
-                    isError: true,
-                };
-            }
-        },
-    );
-
-    // F#33N — paid data products (liq radar + MM trap state)
-    const registerDataProductTool = (toolName, description, x402, sourceTag, publicUrl) => {
-        server.registerTool(
-            toolName,
-            {
-                description,
-                inputSchema: {
-                    x_payment: z
-                        .string()
-                        .optional()
-                        .describe(
-                            "Base64 x402 USDC payment on Base (eip155:8453). Omit on first call to receive 402 payment instructions; retry with header after paying $0.001/call.",
-                        ),
-                    agent_wallet: z
-                        .string()
-                        .optional()
-                        .describe(
-                            "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota balance covers this tool's credit weight (1 credit per Decision Core tool).",
-                        ),
-                },
-            },
-            async ({ x_payment, agent_wallet }, extra) => {
-                let paymentRaw = x_payment;
-                if (!paymentRaw && extra?.sessionId) {
-                    paymentRaw = sessionPayments.get(extra.sessionId);
-                }
-
-                const payment = await processPaidToolPayment({
-                    tool: toolName,
-                    priceUsdc: x402.priceUsdc,
-                    paymentRaw,
-                    agent_wallet,
-                    sessionId: extra?.sessionId,
-                    parse: x402.parsePaymentHeader,
-                    verify: x402.verifyPayment,
-                    buildRequired: x402.buildPaymentRequired,
-                    buildRequirements: x402.buildPaymentRequirements,
-                });
-                if (payment.errorResult) {
-                    return payment.errorResult;
-                }
-
-                if (!INTERNAL_SECRET) {
-                    return jsonToolResult(
-                        { error: "MCP server missing NATTSQUARE_INTERNAL_SECRET" },
-                        true,
-                    );
-                }
-
-                try {
-                    const payload = await x402.fetchPayload(M2M_URL, INTERNAL_SECRET);
-                    onToolCallRecorded({
-                        wallet: payment.wallet,
-                        tool: toolName,
-                        priceUsdc: x402.priceUsdc,
-                        sessionId: extra?.sessionId,
-                        betaBypass: payment.betaBypass,
-                    quotaBypass: payment.quotaBypass,
-                    });
-                    return jsonToolResult({
-                        ok: true,
-                        source: sourceTag,
-                        public_url: publicUrl,
-                        data: payload,
-                    });
-                } catch (err) {
-                    const message = err instanceof Error ? err.message : String(err);
-                    return jsonToolResult(
-                        { error: `${toolName}_fetch_failed`, message },
-                        true,
-                    );
-                }
-            },
-        );
-    };
-
-    registerDataProductTool(
         "get_liq_radar",
-        toolDescriptionFromCard(
-            "get_liq_radar",
-            "Where will the next BTC liquidation cascade hit? Raw cluster data.",
-        ),
-        LIQ_RADAR_X402,
-        "hypernatt_liq_radar_v1",
-        PUBLIC_LIQ_RADAR_URL,
-    );
-    registerDataProductTool(
-        "get_mm_trap_state",
-        toolDescriptionFromCard(
-            "get_mm_trap_state",
-            "Is the MM trapping right now? Flagship trap/sweep/reclaim weather: MM_TRAP_ACTIVE, hunt direction, sweep zones, chart_verdicts. 1 credit.",
-        ),
-        MM_TRAP_STATE_X402,
-        "hypernatt_mm_trap_state_v1",
-        PUBLIC_MM_TRAP_STATE_URL,
-    );
+        {
+            description: toolDescriptionFromCard(
+                "get_liq_radar",
+                "Liquidation radar — multi-crypto whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC).",
+            ),
+            inputSchema: {
+                x_payment: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Base64 x402 USDC payment on Base (eip155:8453). Omit on first call to receive 402 payment instructions; retry with header after paying $0.001/call.",
+                    ),
+                agent_wallet: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota balance covers this tool's credit weight.",
+                    ),
+                symbol: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Optional crypto symbol (BTC ETH SOL BNB XRP HYPE ZEC). Default BTC when omitted.",
+                    ),
+            },
+        },
+        async ({ x_payment, agent_wallet, symbol }, extra) => {
+            let paymentRaw = x_payment;
+            if (!paymentRaw && extra?.sessionId) {
+                paymentRaw = sessionPayments.get(extra.sessionId);
+            }
 
-    // F58N — trading hub pack
-    registerDataProductTool(
-        "get_trading_hub",
-        toolDescriptionFromCard(
-            "get_trading_hub",
-            "One-stop BTC trading context: TA + orderflow + liq both sides + hunt + regime. Agent chooses when to refresh.",
-        ),
-        TRADING_HUB_X402,
-        "hypernatt_trading_hub_v1",
-        PUBLIC_TRADING_HUB_URL,
-    );
-    registerDataProductTool(
-        "get_ta_snapshot",
-        toolDescriptionFromCard(
-            "get_ta_snapshot",
-            "BTC TA snapshot — RSI/MACD/ADX/ATR/VWAP/BB.",
-        ),
-        TA_SNAPSHOT_X402,
-        "hypernatt_ta_snapshot_v1",
-        PUBLIC_TA_SNAPSHOT_URL,
-    );
-    registerDataProductTool(
-        "get_orderflow",
-        toolDescriptionFromCard(
-            "get_orderflow",
-            "BTC orderflow — CVD, OB imbalance, icebergs, taker, funding, OI.",
-        ),
-        ORDERFLOW_X402,
-        "hypernatt_orderflow_v1",
-        PUBLIC_ORDERFLOW_URL,
-    );
-    registerDataProductTool(
-        "get_regime",
-        toolDescriptionFromCard(
-            "get_regime",
-            "BTC regime — season/trend, ADX, session bucket, structure zone.",
-        ),
-        REGIME_X402,
-        "hypernatt_regime_v1",
-        PUBLIC_REGIME_URL,
-    );
-    registerDataProductTool(
-        "get_ignition",
-        toolDescriptionFromCard(
-            "get_ignition",
-            "BTC ignition — VID / micro entry / vol spike / ADX RoC.",
-        ),
-        IGNITION_X402,
-        "hypernatt_ignition_v1",
-        PUBLIC_IGNITION_URL,
-    );
-    registerDataProductTool(
-        "get_entry_quality",
-        toolDescriptionFromCard(
-            "get_entry_quality",
-            "BTC entry-quality flags — FOMO / anti-top / early / exhaustion / clean / whale.",
-        ),
-        ENTRY_QUALITY_X402,
-        "hypernatt_entry_quality_v1",
-        PUBLIC_ENTRY_QUALITY_URL,
+            const payment = await processPaidToolPayment({
+                tool: "get_liq_radar",
+                priceUsdc: LIQ_RADAR_X402.priceUsdc,
+                paymentRaw,
+                agent_wallet,
+                sessionId: extra?.sessionId,
+                parse: LIQ_RADAR_X402.parsePaymentHeader,
+                verify: LIQ_RADAR_X402.verifyPayment,
+                buildRequired: LIQ_RADAR_X402.buildPaymentRequired,
+                buildRequirements: LIQ_RADAR_X402.buildPaymentRequirements,
+            });
+            if (payment.errorResult) {
+                return payment.errorResult;
+            }
+
+            if (!INTERNAL_SECRET) {
+                return jsonToolResult(
+                    { error: "MCP server missing NATTSQUARE_INTERNAL_SECRET" },
+                    true,
+                );
+            }
+
+            try {
+                const fetchOpts =
+                    symbol != null && String(symbol).trim() !== ""
+                        ? { symbol: String(symbol).trim() }
+                        : undefined;
+                const payload = await LIQ_RADAR_X402.fetchPayload(
+                    M2M_URL,
+                    INTERNAL_SECRET,
+                    fetchOpts,
+                );
+                onToolCallRecorded({
+                    wallet: payment.wallet,
+                    tool: "get_liq_radar",
+                    priceUsdc: LIQ_RADAR_X402.priceUsdc,
+                    sessionId: extra?.sessionId,
+                    betaBypass: payment.betaBypass,
+                    quotaBypass: payment.quotaBypass,
+                });
+                return jsonToolResult({
+                    ok: true,
+                    source: "hypernatt_liq_radar_v1",
+                    public_url: PUBLIC_LIQ_RADAR_URL,
+                    data: payload,
+                });
+            } catch (err) {
+                const message = err instanceof Error ? err.message : String(err);
+                return jsonToolResult(
+                    { error: "get_liq_radar_fetch_failed", message },
+                    true,
+                );
+            }
+        },
     );
 
     return server;
@@ -1150,20 +563,8 @@ export function mountMcpSignalRoutes(app) {
             version: TERMINAL_VERSION,
             tools: [
                 "get_agent_manifest",
-                "get_vault_proof",
-                "get_mm_trap_state",
-                "get_btc_usdc_signal",
-                "get_mm_hunt_score",
-                "get_similarity_match",
                 "get_liq_radar",
-                "get_trading_hub",
-                "get_ta_snapshot",
-                "get_orderflow",
-                "get_regime",
-                "get_ignition",
-                "get_entry_quality",
                 "swap_via_nattswap",
-                "swap_quote",
             ],
             transports: {
                 sse: "/mcp/sse",
@@ -1171,30 +572,11 @@ export function mountMcpSignalRoutes(app) {
                 streamable_http: "/mcp/protocol",
             },
             x402: {
-                signal: {
-                    price_usdc: SIGNAL_PRICE_USDC,
-                    pay_to: SIGNAL_PAYTO,
-                    public_url: PUBLIC_SIGNAL_URL,
-                },
-                mm_hunt: {
-                    price_usdc: MM_HUNT_PRICE_USDC,
-                    pay_to: MM_HUNT_PAYTO,
-                    public_url: PUBLIC_MM_HUNT_URL,
-                },
-                similarity_match: {
-                    price_usdc: SIMILARITY_PRICE_USDC,
-                    pay_to: SIMILARITY_PAYTO,
-                    public_url: PUBLIC_SIMILARITY_MATCH_URL,
-                },
                 liq_radar: {
                     price_usdc: LIQ_RADAR_X402.priceUsdc,
                     pay_to: LIQ_RADAR_X402.payTo,
                     public_url: PUBLIC_LIQ_RADAR_URL,
-                },
-                mm_trap_state: {
-                    price_usdc: MM_TRAP_STATE_X402.priceUsdc,
-                    pay_to: MM_TRAP_STATE_X402.payTo,
-                    public_url: PUBLIC_MM_TRAP_STATE_URL,
+                    symbols: ["BTC", "ETH", "SOL", "BNB", "XRP", "HYPE", "ZEC"],
                 },
                 network: "eip155:8453",
             },
@@ -1202,13 +584,7 @@ export function mountMcpSignalRoutes(app) {
             stats_url: "https://hypernatt.com/stats",
             ecosystem_note:
                 "HyperNatt platform at hypernatt.com; hypernatt-terminal MCP is one agent integration brick.",
-            products: [
-                "hypernatt_mimo_cycle_state_v1",
-                "hypernatt_mm_hunt_score_v1",
-                "hypernatt_similarity_match_v1",
-                "hypernatt_liq_radar_v1",
-                "hypernatt_mm_trap_state_v1",
-            ],
+            products: ["hypernatt_liq_radar_v1"],
         });
     });
 
@@ -1356,25 +732,10 @@ export function mountMcpSignalRoutes(app) {
     });
 
     console.log(
-        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 9 tools`,
+        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 3 tools`,
     );
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,
-    );
-    console.log(
-        `[MCP Terminal] x402 get_mm_trap_state @ $${MM_TRAP_STATE_X402.priceUsdc} → ${MM_TRAP_STATE_X402.payTo}`,
-    );
-    console.log(
-        `[MCP Terminal] x402 F58N hub @ $${TRADING_HUB_X402.priceUsdc} → ${TRADING_HUB_X402.payTo}`,
-    );
-    console.log(
-        `[MCP Terminal] x402 get_btc_usdc_signal @ $${SIGNAL_PRICE_USDC} → ${SIGNAL_PAYTO}`,
-    );
-    console.log(
-        `[MCP Terminal] x402 get_mm_hunt_score @ $${MM_HUNT_PRICE_USDC} → ${MM_HUNT_PAYTO}`,
-    );
-    console.log(
-        `[MCP Terminal] x402 get_similarity_match @ $${SIMILARITY_PRICE_USDC} → ${SIMILARITY_PAYTO}`,
     );
     console.log("[MCP Terminal] SSE: /sse + /messages | Streamable: /protocol");
 }

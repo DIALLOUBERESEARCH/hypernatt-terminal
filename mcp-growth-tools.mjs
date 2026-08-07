@@ -39,7 +39,7 @@ export function registerGrowthTools(server, ctx) {
         {
             description: toolDescriptionFromCard(
                 "get_agent_manifest",
-                "Start here: catalog of 14 terminal tools with prices, live usage stats, and proof of edge from our live trading vault. Free.",
+                "Start here: catalog of 3 terminal tools with prices, live usage stats, and journeys. Free.",
             ),
             inputSchema: {
                 locale: z

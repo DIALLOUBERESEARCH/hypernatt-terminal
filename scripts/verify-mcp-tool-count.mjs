@@ -1,5 +1,5 @@
 /**
- * Build-time gate: server-card.json must list exactly 15 terminal tools (F58N).
+ * Build-time gate: server-card.json must list exactly 3 terminal tools (F99N).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -9,23 +9,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const cardPath = path.join(root, "server-card.json");
 
-const EXPECTED_COUNT = 15;
+const EXPECTED_COUNT = 3;
 const EXPECTED_TOOLS = [
     "get_agent_manifest",
-    "get_vault_proof",
-    "get_btc_usdc_signal",
-    "get_mm_hunt_score",
-    "get_similarity_match",
     "get_liq_radar",
-    "get_mm_trap_state",
-    "get_trading_hub",
-    "get_ta_snapshot",
-    "get_orderflow",
-    "get_regime",
-    "get_ignition",
-    "get_entry_quality",
     "swap_via_nattswap",
-    "swap_quote",
 ].sort();
 
 const card = JSON.parse(fs.readFileSync(cardPath, "utf8"));

@@ -95,13 +95,23 @@ export function createDataProductX402(cfg) {
         );
     }
 
-    async function fetchPayload(m2mBaseUrl, internalSecret) {
+    /**
+     * @param {string} m2mBaseUrl
+     * @param {string} internalSecret
+     * @param {{ symbol?: string }} [opts] — F99N: optional symbol for get_liq_radar (?symbol=)
+     */
+    async function fetchPayload(m2mBaseUrl, internalSecret, opts) {
         const url = `${m2mBaseUrl.replace(/\/$/, "")}${cfg.internalPath}`;
+        const params = {};
+        if (opts?.symbol != null && String(opts.symbol).trim() !== "") {
+            params.symbol = String(opts.symbol).trim();
+        }
         const response = await axios.get(url, {
             headers: {
                 "X-M2M-Internal-Secret": internalSecret,
                 Accept: "application/json",
             },
+            ...(Object.keys(params).length ? { params } : {}),
             timeout: 25000,
         });
         return response.data;
@@ -123,7 +133,7 @@ export const LIQ_RADAR_X402 = createDataProductX402({
     priceEnv: "LIQ_RADAR_X402_PRICE_USDC",
     payToEnv: "LIQ_RADAR_X402_PAYTO",
     description:
-        "Where will the next BTC liquidation cascade hit? Raw cluster data via MCP",
+        "Liquidation radar (BTC ETH SOL BNB XRP HYPE ZEC; omit=BTC) via MCP",
     internalPath: "/api/m2m/internal/liq-radar",
 });
 

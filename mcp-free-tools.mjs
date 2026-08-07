@@ -1,27 +1,11 @@
 /**
  * Phase 0 — hypernatt-terminal free MCP tools (thin m2m proxy).
+ * F99N — MCP surface: swap_via_nattswap only (swap_quote + vault_proof unregistered).
  */
 import axios from "axios";
 import { z } from "zod";
 import { toolDescriptionFromCard } from "./server-card-tools.mjs";
 import { validateTerminalSwap, terminalSwapPolicyMode } from "./base-tokens.mjs";
-
-/** F#34N — Fetch proof-of-edge from m2m internal (fail-open, never blocking). */
-async function fetchProofOfEdge(m2mUrl, internalSecret) {
-    try {
-        const base = m2mUrl.replace(/\/$/, "");
-        const resp = await axios.get(`${base}/api/m2m/internal/proof-of-edge`, {
-            headers: { "X-M2M-Internal-Secret": internalSecret },
-            timeout: 4000,
-        });
-        if (resp.data?.ok && resp.data?.proof_of_edge) {
-            return resp.data.proof_of_edge;
-        }
-        return null;
-    } catch {
-        return null;
-    }
-}
 
 const swapParamsSchema = {
     fromChain: z
@@ -80,7 +64,7 @@ function rejectInvalidSwapParams(params) {
 }
 
 /**
- * Register free tools #1–2 (swap) on MCP server.
+ * Register free swap tool on MCP server (F99N: swap_via_nattswap only).
  */
 export function registerTerminalSwapTools(server, ctx) {
     const { m2mUrl, internalSecret, onchainProof } = ctx;
@@ -122,73 +106,11 @@ export function registerTerminalSwapTools(server, ctx) {
             }
         },
     );
-
-    server.registerTool(
-        "swap_quote",
-        {
-            description: toolDescriptionFromCard(
-                "swap_quote",
-                "Raw Li.Fi swap quote JSON. Cross-chain. Free — no x402.",
-            ),
-            inputSchema: swapParamsSchema,
-        },
-        async (params) => {
-            if (!internalSecret) {
-                return toolTextResult({ error: "MCP missing internal secret" }, true);
-            }
-            const rejected = rejectInvalidSwapParams(params);
-            if (rejected) return rejected;
-            try {
-                const data = await fetchInternalSwapQuote(m2mUrl, internalSecret, params);
-                return toolTextResult({ ok: true, source: "hypernatt-terminal", data });
-            } catch (err) {
-                const message = err instanceof Error ? err.message : String(err);
-                return toolTextResult({ error: "swap_quote_failed", message }, true);
-            }
-        },
-    );
 }
 
 /**
- * Register free vault proof tool (Decision Core transparency).
+ * F99N — no-op: get_vault_proof removed from MCP surface (HTTP demount separate).
  */
-export function registerVaultProofTool(server, ctx) {
-    const { m2mUrl, internalSecret } = ctx;
-    const base = () => m2mUrl.replace(/\/$/, "");
-
-    server.registerTool(
-        "get_vault_proof",
-        {
-            description: toolDescriptionFromCard(
-                "get_vault_proof",
-                "Free proof we eat our own cooking: on-chain vault address, public URLs, signed cycle hash.",
-            ),
-            inputSchema: {},
-        },
-        async () => {
-            if (!internalSecret) {
-                return toolTextResult({ error: "MCP missing internal secret" }, true);
-            }
-            try {
-                const response = await axios.get(`${base()}/api/m2m/internal/vault-proof`, {
-                    headers: m2mHeaders(internalSecret),
-                    timeout: 15000,
-                });
-                return toolTextResult({
-                    ok: true,
-                    source: "hypernatt-terminal",
-                    data: response.data,
-                    proof_of_edge: await fetchProofOfEdge(m2mUrl, internalSecret),
-                });
-            } catch (err) {
-                const message = err instanceof Error ? err.message : String(err);
-                const status = err.response?.status;
-                const body = err.response?.data;
-                return toolTextResult(
-                    { error: "vault_proof_failed", status, message, body },
-                    true,
-                );
-            }
-        },
-    );
+export function registerVaultProofTool(_server, _ctx) {
+    // intentionally empty — keep export so older call sites do not crash
 }

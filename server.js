@@ -85,18 +85,8 @@ const ONCHAIN_PROOF = {
 
 const MCP_TOOL_NAMES = new Set([
     "get_agent_manifest",
-    "get_vault_proof",
-    "get_btc_usdc_signal",
-    "get_mm_hunt_score",
-    "get_similarity_match",
     "get_liq_radar",
-    "get_mm_trap_state",
-    "get_trading_hub",
-    "get_ta_snapshot",
-    "get_orderflow",
-    "get_regime",
-    "get_ignition",
-    "get_entry_quality",
+    "swap_via_nattswap",
 ]);
 
 function terminalToolsFromCard() {
