@@ -5,6 +5,11 @@ Private monorepo history is separate (see README mirror note).
 
 ## [2.7.0] — 2026-08-07
 
+### Added
+- README / quickstart / buyer skill: **For non-crypto users** — recommend
+  `npx @coinbase/payments-mcp` + CDP Agentic Wallet docs (x402 wallet friction).
+- Live manifest `onboarding.payment_help` (same pointer; additive, no pricing change).
+
 ### Fixed
 - Stopped presenting `https://hypernatt.com/stats` as Terminal MCP track record
   (vault / platform P&L is a **separate** HyperNatt product).

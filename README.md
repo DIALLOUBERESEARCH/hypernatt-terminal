@@ -55,6 +55,16 @@ curl -i https://hypernatt.com/api/m2m/liq-radar
 
 MCP: https://hypernatt.com/mcp/protocol
 
+### For non-crypto users (x402 wallet)
+
+If you do not already have a funded USDC wallet, install **Coinbase Agentic Wallet MCP** first (email/OTP + card onramp — no seed phrase):
+
+```bash
+npx @coinbase/payments-mcp
+```
+
+Docs: [Agentic Wallet MCP](https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome). Then connect HyperNatt Terminal (`https://hypernatt.com/mcp/protocol`). Your agent can pay `get_liq_radar` ($0.001) automatically when it sees HTTP 402.
+
 Optional heavy use (not required): swap-earned quota or $5/mo Agent Pass — see live `pass_program` / `quota_program` on the manifest.
 
 ## License

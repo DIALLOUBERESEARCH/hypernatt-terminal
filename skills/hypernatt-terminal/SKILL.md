@@ -55,8 +55,23 @@ Whitelist: **BTC ETH SOL BNB XRP HYPE ZEC** (omit symbol = BTC).
 
 ---
 
+## Wallet / x402 (non-crypto users)
+
+Paid calls need a USDC buyer wallet. Prefer Coinbase **Agentic Wallet MCP** (email/OTP + fiat onramp, no seed phrase):
+
+```bash
+npx @coinbase/payments-mcp
+```
+
+Docs: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
+
+Then add HyperNatt Terminal MCP URL `https://hypernatt.com/mcp/protocol`. On `402 Payment Required`, the Agentic Wallet pays automatically within spending limits.
+
+---
+
 ## Suggested flow
 
-1. `get_agent_manifest`
-2. `get_liq_radar` (optional `symbol`)
-3. Optional: `swap_via_nattswap` when the agent needs to move funds
+1. Ensure a funded x402 wallet (Agentic Wallet MCP or existing USDC hot wallet)
+2. `get_agent_manifest`
+3. `get_liq_radar` (optional `symbol`)
+4. Optional: `swap_via_nattswap` when the agent needs to move funds

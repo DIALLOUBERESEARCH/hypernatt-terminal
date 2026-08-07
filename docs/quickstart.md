@@ -8,6 +8,16 @@
 
 **Agents:** 3 tools · v2.7.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
 
+### Wallet first (if you are not crypto-native)
+
+`get_liq_radar` returns HTTP **402** until paid in USDC. Skip seed phrases — use Coinbase Agentic Wallet:
+
+```bash
+npx @coinbase/payments-mcp
+```
+
+Then fund with card / Apple Pay / Google Pay and connect Terminal. Guide: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
+
 ---
 
 ## Star path (F#99N)
