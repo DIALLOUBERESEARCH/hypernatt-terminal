@@ -1,8 +1,8 @@
 {
   "name": "hypernatt-terminal",
-  "displayName": "HyperNatt Terminal",
+  "displayName": "HyperNatt Terminal — Liq Radar + Swap for AI Agents",
   "homepage": "https://hypernatt.com",
-  "description": "HyperNatt Terminal — agent MCP: multi-crypto liquidation radar + Li.Fi cross-chain swap. get_liq_radar whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.\n\nPricing: flat $0.001/call via x402 (Base + Solana) on get_liq_radar. Free: get_agent_manifest. Swap free at MCP layer.\n\nDocs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
+  "description": "HyperNatt Terminal — agent MCP: multi-crypto liquidation radar + Li.Fi cross-chain swap. get_liq_radar whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC). Not a generic market-data wrapper — read-only liquidation context, not trade advice. No custody.\n\nFull HyperNatt platform: https://hypernatt.com — this MCP is one agent-facing brick.\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.\n\nPricing: free get_agent_manifest; get_liq_radar $0.001/call via x402 (Base + Solana). Swap free at MCP layer.\n\nDocs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
   "url": "https://hypernatt.com/mcp/protocol",
   "repository": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
 }

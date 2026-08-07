@@ -13,7 +13,7 @@ Private monorepo history is separate (see README mirror note).
 - Aligned public docs/examples with live surface: **3 tools** only
   (`get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`).
 - Purged leftover trap/signal examples and demounted tool docs from the public mirror.
-- Payment-error copy: Agent Pass **$5**, free tools = manifest + swap (no vault_proof / $19).
+- Payment-error copy: Agent Pass **$5**, free tools = manifest + swap (no vault_proof / legacy prices).
 - npm audit: bumped axios + overrides — **0 vulnerabilities** on the MCP package.
 
 ### Removed
