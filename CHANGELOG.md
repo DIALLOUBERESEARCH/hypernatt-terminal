@@ -6,6 +6,9 @@ Private monorepo history is separate (see README mirror note).
 ## [2.7.0] — 2026-08-07
 
 ### Added
+- **F#104N GTM DX:** README Quick start (30s) Claude Connectors table; 5-client
+  integrations table; `examples/hyperliquid/read_terrain.py` (read-only terrain);
+  AgentKit/CDP buyer path for `liq-radar`; [cdp-bazaar-checklist.md](docs/cdp-bazaar-checklist.md).
 - README / quickstart / buyer skill: **For non-crypto users** — recommend
   `npx @coinbase/payments-mcp` + CDP Agentic Wallet docs (x402 wallet friction).
 - Live manifest `onboarding.payment_help` (same pointer; additive, no pricing change).

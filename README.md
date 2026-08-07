@@ -17,6 +17,21 @@ Full HyperNatt platform (vault, assistant): https://hypernatt.com — this repo 
 
 > Public mirror synced from a private monorepo. History here is mirror commits.
 
+## Quick start (30 seconds)
+
+No install for the hosted MCP. In **Claude → Settings → Connectors → Add custom connector**:
+
+| Field | Value |
+|-------|-------|
+| Name | HyperNatt Terminal |
+| URL | `https://hypernatt.com/mcp/protocol` |
+
+Then ask:
+
+> Call get_agent_manifest, then get_liq_radar — where is the nearest liquidation cluster on the forced-order map? Do not treat this as a trade signal.
+
+More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/integrations.md).
+
 ## What HyperNatt Terminal gives your agent
 
 A map of **forced orders**: where leveraged positions will be liquidated if price reaches them (clusters, OI build-up, observed liquidations).
@@ -82,7 +97,10 @@ curl -i https://hypernatt.com/api/m2m/liq-radar
 | Step | Link |
 |------|------|
 | Quickstart | [docs/quickstart.md](docs/quickstart.md) |
+| Integrations (5 clients + AgentKit) | [docs/integrations.md](docs/integrations.md) |
+| HL terrain example (read-only) | [examples/hyperliquid/read_terrain.py](examples/hyperliquid/read_terrain.py) |
 | Honest interpret example | [examples/liq_radar_interpret.py](examples/liq_radar_interpret.py) |
+| CDP Bazaar checklist | [docs/cdp-bazaar-checklist.md](docs/cdp-bazaar-checklist.md) |
 | Examples | [examples/](examples/) |
 | Security | [SECURITY.md](SECURITY.md) |
 | Buyer skill (use the MCP) | [skills/hypernatt-terminal/SKILL.md](skills/hypernatt-terminal/SKILL.md) |

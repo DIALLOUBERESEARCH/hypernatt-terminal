@@ -51,13 +51,34 @@ Agents often paste **public addresses** they cannot sign. Quotes succeed but
 
 ## Coinbase CDP / x402 buyer wallet
 
+### Pay for forced-order map (`get_liq_radar`)
+
+```text
+GET https://hypernatt.com/api/m2m/liq-radar?symbol=BTC
+→ 200 JSON terrain  OR  402 x402 challenge
+→ pay USDC (Base or Solana) → retry with X-PAYMENT
+```
+
+```bash
+curl -i "https://hypernatt.com/api/m2m/liq-radar?symbol=BTC"
+```
+
+Wire any CDP / AgentKit x402 **buyer** to that URL. Reference:
+[AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welcome) ·
+[x402](https://docs.cdp.coinbase.com/x402/welcome) ·
+wallet MCP: `npx @coinbase/payments-mcp`
+
+This pays **reads only**. It does **not** place Hyperliquid orders.
+
+### Same wallet for Base swaps
+
 HyperNatt HTTP endpoints accept x402 on **Base + Solana**. If your agent already
 pays for `get_liq_radar` via CDP x402:
 
 - Use **that same wallet** as `fromAddress` when swapping **from Base**.
 - For **Ethereum → Base** bridges, fund **ETH gas on Ethereum** separately.
 
-Reference: [Coinbase AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welcome)
+Discovery listing checklist: [cdp-bazaar-checklist.md](cdp-bazaar-checklist.md)
 
 ## Common mistakes
 

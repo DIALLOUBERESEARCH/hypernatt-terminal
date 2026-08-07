@@ -67,6 +67,13 @@ Restart Hermes after edit. Enable MCP toolset (`native-mcp` skill if needed).
 3. Optional: `swap_via_nattswap` for bridging / funding (you sign)
 4. **Your** HL exec tools place/cancel — HyperNatt never does
 
+**Runnable read-only demo (no orders):**
+[../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py)
+
+```bash
+python examples/hyperliquid/read_terrain.py
+```
+
 ---
 
 ## OpenClaw / Claude / Cursor

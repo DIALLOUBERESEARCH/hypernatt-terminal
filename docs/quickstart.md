@@ -2,11 +2,15 @@
 
 **Platform:** [https://hypernatt.com](https://hypernatt.com) — full HyperNatt product. **This doc** covers the **hypernatt-terminal** MCP brick only (`/mcp/protocol`).
 
+**30-second Claude Connectors block** (Name / URL table): see [../README.md](../README.md#quick-start-30-seconds).
+
 **Humans (Claude / Cursor):** add connector `https://hypernatt.com/mcp/protocol`, then ask:
 
-> *Call get_agent_manifest, read value_proposition_v1 and the 3 use scenarios, then get_liq_radar — what does the forced-order map show structurally?*
+> Call get_agent_manifest, then get_liq_radar — where is the nearest liquidation cluster on the forced-order map? Do not treat this as a trade signal.
 
 **Agents:** 3 tools · v2.7.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
+
+**HL agent (read terrain only):** [../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py) · sovereignty: [agent-hl-sovereignty.md](agent-hl-sovereignty.md)
 
 **Why this exists:** classic public indicators do not show where leveraged liquidations stack. `get_liq_radar` is that terrain map — context for timing/sizing/risk, **not** a trade signal.
 

@@ -2,6 +2,7 @@
 
 | Script | Deps | Purpose |
 |--------|------|---------|
+| [hyperliquid/read_terrain.py](hyperliquid/read_terrain.py) | None (stdlib) | **HL agent** — read forced-order terrain only (no orders) |
 | [liq_radar_min.py](liq_radar_min.py) | None (stdlib) | Free manifest taste — 3-tool catalog |
 | [liq_radar_interpret.py](liq_radar_interpret.py) | None (stdlib) | Honest structural read (distance / OI / real liqs) — no fake scores |
 | [swap_readiness_check.py](swap_readiness_check.py) | None | Swap onboarding checklist from live manifest |
@@ -13,6 +14,7 @@ Official MCP journey: `get_agent_manifest` → `get_liq_radar` → optional `swa
 ## Quick start
 
 ```bash
+python examples/hyperliquid/read_terrain.py
 python examples/liq_radar_min.py
 python examples/liq_radar_interpret.py
 

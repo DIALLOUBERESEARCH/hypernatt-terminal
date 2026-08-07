@@ -27,12 +27,24 @@ each framework's own docs and were not smoke-tested here.
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 | Smithery | `npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal` |
 
+### Clients (same URL everywhere)
+
+| Client | Config |
+|--------|--------|
+| Claude Desktop | Settings → Connectors → Add custom connector → URL above |
+| Cursor | MCP Streamable HTTP → URL above |
+| Cline | MCP server settings → Streamable HTTP → URL above |
+| Codex | `mcp_servers` / CLI → URL above |
+| Windsurf | MCP config → URL above |
+
+README 30s block: [../README.md](../README.md#quick-start-30-seconds).
+
 Example prompt:
 
-> Call get_agent_manifest, then get_liq_radar — what is the liq / cluster context?
+> Call get_agent_manifest, then get_liq_radar — where is the nearest liquidation cluster on the forced-order map? Do not treat this as a trade signal.
 
-`get_agent_manifest` is free. First `get_liq_radar` call is intro-free; then x402 /
-Agent Pass / swap quota.
+`get_agent_manifest` is free. `get_liq_radar` is **$0.001** x402 (Base + Solana)
+after any intro; or Agent Pass / swap quota.
 
 ---
 
@@ -58,17 +70,34 @@ Optional HTTP-only (not an MCP tool): `GET /api/m2m/swap/quote` — raw Li.Fi JS
 
 ---
 
-## 3. Coinbase AgentKit / x402  [endpoint verified · SDK reference]
+## 3. Coinbase AgentKit / x402 buyer (liq-radar)  [endpoint verified · SDK reference]
 
-HyperNatt endpoints speak x402 natively (402 -> pay -> retry). An x402-capable
+HyperNatt endpoints speak x402 natively (402 → pay → retry). An x402-capable
 client pays $0.001 USDC on Base or Solana automatically and retries — no API keys.
+
+**Buyer path (forced-order map):**
+
+```text
+1. GET https://hypernatt.com/api/m2m/liq-radar?symbol=BTC
+2. If HTTP 200 → read JSON terrain (clusters / OI / real_liquidations)
+3. If HTTP 402 → build x402 payment from response, retry with header X-PAYMENT
+4. Do NOT invent a BUY/SELL — agent decides from terrain
+```
+
+```bash
+# Probe (often 402 after intro):
+curl -i "https://hypernatt.com/api/m2m/liq-radar?symbol=BTC"
+```
 
 - **Verified (our side):** `GET /api/m2m/liq-radar` returns 402 after intro and
   accepts the `X-Payment` retry.
-- **Reference (SDK side):** wire AgentKit / CDP x402 to that endpoint. See Coinbase
-  Developer Platform x402 docs.
-- **Swaps:** x402 pays paid **reads** only. Signing the Li.Fi `transactionRequest`
-  needs your agent wallet + gas — see [swap-agentkit.md](swap-agentkit.md).
+- **Reference (SDK side):** wire AgentKit / CDP x402 buyer to that endpoint —
+  [Coinbase AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welcome) ·
+  [x402](https://docs.cdp.coinbase.com/x402/welcome) ·
+  optional wallet MCP: `npx @coinbase/payments-mcp`
+- **Swaps:** x402 pays paid **reads** only. Signing Li.Fi needs your agent wallet —
+  see [swap-agentkit.md](swap-agentkit.md).
+- **Discovery listing (owner):** [cdp-bazaar-checklist.md](cdp-bazaar-checklist.md)
 
 ---
 
