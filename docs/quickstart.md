@@ -1,211 +1,42 @@
 # HyperNatt Terminal — Agent Quickstart
 
-**Platform:** [https://hypernatt.com](https://hypernatt.com) — full HyperNatt product (vault, assistant, stats). **This doc** covers the **hypernatt-terminal** MCP brick only (`/mcp/protocol`).
+**Platform:** [https://hypernatt.com](https://hypernatt.com) — full HyperNatt product. **This doc** covers the **hypernatt-terminal** MCP brick only (`/mcp/protocol`).
 
-**Humans (Claude / Cursor):** see [Try in 30 Seconds](../README.md#try-it-in-30-seconds) in the README — add connector `https://hypernatt.com/mcp/protocol`, then ask:
+**Humans (Claude / Cursor):** add connector `https://hypernatt.com/mcp/protocol`, then ask:
 
-> *Call get_agent_manifest, then get the BTC vault signal from HyperNatt.*
+> *Call get_agent_manifest, then get_liq_radar — what is the liq context?*
 
-**Agents:** this guide describes MCP/REST operations in production.
-
-**Trading hub:** [agent-trading-hub.md](agent-trading-hub.md) — `get_trading_hub` one-stop context (agent chooses cadence, no mandatory poll).
-
-**HL sovereignty (F#57N):** [agent-hl-sovereignty.md](agent-hl-sovereignty.md) — HyperNatt decides, **you** trade on your Hyperliquid account (no vault deposit).
-
-**Tool reference:** [../tools/](../tools/) · **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
+**Agents:** 3 tools · v2.7.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
 
 ---
 
-## What you get (before the first tool call)
+## Star path (F#99N)
 
-Three production samples — [full doc](example-responses.md). Order: **hub → trap → zoom**.
+1. **`get_agent_manifest`** (free) — catalog
+2. **`get_liq_radar`** ($0.001) — optional `symbol` among BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC)
+3. Optional **`swap_via_nattswap`** — Li.Fi route; you sign
 
-**Star path (F58N):** after manifest, call **`get_trading_hub`**, then zoom with trap/liq/TA as needed — see [agent-trading-hub.md](agent-trading-hub.md).
-
-**`get_mm_trap_state`** (1 credit):
-
-```json
-{
-  "state": "MM_TRAP_ACTIVE",
-  "trap_direction": "DOWN_HUNT_LONGS",
-  "sweep_zone": { "low": 56933, "high": 58667 },
-  "chart_verdicts": { "hunt": "SWEEP_MATH_FAIL", "reclaim": "RECLAIM_MATH_OK" }
-}
-```
-
-**`get_btc_usdc_signal`** (1 credit, HOLD free):
+Example `get_liq_radar` shape:
 
 ```json
 {
-  "cycle": { "direction": "LONG", "cycle_id": "C94D4BB60", "total_legs": 4 },
-  "has_active": true
-}
-```
-
-**`get_mm_hunt_score`** (1 credit):
-
-```json
-{
-  "mm_hunt_score": -35,
-  "magnet_bias": "BEARISH_MAGNET",
-  "pressure_direction": "DOWN_HUNT_LONGS"
+  "ok": true,
+  "product": "hypernatt_liq_radar_v2",
+  "symbol": "ETH",
+  "binance_symbol": "ETHUSDT",
+  "provenance": { "venue": "binance_oi_hist+hyperliquid_ctx" },
+  "liq_radar": { "available": true }
 }
 ```
 
 ---
 
-## Free tier and pricing (F#43N)
+## Connect
 
-| Tier | What you get |
-|------|----------------|
-| **Intro** | **First call per Decision Core tool is free** (taste each product); no daily credit pool |
-| **HOLD** | `get_btc_usdc_signal` **HOLD** verdict = **0 charge** |
-| **Free** | `get_agent_manifest`, `get_vault_proof`, and swap quotes (no wallet) |
-| **Credit cost** | All 5 Decision Core tools = **1 credit** ($0.001) each |
-| **Agent Pass** | **$5/mo** → **~15,000 credits** / 30 days (~67% below paygo) |
-| **Swap bonus** | about 20 credits per $100 swapped via NattSwap (see quota status) |
-| **Paygo** | **$0.001 USDC** / credit via x402 on Base |
-
-**Paywall order:** intro-free → swap-earned quota → Agent Pass $5/mo → paygo $0.001.
-
-> *First call per tool is free (intro); no daily credit pool. Swap to earn more. Or $5/mo Agent Pass (~15,000 credits) for serious use.*
-
-Status: `GET https://hypernatt.com/api/m2m/pass/status` · `GET https://hypernatt.com/api/m2m/quota/status`
-
----
-
-## What is HyperNatt Terminal?
-
-**[HyperNatt](https://hypernatt.com)** is the live trading + AI platform (vault UI, assistant, on-chain stats). **HyperNatt Terminal** is the **agent-facing MCP server** — one integration brick at `/mcp/protocol`, not the whole product.
-
-The MCP exposes BTC Decision Terminal tools: live vault-backed signals, on-chain proof, cross-chain swap. Verify in real time.
-
-Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid (**live since 2026-02-27**).
-
-| Resource | URL |
-|----------|-----|
-| App | https://hypernatt.com |
-| Public track record | https://hypernatt.com/stats |
-| Hyperliquid vault | https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8 |
-| Smithery | https://smithery.ai/servers/hypernatt/hypernatt-terminal |
-| Glama server | https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal |
-| Documentation repo | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
-
-### How to connect (MCP)
-
-| Method | URL |
-|--------|-----|
-| **Direct (recommended)** | `https://hypernatt.com/mcp/protocol` |
-| **Smithery proxy** | `https://mcp.smithery.ai/hypernatt/hypernatt-terminal` |
-| SSE transport | `https://hypernatt.com/mcp/sse` |
+| Client | Endpoint |
+|--------|----------|
+| Streamable HTTP | `https://hypernatt.com/mcp/protocol` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
+| REST catalog | `GET https://hypernatt.com/api/m2m/agent/manifest` |
 
-The terminal exposes **9 MCP tools** (v2.5.11): orientation, proof, **cross-chain swap**, and five Decision Core reads.
-
-**Quota program (live):** https://hypernatt.com/api/m2m/quota/status — bonus Decision Core credits from NattSwap volume (about 20 per $100).
-
-**Important:** Paid tools return **read-only BTC/USDC context**. They are **not** trade recommendations or execution instructions.
-
----
-
-## Step 1 — Discover what's available (free)
-
-Call **`get_agent_manifest`** (or `GET /api/m2m/agent/manifest`). Optional input: `{ "locale": "en" }`.
-
-| Section | Pricing | Purpose |
-|---------|---------|---------|
-| **Decision Core** | $0.001 USD/call (or **quota bypass**) | Vault-backed BTC context — five tools |
-| **Execution** | Free | Li.Fi cross-chain swap |
-| **Execution** | Free | Li.Fi cross-chain swap quotes (NattSwap) |
-
-### Decision Core — five paid tools
-
-| Tool | Role | Credits |
-|------|------|---------|
-| `get_btc_usdc_signal` | Cycle direction (**LONG** / **SHORT** / **HOLD**) from the live vault | **1** (HOLD free) |
-| `get_mm_hunt_score` | Microstructure pressure & liquidation-hunt context | **1** |
-| `get_similarity_match` | Top-3 historical regime matches & about 4h outcomes | **1** |
-| `get_liq_radar` | Raw liquidation radar: magnet, OI, clusters, real liqs | **1** |
-| `get_mm_trap_state` | Live MM trap/sweep state (redacted strict) | **1** |
-
-Public price: **$0.001 USDC** via **x402** on **Base** (`eip155:8453`). With quota balance: pass **`agent_wallet`** and skip payment.
-
----
-
-## Step 2 — Test the free cross-chain swap
-
-| Tool | When to use |
-|------|-------------|
-| `swap_via_nattswap` | Li.Fi quote + step-by-step execution instructions (any Li.Fi-routed chain pair) |
-| `swap_quote` | Raw Li.Fi quote JSON only |
-
-Swaps are free at the MCP layer; revenue is integrator fees on execution, not x402 on quotes.
-
-**Before swapping:** use **your agent hot wallet** as `fromAddress` — never the vault address from `get_vault_proof`. Quotes return `execution_readiness` (`can_execute`, `blockers`) and `swap_execution_playbook_v1`. Full guide: [swap-agentkit.md](swap-agentkit.md).
-
----
-
-## Step 3 — Decision Core ($0.001 each, or quota)
-
-1. Check `GET https://hypernatt.com/api/m2m/quota/balance?wallet=0x…` — remaining credits.
-2. Call without payment → x402 instructions (402 on REST), **unless** quota balance covers the tool weight.
-3. Pay **$0.001 USDC** on Base (if no quota).
-4. Retry with `x_payment` / `X-Payment`.
-
-Suggested order for a full picture (pro stack):
-
-1. `get_mm_trap_state` — manipulation weather (flagship, 1 credit)
-2. `get_btc_usdc_signal` — vault cycle now (HOLD free)
-3. `get_mm_hunt_score` — hunt / trap pressure summary
-4. `get_similarity_match` — historical analogies
-5. `get_liq_radar` — raw microstructure block (commodity, 1 credit)
-
-Cross-check: vault on Hyperliquid + https://hypernatt.com/stats
-
----
-
-## Reference — all 9 MCP tools
-
-| # | Tool | Price |
-|---|------|-------|
-| 1 | `get_agent_manifest` | Free |
-| 2 | `get_vault_proof` | Free |
-| 3 | `get_mm_trap_state` | 1 credit / $0.001 x402 or quota |
-| 4 | `get_btc_usdc_signal` | 1 credit; **HOLD free** |
-| 5 | `get_mm_hunt_score` | 1 credit / $0.001 x402 or quota |
-| 6 | `get_similarity_match` | 1 credit / $0.001 x402 or quota |
-| 7 | `get_liq_radar` | 1 credit / $0.001 x402 or quota |
-| 8 | `swap_via_nattswap` | Free |
-| 9 | `swap_quote` | Free |
-
-Per-tool docs: [../tools/](../tools/)
-
----
-
-## REST endpoints (non-MCP agents)
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
-| `GET /api/m2m/quota/status` | Quota program params (public) |
-| `GET /api/m2m/quota/balance` | Wallet quota balance (public) |
-| `GET /api/m2m/stats/usage` | Public 24h usage counters |
-| `GET /api/m2m/signal` | Paid signal (x402 or quota) |
-| `GET /api/m2m/mm-hunt` | Paid MM hunt (x402 or quota) |
-| `GET /api/m2m/similarity-match` | Paid similarity (x402 or quota) |
-| `GET /api/m2m/liq-radar` | Paid liq radar (x402 or quota) |
-| `GET /api/m2m/mm-trap-state` | Paid MM trap state (x402 or quota) |
-
-Base URL: `https://hypernatt.com`
-
----
-
-## Install via Smithery
-
-```bash
-npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
-```
-
----
-
-*Document version: hypernatt-terminal MCP v2.5.11 (9 tools, ecosystem homepage discovery + session resilience).*
+Tool docs: [../tools/](../tools/)

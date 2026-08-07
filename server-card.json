@@ -2,8 +2,8 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal — BTC Decision Terminal for AI Agents",
-    "version": "2.6.0",
-    "description": "HyperNatt Terminal — BTC decision context for AI agents: trading hub (TA + orderflow + liq both sides + MM hunt/trap), regime, ignition, entry-quality flags, Li.Fi cross-chain swap. Live Hyperliquid vault stack available for verify — not the star sales pitch.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick. Not a generic market-data wrapper — read-only BTC/USDC context, not trade advice. No custody.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n15 tools · v2.6.0 · Streamable HTTP. Call get_agent_manifest first.\n\nTRADING HUB: after manifest, call get_trading_hub when you need full BTC context — you choose cadence (no mandatory poll). Zoom with get_ta_snapshot / get_orderflow / get_liq_radar / get_mm_trap_state. Guide: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/agent-trading-hub.md\n\nHL SOVEREIGNTY: agents trading on THEIR Hyperliquid account use this Decision Core — no vault deposit, no custody. Pair with your HL exec MCP/SDK.\n\nPricing: flat .001 per call via x402 (USDC on Base + Solana). Free: manifest and signed vault proof.\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "version": "2.7.0",
+    "description": "HyperNatt Terminal — agent MCP for liquidation radar + cross-chain swap. Multi-crypto get_liq_radar (whitelist BTC ETH SOL BNB XRP HYPE ZEC; omit symbol = BTC). Li.Fi swap via swap_via_nattswap. Not a generic market-data wrapper — read-only Decision Core context, not trade advice. No custody.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick.\n\nSecurity: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: after manifest, call get_liq_radar (optional symbol). Pricing: $0.001 per call via x402 (USDC on Base + Solana). Free: get_agent_manifest. Swap is free at MCP layer (gas on-chain).\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -21,7 +21,7 @@
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
     "agent_pass_usd": 5,
     "agent_pass_credits": 15000,
-    "note": "Pay-per-call $0.001/call via x402 on Base + Solana (no subscription required). Optional Agent Pass $5/mo (~15,000 Decision Core credits, ~67% below paygo) for heavy use. HOLD on get_btc_usdc_signal is not charged. Swap-earned quota also available."
+    "note": "Pay-per-call $0.001/call via x402 on Base + Solana (no subscription required). Optional Agent Pass $5/mo (~15,000 Decision Core credits, ~67% below paygo) for heavy use. Swap-earned quota also available."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
@@ -31,7 +31,7 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here: catalog of 15 terminal tools with prices, live usage stats, and journeys. Prefer get_trading_hub next. Free.",
+      "description": "Start here: catalog of 3 terminal tools with prices, live usage stats, and journeys. Prefer get_liq_radar next. Free.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -43,91 +43,8 @@
       }
     },
     {
-      "name": "get_vault_proof",
-      "description": "Free proof we eat our own cooking: on-chain vault address, public URLs, signed cycle hash. Verify our live BTC trades yourself.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {}
-      }
-    },
-    {
-      "name": "get_mm_trap_state",
-      "description": "Is the MM trapping BTC right now? Flagship Decision Core — manipulation weather (trap latch, sweep/reclaim math), not raw cluster data. USE WHEN: sizing risk or you need state (MM_TRAP_ACTIVE), trap_direction (e.g. DOWN_HUNT_LONGS), sweep_zone, chart_verdicts. NOT WHEN: one-line pressure only (get_mm_hunt_score) or raw OI/clusters (get_liq_radar). RETURNS: hypernatt_mm_trap_state_v1 — state, trap_direction, cluster_price, sweep_zone, chart_verdicts, cycles_since_trap. Read-only, not trade advice. COST: $0.001 flat via x402 (Base or Solana). Side effects: none.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string",
-            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
-          }
-        }
-      }
-    },
-    {
-      "name": "get_btc_usdc_signal",
-      "description": "Should I align with the live BTC vault? Real-time Mimo cycle LONG/SHORT/HOLD. USE WHEN: vault bias, cycle_id, open PnL (chain_snapshot), checkpoint HOLD. NOT WHEN: MM trap math (get_mm_trap_state) or hunt score alone. RETURNS: hypernatt_mimo_cycle_state_v1 — default summary v2 includes chain_snapshot, checkpoint_snapshot, interpretation_contract_v1 (PnL authority: chain only, not avg_entry). full_payload:true for per-leg detail. HOLD direction is not charged. COST: $0.001 flat via x402 (Base or Solana). Side effects: none.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string",
-            "description": "Base64 x402 payment payload (USDC on Base or Solana). Omit on first call to receive payment instructions."
-          },
-          "agent_wallet": {
-            "type": "string",
-            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
-          },
-          "full_payload": {
-            "type": "boolean",
-            "description": "If true, return full JSON; default compact summary."
-          }
-        }
-      }
-    },
-    {
-      "name": "get_mm_hunt_score",
-      "description": "Is the Market Maker hunting your position? One-line liquidation pressure summary. USE WHEN: quick hunt read, alert_level, magnet_bias. NOT WHEN: full trap/sweep math (get_mm_trap_state) or raw clusters (get_liq_radar). RETURNS: hypernatt_mm_hunt_score_v1 — mm_hunt_score (-100..100), pressure_direction, alert_level, long_trap_phase, interpretation_en. COST: $0.001 flat via x402 (Base or Solana). Side effects: none.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string",
-            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
-          },
-          "full_payload": {
-            "type": "boolean"
-          }
-        }
-      }
-    },
-    {
-      "name": "get_similarity_match",
-      "description": "What happened last time BTC microstructure looked like this? Top-3 historical regime matches with observed about 4h BTC outcomes (NOT vault PnL). USE WHEN: analogies / regime context only. NOT WHEN: trade direction (get_btc_usdc_signal), live trap (get_mm_trap_state), or sizing. RETURNS: hypernatt_similarity_match_v1 with interpretation_contract_v1, confidence_tier, episode_diversity, matches[]. Agents MUST quote do_not_infer rules — never treat similarity_pct as win probability. COST: $0.001 flat via x402 (Base or Solana). Side effects: none.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string",
-            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
-          },
-          "full_payload": {
-            "type": "boolean"
-          }
-        }
-      }
-    },
-    {
       "name": "get_liq_radar",
-      "description": "Raw BTC liquidation radar — magnet score, OI build-up, long/short ratio, liquidation clusters above/below, 1h/24h liquidations. USE WHEN: you need the full microstructure block. Prefer get_trading_hub for a one-shot pack; agent chooses when to refresh (no mandatory poll). NOT WHEN: trap/sweep/reclaim verdicts (get_mm_trap_state) or short hunt narrative (get_mm_hunt_score). RETURNS: hypernatt_liq_radar_v1. Redacted, read-only. COST: $0.001 flat via x402 (Base or Solana). Side effects: none. Guide: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/agent-trading-hub.md",
+      "description": "Liquidation radar — magnet score, OI build-up, long/short ratio, liquidation clusters above/below, 1h/24h liquidations. Multi-crypto whitelist: BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC). USE WHEN: microstructure / cascade context. RETURNS: hypernatt_liq_radar payload. Redacted, read-only. COST: $0.001 flat via x402 (Base or Solana). Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -137,152 +54,17 @@
           "agent_wallet": {
             "type": "string",
             "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
-          }
-        }
-      }
-    },
-    {
-      "name": "get_trading_hub",
-      "description": "One-stop BTC trading context: TA + orderflow + liq clusters above/below + hunt + regime in one call. USE WHEN: first paid context after manifest, or whenever you need a full refresh. Agent chooses cadence — no mandatory poll. NOT WHEN: you only need trap math (get_mm_trap_state) or a single zoom tool. RETURNS: hypernatt_trading_hub_v1. COST: $0.001 flat via x402. Side effects: none. Guide: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/agent-trading-hub.md",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
           },
-          "agent_wallet": {
+          "symbol": {
             "type": "string",
-            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
-          }
-        }
-      }
-    },
-    {
-      "name": "get_ta_snapshot",
-      "description": "BTC TA snapshot — RSI 15m/5m, MACD, ADX, ATR%, VWAP deviation, BB flag, velocity. Zoom tool after get_trading_hub. COST: $0.001. Read-only.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
-      "name": "get_orderflow",
-      "description": "BTC orderflow — CVD, OB imbalance, icebergs bid/ask, taker ratio, funding, OI delta. Zoom tool. COST: $0.001. Read-only.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
-      "name": "get_regime",
-      "description": "BTC regime — season/trend label, ADX, session bucket (ASIA/EU/US/LATE), F32 structure zone. COST: $0.001. Read-only.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
-      "name": "get_ignition",
-      "description": "BTC ignition / micro — VID score, MRE entry score, vol spike, ADX RoC, cooldown flag. COST: $0.001. Read-only.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
-      "name": "get_entry_quality",
-      "description": "BTC entry-quality flags — fomo_block, anti_top_veto, early_entry, macd_exhaustion, clean_signature, accel_whale. Verdicts only. COST: $0.001. Read-only — not trade advice.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "x_payment": {
-            "type": "string"
-          },
-          "agent_wallet": {
-            "type": "string"
+            "description": "Optional crypto symbol (BTC ETH SOL BNB XRP HYPE ZEC). Default BTC when omitted."
           }
         }
       }
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid (any pair — not limited to BTC/USDC). USE WHEN: bridge, fund gas, treasury routing, or rebalance after Decision Core. NOT WHEN: Decision Core BTC reads alone (get_btc_usdc_signal / trap / hunt) — vault signals stay BTC/USDC only. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1 (ordered approve→swap→register_hint when can_execute) + recommended_action. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + integrator fee. Side effects: MCP read-only until wallet signs.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "fromChain": {
-            "type": [
-              "number",
-              "string"
-            ]
-          },
-          "toChain": {
-            "type": [
-              "number",
-              "string"
-            ]
-          },
-          "fromToken": {
-            "type": "string"
-          },
-          "toToken": {
-            "type": "string"
-          },
-          "fromAmount": {
-            "type": "string"
-          },
-          "fromAddress": {
-            "type": "string"
-          },
-          "toAddress": {
-            "type": "string"
-          },
-          "slippage": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "fromChain",
-          "toChain",
-          "fromToken",
-          "toToken",
-          "fromAmount",
-          "fromAddress",
-          "toAddress"
-        ]
-      }
-    },
-    {
-      "name": "swap_quote",
-      "description": "Raw Li.Fi swap quote JSON without execution steps. USE WHEN: preview route, fees, and slippage before swap_via_nattswap. NOT WHEN: you need step-by-step agent instructions (use swap_via_nattswap). RETURNS: Li.Fi quote { estimate, toolDetails, transactionRequest, ... }. Free — no x402. Side effects: none.",
+      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1 + recommended_action. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + integrator fee. Side effects: MCP read-only until wallet signs.",
       "inputSchema": {
         "type": "object",
         "properties": {

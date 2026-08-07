@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.DIALLOUBE-RESEARCH/hypernatt-terminal",
   "title": "hypernatt-terminal",
-  "description": "BTC/USDC decision context for AI agents from a live Hyperliquid vault; $0.001/call via x402.",
+  "description": "Multi-crypto liquidation radar + Li.Fi swap for AI agents; 3 tools · v2.7.0; $0.001/call via x402.",
   "repository": {
     "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
     "source": "github"
   },
-  "version": "2.6.0",
+  "version": "2.7.0",
   "remotes": [
     {
       "type": "streamable-http",
