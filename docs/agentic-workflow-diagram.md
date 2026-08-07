@@ -5,6 +5,8 @@
 
 > Diagram for application form. GitHub renders Mermaid below.
 
+**Live MCP v2.7.0 — 3 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+
 ---
 
 ## System overview
@@ -23,7 +25,7 @@ flowchart TB
   end
 
   subgraph PAYWALL["Payment gate — x402 seller"]
-    P0{"Intro free?<br/>1st call per tool"}
+    P0{"Intro free?<br/>1st get_liq_radar"}
     P1{"Swap quota?"}
     P2{"Agent Pass $5/mo?"}
     P3["HTTP 402 + PAYMENT-REQUIRED<br/>Base eip155:8453 + Solana"]
@@ -31,37 +33,30 @@ flowchart TB
   end
 
   subgraph MCP["HyperNatt Terminal MCP<br/>hypernatt.com/mcp/protocol"]
-    T1["get_btc_usdc_signal"]
-    T2["get_mm_trap_state"]
-    T3["get_mm_hunt_score"]
-    T4["get_liq_radar"]
-    T5["get_similarity_match"]
-    T6["get_swap_quote · Li.Fi"]
-    T7["get_agent_manifest"]
+    T1["get_agent_manifest"]
+    T2["get_liq_radar"]
+    T3["swap_via_nattswap · Li.Fi"]
   end
 
   subgraph DATA["Data sources & APIs"]
-    HL["HyperLiquid L2<br/>orderbook · trades · liquidations"]
-    VAULT["Mimo vault<br/>15m BTC/USDC cycles"]
-    HIST["Historical microstructure<br/>TOP3 similarity"]
+    HL["HyperLiquid L2<br/>orderbook · OI · liquidations"]
     LIFI["Li.Fi cross-chain<br/>swap routes"]
   end
 
-  subgraph CORE["Decision core (server)"]
-    C1["MM trap / hunt / liq radar engines"]
-    C2["Cycle signal + observed outcomes"]
+  subgraph CORE["Liq radar engine (server)"]
+    C1["Magnet / OI / cluster snapshot"]
+    C2["Whitelist: BTC ETH SOL BNB XRP HYPE ZEC"]
     C3["Fail-closed if data stale"]
   end
 
   subgraph HITL["Human-in-the-loop"]
-    H1["Vault depositor<br/>deposits USDC · withdraws"]
     H2["Agent operator<br/>approves wallet spend"]
     H3["No auto-trade on MCP<br/>read-only intelligence"]
   end
 
   subgraph OUTPUTS["Outputs"]
-    O1["Structured JSON<br/>trap state · hunt score · signal"]
-    O2["On-chain proof links<br/>vault · x402 receipt"]
+    O1["Structured JSON<br/>liq_radar snapshot"]
+    O2["On-chain proof links<br/>x402 receipt"]
     O3["Agent decision context<br/>not financial advice"]
   end
 
@@ -78,26 +73,23 @@ flowchart TB
   P3 --> A3
   A3 --> P4 --> CORE
 
-  T1 & T2 & T3 & T4 & T5 --> CORE
-  T6 --> LIFI
-  T7 --> D2
+  T2 --> CORE
+  T3 --> LIFI
+  T1 --> D2
 
   HL --> CORE
-  VAULT --> CORE
-  HIST --> CORE
 
   CORE --> O1
   P4 --> O2
   CORE --> O3
 
-  H1 --> VAULT
   H2 -.-> A3
   H3 -.-> MCP
 ```
 
 ---
 
-## Sequence — agent pays and reads MM trap state
+## Sequence — agent pays and reads liq radar
 
 ```mermaid
 sequenceDiagram
@@ -106,14 +98,14 @@ sequenceDiagram
   participant Wallet as Agent wallet (Base/Solana)
   participant MCP as HyperNatt Terminal MCP
   participant X402 as x402 seller (verify/settle)
-  participant HL as HyperLiquid API
+  participant HL as HyperLiquid / venue APIs
   participant Human as Human operator (optional)
 
-  Agent->>MCP: tools/call get_mm_trap_state
-  alt First call on this tool (intro free)
-    MCP->>HL: fetch L2 + liquidation context
+  Agent->>MCP: tools/call get_liq_radar
+  alt First call (intro free)
+    MCP->>HL: fetch OI + liquidation context
     HL-->>MCP: live microstructure
-    MCP-->>Agent: JSON trap state (free)
+    MCP-->>Agent: JSON liq_radar (free)
   else Paywall
     MCP-->>Agent: HTTP 402 + accepts[] dual rail
     Human-->>Agent: approve spend (HITL policy)
@@ -122,7 +114,7 @@ sequenceDiagram
     X402->>MCP: payment confirmed
     MCP->>HL: fetch live data
     HL-->>MCP: live microstructure
-    MCP-->>Agent: JSON trap state + receipt
+    MCP-->>Agent: JSON liq_radar + receipt
   end
   Agent->>Agent: decide trade / hold / route
   Note over Agent,Human: MCP is read-only — no auto-execution
@@ -134,12 +126,11 @@ sequenceDiagram
 
 | Step | Decision | Fail mode |
 |------|----------|-----------|
-| Tool discovery | MCP `tools/list` | Standard MCP errors |
-| Intro eligibility | Per-tool first call | Falls through to paywall |
+| Tool discovery | MCP `tools/list` (3 tools) | Standard MCP errors |
+| Intro eligibility | First `get_liq_radar` | Falls through to paywall |
 | Payment | x402 verify → settle before deliver | 402 until paid; no grant on failed settle |
-| Data freshness | Stale HL feed | Fail-closed / degraded flag |
+| Data freshness | Stale feed | Fail-closed / degraded flag |
 | Agent action | Agent chooses use of JSON | No server-side auto-trade |
-| Vault (parallel) | Human deposits USDC | Non-custodial; on-chain only |
 
 ---
 
@@ -149,10 +140,9 @@ sequenceDiagram
 |----------|-----|
 | MCP endpoint | https://hypernatt.com/mcp/protocol |
 | Server card | https://hypernatt.com/.well-known/mcp/server-card.json |
-| Live vault proof | https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8 |
 | Repo | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Loom (application) | https://www.loom.com/share/618c17521a964a60a6b6605c196a6460 |
 
 ---
 
-MIT · DIALLOUBE-RESEARCH · HyperNatt Terminal v2.5.11
+MIT · DIALLOUBE-RESEARCH · HyperNatt Terminal v2.7.0

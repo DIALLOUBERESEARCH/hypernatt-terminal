@@ -3,16 +3,17 @@
 How to go from **quote** to **on-chain swap** to **quota credits**. HyperNatt does
 not custody your keys. You sign every transaction.
 
+MCP v2.7.0 — the only swap MCP tool is **`swap_via_nattswap`**.
+
 ## Why this doc exists
 
-Decision Core tools (`get_liq_radar`, `get_mm_trap_state`, …) are **read-only**:
-pay $0.001 x402 on Base → JSON back. Done.
+`get_liq_radar` is **read-only**: pay $0.001 x402 on Base → JSON back. Done.
 
 NattSwap is **execution**: you need a wallet that signs on the **source chain**,
 native gas, token balance, then optional registration for credits.
 
-Agents often paste **public addresses** (Hyperliquid vault from `get_vault_proof`,
-exchange cold wallets). Quotes succeed but **you cannot sign** those txs.
+Agents often paste **public addresses** they cannot sign. Quotes succeed but
+**broadcast fails**.
 
 ## Prerequisites checklist
 
@@ -29,10 +30,9 @@ exchange cold wallets). Quotes succeed but **you cannot sign** those txs.
 | Surface | Cost | Best for |
 |---------|------|----------|
 | MCP `swap_via_nattswap` | Free at API layer | Agents with MCP + signer |
-| MCP `swap_quote` | Free | Raw Li.Fi JSON |
-| HTTP `GET /api/m2m/swap/quote` | $0.001 x402 | REST / x402-list crawlers |
+| HTTP `GET /api/m2m/swap/quote` | $0.001 x402 | REST / x402-list crawlers (optional; **not** an MCP tool) |
 
-**Recommendation:** use **`swap_via_nattswap`** — same quote plus `instructions`,
+**Recommendation:** use **`swap_via_nattswap`** — quote plus `instructions`,
 `execution_readiness`, and `swap_execution_playbook_v1`.
 
 ## Step-by-step (MCP)
@@ -43,11 +43,11 @@ exchange cold wallets). Quotes succeed but **you cannot sign** those txs.
    - `fromAddress` / `toAddress` = your wallets
    - `fromChain`, `toChain`, tokens, `fromAmount` (atomic units)
 4. **Readiness** — if `execution_readiness.can_execute` is `false`, fix `blockers` first.
-5. **Prefer `swap_actions_v1`** (F#54N) — sign `actions` in order (`approve` then `swap`).
+5. Prefer **`swap_actions_v1`** — sign `actions` in order (`approve` then `swap`).
    Fallback: approve Li.Fi Diamond then broadcast `transactionRequest`.
 6. **Poll** — `GET /api/m2m/swap/status/:txHash?fromChain=...` (bridges: 1–30 min).
 7. **Register** — use `register_hint` from `swap_actions_v1` or `POST /api/m2m/swap/register`.
-8. **Quota** — `GET /api/m2m/quota/status` for bonus Decision Core credits.
+8. **Quota** — `GET /api/m2m/quota/status` for bonus `get_liq_radar` credits.
 
 ## Coinbase CDP / x402 buyer wallet
 
@@ -63,7 +63,7 @@ Reference: [Coinbase AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welco
 
 | Mistake | Fix |
 |---------|-----|
-| `fromAddress` = vault from `get_vault_proof` | Vault is read-only proof — use your agent wallet |
+| `fromAddress` = third-party vault | Use your agent wallet |
 | Paid x402 with wallet A, `fromAddress` = wallet B | Align payer and signer |
 | Broadcast with `can_execute: false` | Read `blockers` and `swap_execution_playbook_v1` |
 | Expect x402 USDC to pay swap gas | Gas is native on source chain |

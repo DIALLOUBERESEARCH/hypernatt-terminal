@@ -4,30 +4,41 @@ Cross-chain swap quote via **Li.Fi** with step-by-step execution instructions fo
 
 **Free** at the MCP layer (no x402). On-chain execution costs gas plus **0.5% integrator fee** on swap volume.
 
+This is the **only** swap tool on the MCP surface (v2.7.0).
+
 ## When to use
 
 | Situation | Call |
 |-----------|------|
 | Bridge or fund a wallet across chains | `swap_via_nattswap` |
-| Preview only (no instructions) | `swap_quote` |
+| Catalog / pricing | `get_agent_manifest` |
+| Liq / cluster context first | `get_liq_radar` |
 
 ## Inputs
 
-Same as [`swap_quote`](swap_quote.md): `fromChain`, `toChain`, `fromToken`, `toToken`, `fromAmount`, `fromAddress`, `toAddress`, optional `slippage`.
+`fromChain`, `toChain`, `fromToken`, `toToken`, `fromAmount`, `fromAddress`, `toAddress`, optional `slippage`.
+
+Use **your** agent signing wallet for `fromAddress` / `toAddress`.
 
 ## Flow
 
-1. Call **`swap_via_nattswap`** → receive Li.Fi `transactionRequest` + `execution_readiness` + optional **`swap_actions_v1`** (F#54N).
+1. Call **`swap_via_nattswap`** → receive Li.Fi `transactionRequest` + `execution_readiness` + optional **`swap_actions_v1`**.
 2. If `execution_readiness.can_execute` is `false`, fix blockers (see [swap-agentkit.md](../docs/swap-agentkit.md)).
 3. Prefer signing **`swap_actions_v1.actions`** in order (`approve` then `swap`). Else approve ERC-20 if needed, then broadcast `transactionRequest`.
 4. Optional: `GET https://hypernatt.com/api/m2m/swap/status/:txHash?fromChain=…` to poll bridge status.
 5. Optional: `POST https://hypernatt.com/api/m2m/swap/register` (see `register_hint` in `swap_actions_v1`).
 
-Swap volume may qualify for **Decision Core quota credits** — see `GET https://hypernatt.com/api/m2m/quota/status`.
+Swap volume may qualify for **quota credits** toward `get_liq_radar` — see
+`GET https://hypernatt.com/api/m2m/quota/status`.
+
+## Optional HTTP footnote
+
+`GET /api/m2m/swap/quote` returns raw Li.Fi JSON only. It is **not** an MCP tool —
+prefer `swap_via_nattswap` for agents.
 
 ## Related tools
 
 | Tool | Role |
 |------|------|
-| `swap_quote` | Raw Li.Fi JSON only |
-| `get_agent_manifest` | Pricing, free tools, quota program |
+| `get_agent_manifest` | Pricing, catalog, journey |
+| `get_liq_radar` | Read-only liq / OI / cluster context |

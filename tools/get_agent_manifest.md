@@ -1,10 +1,20 @@
 # `get_agent_manifest`
 
-**Start here.** Free catalog of all HyperNatt Terminal tools: sections, prices, roles, and optional live 24h usage stats.
+**Start here.** Free catalog of HyperNatt Terminal MCP tools (v2.7.0).
 
 ## Price
 
 **Free**
+
+## Live MCP surface (3 tools)
+
+| Tool | Role | Price |
+|------|------|-------|
+| `get_agent_manifest` | Catalog, pricing, journey | Free |
+| `get_liq_radar` | Liquidation radar (BTC ETH SOL BNB XRP HYPE ZEC) | 1 credit / $0.001 x402 |
+| `swap_via_nattswap` | Li.Fi quote + execution playbook | Free at MCP layer |
+
+Suggested journey: manifest → `get_liq_radar` → optional `swap_via_nattswap`.
 
 ## Inputs
 
@@ -18,9 +28,8 @@ JSON manifest with:
 
 - `terminal` — `"hypernatt-terminal"`
 - `description` — terminal tagline
-- `sections[]` — **Decision Core**, **Execution**, **Rewards & Referral**
-  - Each section: `name`, `description`, `tools[]` with `name`, `role`, `price`
-  - Decision Core may include `usage` (24h public counters: swaps, signals, active agents)
+- `sections[]` — tool groups with `name`, `role`, `price`
+- Optional live 24h usage counters
 
 ## Example — MCP
 
@@ -49,3 +58,4 @@ curl -sS "https://hypernatt.com/api/m2m/agent/manifest?locale=en"
 ## Notes
 
 Call this before any paid tool. No x402 required.
+Agent Pass: **$5/mo**.

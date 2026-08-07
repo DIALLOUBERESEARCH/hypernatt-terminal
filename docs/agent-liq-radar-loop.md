@@ -1,14 +1,17 @@
-# Agent loop: `get_liq_radar` (optional zoom)
+# Agent loop: `get_liq_radar`
 
-Prefer **`get_trading_hub`** for a one-shot BTC context pack (TA + orderflow + liq both sides + hunt + regime). See [agent-trading-hub.md](agent-trading-hub.md).
+Use `get_liq_radar` when you need magnet / OI / cluster context on a whitelist coin.
 
-Use `get_liq_radar` when you need the **raw** magnet / OI / cluster block only.
+**MCP tools only:** `get_agent_manifest` → `get_liq_radar` → optional `swap_via_nattswap`.
 
 ## Suggested flow (agent chooses cadence)
 
 1. `get_agent_manifest` (free)
-2. `get_trading_hub` ($0.001) — or jump straight to `get_liq_radar` if you only need clusters
-3. Cross-read `get_mm_trap_state` before sizing risk
-4. Call again **when you decide** context is stale — there is **no mandatory poll interval**
+2. `get_liq_radar` — optional `symbol` among BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC)
+3. Call again **when you decide** context is stale — no mandatory poll interval
+4. Optional: `swap_via_nattswap` if you need a Li.Fi route (you sign)
 
-See also `agent_interpretation_rules_v1.trading_hub_loop_v1` / `sticky_liq_loop_v1` on the manifest.
+Sample shape: [example-responses.md](example-responses.md)
+
+See also `agent_interpretation_rules_v1` on the live manifest
+(`GET https://hypernatt.com/api/m2m/agent/manifest`).

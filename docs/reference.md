@@ -1,27 +1,31 @@
 ﻿# HyperNatt Terminal — technical reference
 
-Extended docs (connect URLs, manifest tables, REST API). Listing copy matches Smithery / Glama / `get_agent_manifest` description.
+Thin pointer. Live MCP is **v2.7.0** with **3 tools** only.
+
+Start here: [quickstart.md](quickstart.md)
 
 ---
 
-## Try It in 30 Seconds
+## MCP tools (canonical)
 
-No code. No API key. No npm install required.
+| Tool | Role | Price |
+|------|------|-------|
+| [`get_agent_manifest`](../tools/get_agent_manifest.md) | Catalog, pricing, journey | Free |
+| [`get_liq_radar`](../tools/get_liq_radar.md) | Liquidation radar (whitelist coins) | 1 credit / $0.001 x402 |
+| [`swap_via_nattswap`](../tools/swap_via_nattswap.md) | Li.Fi quote + agent execution playbook | Free at MCP layer |
 
-**Step 1.** Claude → Settings → Integrations → **Add custom connector**
+**Symbols for `get_liq_radar`:** BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
-**Step 2.**
+---
 
-| Field | Value |
-|-------|-------|
-| Name | `HyperNatt Terminal` |
-| URL | `https://hypernatt.com/mcp/protocol` |
+## Connect
 
-**Step 3.** Ask Claude:
-
-> *Call get_agent_manifest, then get_mm_trap_state from HyperNatt — is the MM trapping right now?*
-
-**Cursor / Claude Desktop** — remote MCP config:
+| Method | URL |
+|--------|-----|
+| MCP Streamable HTTP | `https://hypernatt.com/mcp/protocol` |
+| SSE | `https://hypernatt.com/mcp/sse` |
+| Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
+| REST manifest | `GET https://hypernatt.com/api/m2m/agent/manifest` |
 
 ```json
 {
@@ -39,171 +43,43 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ---
 
-## What you get (live examples)
-
-Three real production responses (2026-06-13). **Trap → vault → hunt** — the pro stack.
-
-### 1. `get_mm_trap_state` (1 credit) — MM trap weather
-
-```json
-{
-  "state": "MM_TRAP_ACTIVE",
-  "trap_direction": "DOWN_HUNT_LONGS",
-  "cluster_price": 57800,
-  "sweep_zone": { "low": 56933, "high": 58667 },
-  "chart_verdicts": { "hunt": "SWEEP_MATH_FAIL", "reclaim": "RECLAIM_MATH_OK" }
-}
-```
-
-### 2. `get_btc_usdc_signal` (1 credit · HOLD free) — live vault
-
-```json
-{
-  "cycle": { "direction": "LONG", "cycle_id": "C94D4BB60", "total_legs": 4 },
-  "vault_wallet_redacted": "0x04e2…a6d8",
-  "has_active": true
-}
-```
-
-### 3. `get_mm_hunt_score` (1 credit) — hunt summary
-
-```json
-{
-  "mm_hunt_score": -35,
-  "magnet_bias": "BEARISH_MAGNET",
-  "pressure_direction": "DOWN_HUNT_LONGS",
-  "alert_level": "orange"
-}
-```
-
-Full fields + curls: **[example-responses.md](example-responses.md)**
-
----
-
 ## Pricing (at a glance)
 
-| | Free (intro) | Agent Pass $5/mo | Paygo |
-|---|------|--------------|-------|
+| | Intro | Agent Pass $5/mo | Paygo |
+|---|-------|------------------|-------|
 | MCP install | Yes | Yes | Yes |
-| First call per Decision Core tool | **Free (intro)** | included | included |
-| Credit cost per tool | 1 credit (all 5 Decision Core tools) | same | per credit |
-| Monthly credits | — | **~15,000** / 30 days | — |
-| HOLD signal | **Free** | **Free** | **Free** |
+| First `get_liq_radar` call | Free (intro) | included | included |
+| Monthly credits | — | ~15,000 / 30 days | — |
 | Swap-earned credits | Yes | Yes | Yes |
 
-Decision Core = five tools at **$0.001/credit** when credits exhausted (x402 USDC on Base). No daily credit pool. The **$5/mo Agent Pass** (~15,000 credits) is about **67% below paygo**.
-
-**Paywall funnel (in order):** first call per tool free (intro) → **swap earns bonus credits** → Agent Pass $5/mo → paygo $0.001/credit.
+Paywall order: intro-free → swap quota → Agent Pass $5/mo → $0.001 USDC/credit (x402 on Base + Solana).
 
 ---
 
-## What it is
+## Suggested journey
 
-HyperNatt Terminal exposes **9 MCP tools** (v2.5.11): orientation + vault proof, **cross-chain swap** (Li.Fi), and five Decision Core reads. MCP Streamable HTTP session resilience (spec 404 re-init).
+1. `get_agent_manifest` (free)
+2. `get_liq_radar` (optional `symbol`)
+3. Optional `swap_via_nattswap` — you sign with your agent wallet
 
-Signals are produced by **Mimo**, HyperNatt's automated strategy on the public **Mimo BTC/USDC vault** on Hyperliquid. The vault runs **24/7**, **live since 2026-02-27** — independently verifiable on-chain (fills, positions, vault state).
-
-Paid Decision Core tools return **read-only BTC/USDC context** (cycle state, microstructure, historical analogies, raw liq radar, MM trap/sweep state). They are **not** trade recommendations or execution instructions. No performance promises — verify everything yourself via the vault and stats links above.
-
----
-
-## Connect
-
-| Method | URL |
-|--------|-----|
-| **Direct MCP (recommended)** | `https://hypernatt.com/mcp/protocol` |
-| **Smithery proxy** | `https://mcp.smithery.ai/hypernatt/hypernatt-terminal` |
-| **SSE transport** | `https://hypernatt.com/mcp/sse` |
-| **Server card** | `https://hypernatt.com/.well-known/mcp/server-card.json` |
-
-Start with the free tool **`get_agent_manifest`** — catalog, pricing, live 24h usage, and proof links.
+Sample response: [example-responses.md](example-responses.md)
 
 ---
 
-## Manifest sections
+## Optional HTTP footnote (not MCP tools)
 
-Same structure via MCP `get_agent_manifest` or `GET https://hypernatt.com/api/m2m/agent/manifest`.
+| Endpoint | Note |
+|----------|------|
+| `GET /api/m2m/liq-radar` | Same payload as MCP `get_liq_radar` |
+| `GET /api/m2m/swap/quote` | Raw Li.Fi quote JSON only — **not** an MCP tool |
 
-### Decision Core
-
-Five vault-backed **BTC/USDC** reads (live Mimo vault since **2026-02-27**). Paywall order: **first call per tool is free (intro)**, no daily credit pool → **swap-earned quotas** (`agent_wallet` or `X-Agent-Wallet`) → **Agent Pass $5/mo** (~15,000 credits) → **$0.001 USDC/credit** via x402 on Base. **`get_btc_usdc_signal` HOLD verdicts are always free.**
-
-| Tool | Role | Price |
-|------|------|-------|
-| [`get_mm_trap_state`](../tools/get_mm_trap_state.md) | **Flagship** — live MM trap/sweep/reclaim weather (1 credit) | intro, pass, quota, or $0.001 |
-| [`get_btc_usdc_signal`](../tools/get_btc_usdc_signal.md) | Cycle direction & conviction (**LONG** / **SHORT** / **HOLD**) from the live vault | **HOLD free**; else 1 credit |
-| [`get_mm_hunt_score`](../tools/get_mm_hunt_score.md) | Microstructure pressure & liquidation-hunt summary (1 credit) | intro, pass, quota, or $0.001 |
-| [`get_similarity_match`](../tools/get_similarity_match.md) | Top-3 historical regime matches & observed about 4h BTC outcomes | intro, pass, quota, or $0.001 |
-| [`get_liq_radar`](../tools/get_liq_radar.md) | Raw liquidation radar — clusters, OI, magnet (1 credit; commodity layer) | intro, pass, quota, or $0.001 |
-| [`get_vault_proof`](../tools/get_vault_proof.md) | On-chain vault proof + signed cycle snapshot hash | Free |
-
-### Execution
-
-**Cross-chain swap** via **Li.Fi** (NattSwap). Free at the MCP layer — integrator fees on execution. **Does not** change Decision Core pair policy (BTC/USDC only).
-
-| Tool | Role | Price |
-|------|------|-------|
-| [`swap_via_nattswap`](../tools/swap_via_nattswap.md) | Li.Fi quote + step-by-step agent execution instructions | Free |
-| [`swap_quote`](../tools/swap_quote.md) | Raw Li.Fi quote JSON only | Free |
-
-### Orientation (call first)
-
-| Tool | Role | Price |
-|------|------|-------|
-| [`get_agent_manifest`](../tools/get_agent_manifest.md) | Catalog, journey, sections, live 24h usage stats | Free |
+Base: `https://hypernatt.com`
 
 ---
 
-## Run locally (Docker)
+## More guides
 
-```bash
-docker build -t hypernatt-terminal .
-docker run --rm -p 8011:8011 hypernatt-terminal
-curl -sS http://127.0.0.1:8011/health
-```
-
-| Path | Description |
-|------|-------------|
-| `GET /health` | Liveness |
-| `GET /tools` | REST tool catalog |
-| `POST /protocol` | MCP Streamable HTTP |
-| `GET /sse` | MCP SSE transport |
-
----
-
-## Suggested agent journey
-
-1. **`get_agent_manifest`** — catalog, pricing, live examples (free).
-2. **`get_mm_trap_state`** — is the MM trapping? (1 credit).
-3. **`get_btc_usdc_signal`** — what is the live vault doing? (**HOLD free**).
-4. **`get_mm_hunt_score`** — one-line hunt pressure summary (1 credit).
-5. **`swap_via_nattswap`** — optional cross-chain Li.Fi swap (free at MCP layer).
-
-Full walkthrough: [quickstart.md](quickstart.md)
-
----
-
-## REST endpoints (non-MCP agents)
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/m2m/agent/manifest` | Same as `get_agent_manifest` |
-| `GET /api/m2m/pass/status` | Agent Pass pricing + intro/free params |
-| `GET /api/m2m/free-tier/remaining` | Remaining free / intro calls |
-| `GET /api/m2m/quota/status` | Quota program params |
-| `GET /api/m2m/quota/balance?wallet=0x…` | Quota balance for wallet |
-| `GET /api/m2m/stats/usage` | Public 24h usage counters |
-| `GET /api/m2m/signal` | Signal (HOLD free) |
-| `GET /api/m2m/mm-hunt` | MM hunt |
-| `GET /api/m2m/similarity-match` | Similarity |
-| `GET /api/m2m/liq-radar` | Liq radar |
-| `GET /api/m2m/mm-trap-state` | MM trap state |
-
-Base URL: `https://hypernatt.com`
-
----
-
-## Verify on-chain
-
-- **Vault:** https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8
-- **Track record:** https://hypernatt.com/stats
+- [integrations.md](integrations.md)
+- [agent-liq-radar-loop.md](agent-liq-radar-loop.md)
+- [agent-hl-sovereignty.md](agent-hl-sovereignty.md)
+- [swap-agentkit.md](swap-agentkit.md)

@@ -54,7 +54,7 @@ const PUBLIC_LIQ_RADAR_URL =
 import { toolDescriptionFromCard, getServerCard } from "./server-card-tools.mjs";
 
 const SERVER_TITLE =
-    "HyperNatt Terminal — BTC Decision Terminal for AI Agents";
+    "HyperNatt Terminal — Liq Radar + Swap for AI Agents";
 
 const TERMINAL_ONCHAIN_PROOF = {
     ndatToken: {

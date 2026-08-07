@@ -29,21 +29,27 @@ HyperNatt** — even if it copies our name, branding, or links back to this
 site. When in doubt, verify on-chain and reach us only through the channels
 above.
 
+## Surface (truth)
+
+**3 tools · v2.7.0:** `get_agent_manifest` (free), `get_liq_radar` ($0.001 x402
+on Base + Solana), `swap_via_nattswap` (free at MCP; gas + Li.Fi fee on-chain).
+
+Agent Pass for heavy use: **$5/mo** (~15,000 credits).
+
 ## Can this server move or drain my funds?
 
 **No.** It has no custody and never sees your keys.
 
-- **Decision Core reads are read-only**; the **first call per tool is free** (intro,
-  no wallet).
-- **Swap tools are advisory**: `swap_via_nattswap` / `swap_quote` *return* a Li.Fi
-  quote and step-by-step instructions. **Your agent decides and signs its own
+- **Reads are read-only** JSON context (liq radar / catalog).
+- **Swap is advisory**: `swap_via_nattswap` *returns* a Li.Fi quote and
+  step-by-step instructions. **Your agent decides and signs its own
   transaction.** The server never holds keys and never broadcasts anything.
 
 ## Does it hold API keys I could leak?
 
-**No keys.** Payment is **x402, per call** ($0.001 USDC/credit on Base), controlled
-by your agent — no accounts, no static API keys, no subscription lock-in. The intro-free
-call per tool needs no wallet on the MCP session.
+**No keys required for the free manifest.** Payment is **x402, per call**
+($0.001 USDC on Base or Solana), controlled by your agent — no accounts, no
+static API keys, no subscription lock-in.
 
 ## What data does it see / store?
 
@@ -52,19 +58,29 @@ to improve the terminal. **No prompt content. Never your keys or local files.**
 
 ## Prompt injection / tool poisoning?
 
-Decision Core responses are **structured JSON data** (state, scores, prices), not
+Tool responses are **structured JSON data** (state, scores, prices), not
 free-form instructions. Interpretation guardrails (`interpretation_contract_v1`,
-`do_not_infer`) bound how the data should be read. The swap tools' "instructions"
+`do_not_infer`) bound how the data should be read. The swap tool's "instructions"
 are **advisory for your agent to evaluate**, not commands the server executes.
+
+## Seller-side x402 hardening (builders / auditors)
+
+Buyer trust (this page) is not the same as **seller** payment hardening.
+The open skill below maps 2026 x402 Security Invariants to defenses used by this
+multi-rail seller, with a zero-dependency heuristic checker:
+
+https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill
+
+It marks LIVE / PARTIAL / CHECKER honestly. A clean checker report is **necessary,
+not sufficient** — not a claim of unhackability.
 
 ## How do I verify all this?
 
-- **Read the source** — the server is public:
-  https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
-- **On-chain**: the live vault on Hyperliquid and the public track record at
-  https://hypernatt.com/stats
-- **Inspect before connecting**: `curl -s https://hypernatt.com/api/m2m/agent/manifest`
-  (free, no wallet) — see the `security_v1` block.
+- **Read the source** — https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
+- **On-chain / stats** — https://hypernatt.com/stats
+- **Free catalog** — `curl -s https://hypernatt.com/api/m2m/agent/manifest`
+- **Real 402** — `curl -i https://hypernatt.com/api/m2m/liq-radar`
+- **Networks** — `curl -s https://hypernatt.com/.well-known/x402`
 
 ## Reporting a vulnerability
 

@@ -95,8 +95,8 @@ async function main() {
   console.log(`[cdp] EVM account ${CDP_NAME}: ${address}`);
 
   const sid = await initMcp();
-  await callTool(sid, "get_mm_trap_state");
-  await callTool(sid, "get_btc_usdc_signal");
+  await callTool(sid, "get_agent_manifest");
+  await callTool(sid, "get_liq_radar", { symbol: "BTC" });
 
   const swapArgs = {
     fromChain: 8453,

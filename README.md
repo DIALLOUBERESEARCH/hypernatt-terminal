@@ -1,46 +1,64 @@
 # HyperNatt Terminal
 
-HyperNatt Terminal — agent MCP: multi-crypto liquidation radar + Li.Fi cross-chain swap. Not a generic market-data wrapper — read-only Decision Core context, not trade advice. No custody.
+[![Live](https://img.shields.io/badge/Live-hypernatt.com-00c853)](https://hypernatt.com)
+[![MCP](https://img.shields.io/badge/MCP-3%20tools%20·%20v2.7.0-9c27b0)](https://hypernatt.com/mcp/protocol)
+[![x402](https://img.shields.io/badge/x402-Base%20%2B%20Solana-blue)](https://hypernatt.com/.well-known/x402)
+[![Security](https://img.shields.io/badge/Security-no%20custody%20·%20verify-brightgreen)](./SECURITY.md)
+[![Seller skill](https://img.shields.io/badge/x402%20seller-security%20skill-orange)](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill)
+[![Glama](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
+[![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 
-Full HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick.
+**Agent MCP:** multi-crypto **liquidation radar** + **Li.Fi** cross-chain swap. Read-only microstructure context from a live Hyperliquid vault operator — **not** trade advice, **no** custody.
 
-Security: no custody, no key access, read-only Decision Core, x402 you control, public code — verify yourself (SECURITY.md).
+Full HyperNatt platform: https://hypernatt.com — this repo is one agent-facing brick.
 
-3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.
+> **Public mirror note:** synced from the NATTAPP monorepo (`backend/services/m2m/mcp/public-repo/`). History here is mirror commits, not the private monorepo timeline.
 
-Pricing: flat $0.001 per call via x402 (USDC on Base + Solana) on `get_liq_radar`. Free: `get_agent_manifest`. Swap is free at MCP layer (gas + Li.Fi integrator fee on-chain). Heavy use: swap-earned quota or the $5/mo Agent Pass (~15,000 credits).
+## What it does
 
-Whitelist for `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC).
+| Tool | Role | Price |
+|------|------|-------|
+| `get_agent_manifest` | Catalog + journeys — **call first** | Free |
+| `get_liq_radar` | Liq / OI / cluster context (whitelist) | **$0.001** x402 (Base + Solana) |
+| `swap_via_nattswap` | Li.Fi route + actions — **you** sign | Free at MCP (gas + Li.Fi fee on-chain) |
 
-Humans: Claude → Settings → Integrations → Add connector → MCP URL on the domain above (/mcp/protocol), then ask: "Call get_agent_manifest, then get_liq_radar — what is the liq context?"
+Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC).
 
-Documentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
+Heavy use: swap-earned quota or **$5/mo** Agent Pass (~15,000 credits).
 
----
+### What we do NOT claim
 
-## Try it in 30 seconds (no install, no wallet)
+| We do **not** claim | What we **do** show |
+|---------------------|---------------------|
+| Generic Coinglass / market-data wrapper | Operator-shaped liq radar for agents |
+| Custody of keys or funds | Agent signs own txs; server never broadcasts |
+| Trade advice / guaranteed edge | Read-only JSON context + interpretation bounds |
+| 9 or 15 MCP tools | **Exactly 3 tools** · v2.7.0 |
+| Independent security audit / bank-grade | Public code + [SECURITY.md](./SECURITY.md) + [x402 seller skill](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill) |
 
-One free public call returns the catalog (3 tools, prices, ecosystem links):
+## Start here
 
-```bash
-curl -s https://hypernatt.com/api/m2m/agent/manifest      # full catalog, free
-```
+| Step | Link |
+|------|------|
+| **1. Free catalog (30s)** | `curl -s https://hypernatt.com/api/m2m/agent/manifest` |
+| **2. Quickstart** | [docs/quickstart.md](docs/quickstart.md) |
+| **3. Examples** | [examples/](examples/) — `liq_radar_min.py` then `swap_after_liq_radar.py` |
+| **4. Tool reference** | [tools/README.md](tools/README.md) |
+| **5. Security (buyer trust)** | [SECURITY.md](SECURITY.md) |
+| **6. Buyer skill (agents)** | [skills/hypernatt-terminal/SKILL.md](skills/hypernatt-terminal/SKILL.md) |
+| **7. Seller hardening (builders)** | [solana-x402-seller-security-skill](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill) |
+| **8. Integrations** | [docs/integrations.md](docs/integrations.md) |
 
 MCP endpoint: https://hypernatt.com/mcp/protocol
 
----
+## Security
 
-## Documentation
+- **No custody** — Decision Core reads are data; swap returns Li.Fi instructions for **your** agent to evaluate and sign.
+- **x402 you control** — pay per call; no static API keys required for the free manifest.
+- **Seller defenses** — same multi-rail (Base + Solana) stack documented in the open [x402 seller security skill](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill) (Security Invariants + heuristic checker). That skill is **not** a substitute for an independent audit.
 
-- [Quickstart](docs/quickstart.md) — connect Claude / Cursor in 30 seconds
-- [Integrations](docs/integrations.md) — MCP clients, REST + x402
-- [Tool reference](tools/README.md) — per-tool docs
-- [Security & trust](SECURITY.md) — no custody, no keys, read-only; verify yourself
-- [Glama submission](docs/glama.md)
-
-[![DIALLOUBE-RESEARCH/hypernatt-terminal MCP server](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
-
-[![HyperNatt Terminal on x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
+Verify yourself: [SECURITY.md](SECURITY.md) · source · `curl -i https://hypernatt.com/api/m2m/liq-radar` (real **402**).
 
 ## License
 

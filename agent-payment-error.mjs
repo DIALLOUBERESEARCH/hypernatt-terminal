@@ -4,8 +4,6 @@
 
 const FREE_TOOLS_ALWAYS_WORK = [
     "get_agent_manifest",
-    "get_vault_proof",
-    "swap_quote",
     "swap_via_nattswap",
 ];
 
@@ -19,19 +17,19 @@ function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
     if (reasonCode === "PAYWALL_UNAVAILABLE") {
         return (
             "HyperNatt paywall check is temporarily unavailable. " +
-            "Free tools get_agent_manifest and get_vault_proof still work — retry in a minute."
+            "Free tools get_agent_manifest and swap_via_nattswap still work — retry in a minute."
         );
     }
     if (reasonCode === "PAYMENT_REQUIRED") {
         return (
             `Payment required for ${tool}. ` +
-            "Connect a wallet with swap quota, Agent Pass, or pay $0.001 USDC per call on Base."
+            "Connect a wallet with swap quota, Agent Pass ($5/mo), or pay $0.001 USDC per call on Base or Solana."
         );
     }
     return (
         `Free trial credits used (${rem}/${daily} pool remaining today UTC). ` +
-        "get_vault_proof and get_agent_manifest still work. " +
-        "Swap via NattSwap for bonus credits, Agent Pass $19/mo, or retry tomorrow UTC."
+        "get_agent_manifest and swap_via_nattswap still work. " +
+        "Swap via NattSwap for bonus credits, Agent Pass $5/mo, or retry tomorrow UTC."
     );
 }
 
@@ -42,7 +40,7 @@ export function buildAgentPaymentRequiredBlock(input) {
     const nextSteps = swapTool
         ? [
               "Call get_agent_manifest and read wallet_onboarding_v1 under Execution",
-              "Use swap_via_nattswap MCP with YOUR agent wallet as fromAddress (not vault proof address)",
+              "Use swap_via_nattswap MCP with YOUR agent wallet as fromAddress (not a vault address)",
               "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/docs/swap-agentkit.md",
               "After on-chain swap: POST /api/m2m/swap/register for quota credits",
           ]
