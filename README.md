@@ -50,6 +50,8 @@ Heavy use: swap-earned quota or **$5/mo** Agent Pass (~15,000 credits).
 | **6. Buyer skill (agents)** | [skills/hypernatt-terminal/SKILL.md](skills/hypernatt-terminal/SKILL.md) |
 | **7. Seller hardening (builders)** | [solana-x402-seller-security-skill](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill) |
 | **8. Integrations** | [docs/integrations.md](docs/integrations.md) |
+| **9. Changelog** | [CHANGELOG.md](CHANGELOG.md) |
+| **10. Tests** | [test/](test/) — `npm test` (node:test) |
 
 MCP endpoint: https://hypernatt.com/mcp/protocol
 
