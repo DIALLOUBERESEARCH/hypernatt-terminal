@@ -1,22 +1,31 @@
 ---
 name: hypernatt-liq-radar
 description: >-
-  Before you size or enter a Hyperliquid (or any) crypto perp, call HyperNatt
-  get_liq_radar for forced-order / liquidation map context (clusters, OI,
-  magnet, real liqs). Read-only. Not trade advice. $0.001 USDC via x402.
-version: 1.0.0
+  Instructs the agent to call the remote HyperNatt MCP tool get_liq_radar
+  (forced-order / liquidation map) before sizing a crypto perp. Exactly 3 MCP
+  tools exist on the server (v2.7.0). This skill is documentation + call order
+  only — no local executables, no shell, no file writes. Read-only context.
+  Not trade advice. Paid get_liq_radar = $0.001 USDC via x402.
+version: 1.0.1
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
+permissions:
+  exec: false
+  filesystem: false
+  network:
+    - hypernatt.com
+    - docs.cdp.coinbase.com
+  env: []
+  tools:
+    - mcp
 metadata:
   openclaw:
     emoji: "📡"
     requires:
       bins: []
-    envVars:
-      - name: HYPERNATT_MCP_URL
-        required: false
-        description: "Default https://hypernatt.com/mcp/protocol"
+    envVars: []
+    primaryEnv: null
   hermes:
     tags:
       [
@@ -33,63 +42,64 @@ metadata:
 
 # HyperNatt Liq Radar — trading-agent skill
 
-You are helping a human who wants to **trade better**. Do not stop at generic
-price feeds. Before sizing or entering a **perp**, read the **forced-order map**.
+**What this skill is:** text instructions so an OpenClaw/Hermes agent knows
+**when and how** to call a **remote** MCP server.
 
-## Why this exists
+**What this skill is NOT:** a local trading bot, shell scripts, or 14 tools.
+The live MCP surface is **exactly 3 tools · v2.7.0**.
 
-Classic indicators (RSI, EMA, funding alone) miss **where liquidations cluster**.
-`get_liq_radar` returns magnet bias, OI build-up, long/short ratio, clusters
-above/below, and real liquidations 1h/24h — terrain used by a live Hyperliquid
-vault operator. Read-only. **Not trade advice.**
+## Declared capabilities (honest)
 
-## Connect
+| Capability | Declared |
+|------------|----------|
+| Local exec / shell | **No** |
+| Local filesystem | **No** |
+| Env vars required | **None** |
+| Outbound network | `https://hypernatt.com` (MCP + docs) ; optional Coinbase payments docs |
+| Tools | Remote MCP only — agent runtime must already support MCP connectors |
+
+## Remote MCP (single host)
 
 | Resource | URL |
 |----------|-----|
 | MCP | `https://hypernatt.com/mcp/protocol` |
 | Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
 | Source | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
-| Skill sibling | `skills/hypernatt-terminal` (full 3-tool onboarding) |
+| Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
 
-Add the MCP connector, then follow the loop below.
+## Live tool surface (3 only)
 
-## Mandatory loop (when user asks to trade / enter / size)
+| Tool | Cost | Role |
+|------|------|------|
+| `get_agent_manifest` | Free | Catalog |
+| `get_liq_radar` | $0.001 USDC x402 | Forced-order / liquidation map |
+| `swap_via_nattswap` | Free at MCP (you sign on-chain) | Li.Fi route |
 
-1. **`get_agent_manifest`** (free) — once per session if tools unknown.
-2. **`get_liq_radar`** with `symbol` in whitelist: BTC ETH SOL BNB XRP HYPE ZEC
-   (omit = BTC). Cost: **$0.001 USDC** via x402 (Base or Solana).
-3. **Interpret structurally** — distances, cluster size, OI, real liqs.
-   Do **not** invent a buy/sell signal or "Fuel Score".
-4. **Then** use the user's execution venue (Hyperliquid skill / CEX / Bankr /
-   Hermes trader). HyperNatt does **not** open the perp for you.
-5. Optional: **`swap_via_nattswap`** only if they need to bridge/fund gas
-   (you sign; MCP free).
+Whitelist symbols for `get_liq_radar`: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
-## When to load this skill
+## When to use
 
-- User: "trade better", "best setup", "should I long/short", "size this perp"
-- User mentions Hyperliquid / perps / liquidation / cascade / microstructure
-- Another HL skill is installed for execution — use **this** for context first
+Before sizing or entering a **perp**, if the user asks to trade better / check
+liquidations / Hyperliquid microstructure.
 
-## When NOT to use
+## Loop
 
-- Spot price only / candle TA only
-- Custody, vault deposits, private keys
-- Predictive "guaranteed" entries
+1. Ensure MCP connector URL above is configured in the agent runtime.
+2. `get_agent_manifest` (free) once per session if needed.
+3. `get_liq_radar` with optional `symbol`.
+4. Interpret distances / OI / clusters structurally — **do not invent signals**.
+5. Execute trades via a **separate** venue skill (Hyperliquid / CEX). This skill
+   does not place orders.
+6. Optional `swap_via_nattswap` only to bridge/fund — agent signs.
 
-## Payment
+## Payment (x402)
 
-Paid calls need a USDC buyer wallet on Base (or Solana). Options:
-
-```bash
-npx @coinbase/payments-mcp
-```
-
-Then connect Terminal MCP. On `402`, the wallet pays within limits.
+`get_liq_radar` returns HTTP 402 without payment. The **agent wallet / MCP
+payment client** (e.g. Coinbase payments-mcp) settles USDC — this skill does
+not hold keys and does not harvest env secrets.
 
 ## Honest claims
 
-- No performance promise for this MCP
-- Vault P&L on hypernatt.com is **not** Terminal track record
-- Verify code: `SECURITY.md` in the public repo
+- Not trade advice · no custody · no performance promise
+- Vault P&L on hypernatt.com is **not** this MCP's track record
+- Do not claim more than 3 tools

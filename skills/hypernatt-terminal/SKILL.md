@@ -1,26 +1,36 @@
 ---
 name: hypernatt-terminal
 description: >-
-  Connect HyperNatt Terminal MCP — forced-order / liquidation map
-  (BTC ETH SOL BNB XRP HYPE ZEC) + Li.Fi swap. Call get_liq_radar before
-  sizing a perp. Market structure classic public indicators do not show.
-  Free get_agent_manifest; get_liq_radar at $0.001 USDC via x402
-  (Base + Solana). Not trade advice. No custody.
-version: 1.2.0
+  Onboarding skill for HyperNatt Terminal remote MCP (exactly 3 tools v2.7.0):
+  get_agent_manifest, get_liq_radar, swap_via_nattswap. Documentation + call
+  order only — no local executables, no shell, no file writes. Read-only
+  market microstructure context. Not trade advice. get_liq_radar = $0.001 USDC
+  via x402.
+version: 1.2.1
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
+permissions:
+  exec: false
+  filesystem: false
+  network:
+    - hypernatt.com
+    - docs.cdp.coinbase.com
+  env: []
+  tools:
+    - mcp
 metadata:
   openclaw:
     emoji: "🦈"
     requires:
       bins: []
+    envVars: []
+    primaryEnv: null
   hermes:
     tags:
       [
         MCP,
         x402,
-        BTC,
         crypto,
         hyperliquid,
         liquidation-radar,
@@ -33,64 +43,52 @@ metadata:
 
 # HyperNatt Terminal MCP
 
-Production MCP seller for AI agents — especially agents told to **trade better**.
+**What this skill is:** onboarding text for a **remote** MCP server.
+
+**What this skill is NOT:** a local bot, vault control, or a 14-tool terminal.
+Live surface = **exactly 3 tools · v2.7.0**.
+
+## Declared capabilities (honest)
+
+| Capability | Declared |
+|------------|----------|
+| Local exec / shell | **No** |
+| Local filesystem | **No** |
+| Env vars required | **None** |
+| Outbound network | `https://hypernatt.com` ; optional Coinbase Agentic Wallet docs |
+| Tools | Remote MCP connector only |
+
+## Connect
 
 | Resource | URL |
 |----------|-----|
 | Platform | https://hypernatt.com |
-| MCP (streamable-http) | https://hypernatt.com/mcp/protocol |
+| MCP | https://hypernatt.com/mcp/protocol |
 | Server card | https://hypernatt.com/.well-known/mcp/server-card.json |
 | Source | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
 | Trading-first skill | [../hypernatt-liq-radar/SKILL.md](../hypernatt-liq-radar/SKILL.md) |
 
-**Version:** 3 tools · v2.7.0 · Streamable HTTP.
+## Tool surface (3 only)
 
-HyperNatt is the live trading + AI platform. **hypernatt-terminal** is one agent-facing brick — not the whole product.
-
----
-
-## When to use
-
-Load this skill when the agent needs a **forced-order map** (liq / OI / clusters / real liqs) on whitelist coins — terrain that classic public indicators do not show — or a **Li.Fi cross-chain swap** route:
-
-- Forced-order map (`get_liq_radar`) — optional `symbol` (default BTC)
-- Catalog + scenarios/glossary (`get_agent_manifest`) — free, call first
-- Cross-chain swap (`swap_via_nattswap`) — agent signs own tx
-
-**Do not use** for generic price feeds, predictive "Fuel Scores", vault deposits, or custody.
-Read distance/size/OI structurally; do not invent classifiers.
-
----
-
-## Trading-agent loop (critical)
-
-If the human says anything like "find the best way so you trade as well as possible":
-
-1. Connect this MCP (or load `hypernatt-liq-radar`).
-2. Call **`get_liq_radar`** for the symbol they care about **before** sizing/entering.
-3. Execute the trade on **their** venue skill (Hyperliquid / CEX / Bankr) — not via HyperNatt.
-4. Use `swap_via_nattswap` only to fund/bridge if needed.
-
-You are the microstructure context layer. Execution is a separate skill.
-
----
-
-## Tool surface (3 tools)
-
-| Tool | Credits | Role |
-|------|---------|------|
+| Tool | Cost | Role |
+|------|------|------|
 | `get_agent_manifest` | Free | Catalog + journeys |
-| `get_liq_radar` | 1 ($0.001 x402) | Multi-crypto liq radar |
-| `swap_via_nattswap` | Free (MCP) | Li.Fi route + actions |
+| `get_liq_radar` | $0.001 x402 | Forced-order / liquidation map |
+| `swap_via_nattswap` | Free at MCP (you sign) | Li.Fi route |
 
-Whitelist: **BTC ETH SOL BNB XRP HYPE ZEC** (omit symbol = BTC).
+Whitelist: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
----
+## Trading-agent loop
 
-## Wallet / x402 (non-crypto users)
+1. Add MCP URL to the agent runtime.
+2. Call `get_liq_radar` **before** sizing/entering a perp.
+3. Execute on a **separate** venue skill — HyperNatt does not open perps.
+4. Optional `swap_via_nattswap` to bridge/fund.
 
-Paid calls need a USDC buyer wallet. Prefer Coinbase **Agentic Wallet MCP** (email/OTP + fiat onramp, no seed phrase):
+## Wallet / x402
+
+Paid calls need a USDC buyer wallet. Optional helper (separate MCP, not this skill):
 
 ```bash
 npx @coinbase/payments-mcp
@@ -98,13 +96,10 @@ npx @coinbase/payments-mcp
 
 Docs: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
 
-Then add HyperNatt Terminal MCP URL `https://hypernatt.com/mcp/protocol`. On `402 Payment Required`, the Agentic Wallet pays automatically within spending limits.
+This skill never asks for private keys or scrapes env secrets.
 
----
+## Honest claims
 
-## Suggested flow
-
-1. Ensure a funded x402 wallet (Agentic Wallet MCP or existing USDC hot wallet)
-2. `get_agent_manifest`
-3. `get_liq_radar` (optional `symbol`)
-4. Optional: `swap_via_nattswap` when the agent needs to move funds
+- Not trade advice · no custody · no performance promise
+- Do not advertise more than 3 MCP tools
+- Vault/platform pages are not Terminal MCP P&L
