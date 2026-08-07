@@ -1,0 +1,40 @@
+# GitHub Actions — hypernatt-terminal public mirror
+# Source of truth: monorepo backend/services/m2m/mcp/public-repo/.github/
+# Synced to DIALLOUBE-RESEARCH/hypernatt-terminal
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  gate:
+    name: test + audit + tool-count
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install (lockfile)
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Unit tests (node:test)
+        run: npm test
+
+      - name: npm audit (prod)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Verify MCP tool count (3 tools · server-card)
+        run: node scripts/verify-mcp-tool-count.mjs

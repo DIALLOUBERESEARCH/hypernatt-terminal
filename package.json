@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "start:stdio": "node stdio.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "verify:tools": "node scripts/verify-mcp-tool-count.mjs",
+    "ci": "npm test && npm audit --omit=dev --audit-level=high && npm run verify:tools"
   },
   "dependencies": {
     "@coinbase/cdp-sdk": "^1.51.0",

@@ -18,8 +18,10 @@ Private monorepo history is separate (see README mirror note).
 - README packaging: badges, **What we do NOT claim**, Start here, Security + seller skill link.
 - Examples: `liq_radar_min.py`, `swap_after_liq_radar.py`.
 - CI guard: `scripts/verify-mcp-tool-count.mjs` (Docker / card must list exactly 3 tools).
+- GitHub Actions **CI** (`.github/workflows/ci.yml`): `npm test` + `npm audit --audit-level=high` + verify 3 tools.
 - Buyer skill: `skills/hypernatt-terminal/SKILL.md`.
 - Visible `test/` suite synced from monorepo (node:test).
+- `CHANGELOG.md`.
 
 ### Changed
 - Title / positioning: **Liq Radar + Swap** (not BTC Decision Terminal).
