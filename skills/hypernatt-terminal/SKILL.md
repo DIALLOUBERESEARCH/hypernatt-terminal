@@ -1,9 +1,10 @@
 ---
 name: hypernatt-terminal
 description: >-
-  Connect HyperNatt Terminal MCP — multi-crypto liquidation radar
-  (BTC ETH SOL BNB XRP HYPE ZEC) + Li.Fi swap. Free get_agent_manifest;
-  get_liq_radar at $0.001 USDC via x402 (Base + Solana). Not trade advice. No custody.
+  Connect HyperNatt Terminal MCP — forced-order / liquidation map
+  (BTC ETH SOL BNB XRP HYPE ZEC) + Li.Fi swap. Market structure classic public
+  indicators do not show. Free get_agent_manifest; get_liq_radar at $0.001 USDC
+  via x402 (Base + Solana). Not trade advice. No custody.
 version: 1.1.0
 author: DIALLOUBE-RESEARCH
 license: MIT
@@ -33,13 +34,14 @@ HyperNatt is the live trading + AI platform. **hypernatt-terminal** is one agent
 
 ## When to use
 
-Load this skill when the agent needs **liquidation / OI / cluster context** on whitelist coins, or a **Li.Fi cross-chain swap** route:
+Load this skill when the agent needs a **forced-order map** (liq / OI / clusters / real liqs) on whitelist coins — terrain that classic public indicators do not show — or a **Li.Fi cross-chain swap** route:
 
-- Liquidation radar (`get_liq_radar`) — optional `symbol` (default BTC)
-- Catalog / prices (`get_agent_manifest`) — free, call first
+- Forced-order map (`get_liq_radar`) — optional `symbol` (default BTC)
+- Catalog + scenarios/glossary (`get_agent_manifest`) — free, call first
 - Cross-chain swap (`swap_via_nattswap`) — agent signs own tx
 
-**Do not use** for generic price feeds, vault deposits, or custody.
+**Do not use** for generic price feeds, predictive “Fuel Scores”, vault deposits, or custody.
+Read distance/size/OI structurally; do not invent classifiers.
 
 ---
 

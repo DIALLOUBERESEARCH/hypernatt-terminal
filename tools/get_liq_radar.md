@@ -1,6 +1,8 @@
 # `get_liq_radar`
 
-Multi-crypto **liquidation radar** snapshot: magnet score, OI build-up, long/short ratio, liquidation clusters above/below price, and recent liquidations.
+Multi-crypto **forced-order / liquidation map**: magnet bias, OI build-up, long/short ratio, liquidation clusters above/below price, and observed liquidations.
+
+This is **market structure context** (where leveraged liquidations stack) — not a public-indicator substitute and **not** a trade signal.
 
 Product: `hypernatt_liq_radar_v2`. Clusters expose `largest_*_cluster` (size leaders within ±10% of mark); `nearest_*_cluster` is a temporary alias for older clients.
 
@@ -21,9 +23,11 @@ Omit → **BTC** (whale-compatible default). Other symbols → `symbol_not_suppo
 
 | Situation | Call |
 |-----------|------|
-| Need liq / OI / cluster context on a whitelist coin | **`get_liq_radar`** |
-| Start / catalog | `get_agent_manifest` (free) |
+| Need forced-order / liq / OI / cluster terrain on a whitelist coin | **`get_liq_radar`** |
+| Start / catalog + scenarios / glossary | `get_agent_manifest` (free) |
 | Cross-chain route | `swap_via_nattswap` |
+
+Honest structural walkthrough: [../examples/liq_radar_interpret.py](../examples/liq_radar_interpret.py)
 
 ## Inputs
 

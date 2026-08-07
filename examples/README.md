@@ -3,6 +3,7 @@
 | Script | Deps | Purpose |
 |--------|------|---------|
 | [liq_radar_min.py](liq_radar_min.py) | None (stdlib) | Free manifest taste — 3-tool catalog |
+| [liq_radar_interpret.py](liq_radar_interpret.py) | None (stdlib) | Honest structural read (distance / OI / real liqs) — no fake scores |
 | [swap_readiness_check.py](swap_readiness_check.py) | None | Swap onboarding checklist from live manifest |
 | [swap_after_liq_radar.py](swap_after_liq_radar.py) | None | **manifest → liq_radar → swap quote** ; `--compare-vault` shows vault blocked |
 | [cdp_swap_execute.mjs](cdp_swap_execute.mjs) | `npm install` in this folder | CDP EVM wallet + MCP swap ; `--dry-run` / `--execute` (VPS keys) |
@@ -13,6 +14,7 @@ Official MCP journey: `get_agent_manifest` → `get_liq_radar` → optional `swa
 
 ```bash
 python examples/liq_radar_min.py
+python examples/liq_radar_interpret.py
 
 # Vault blocked demo (prod MCP):
 python examples/swap_after_liq_radar.py --compare-vault

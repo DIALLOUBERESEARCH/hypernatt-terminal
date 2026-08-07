@@ -7,13 +7,48 @@
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 [![npm audit](https://img.shields.io/badge/npm%20audit-0%20high-brightgreen)](./CHANGELOG.md)
 
-Multi-crypto **liquidation radar** for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
+**Forced-order map** for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
+
+Most agents (and most humans) only see classic public indicators. This MCP shows **where leveraged liquidations stack** — a market-structure layer those indicators do not expose. Read-only context. Your agent still decides.
 
 Built by one person. Code is public. Backend is private. No custody. Not trade advice.
 
 Full HyperNatt platform (vault, assistant): https://hypernatt.com — this repo is one agent-facing brick.
 
 > Public mirror synced from a private monorepo. History here is mirror commits.
+
+## What HyperNatt Terminal gives your agent
+
+A map of **forced orders**: where leveraged positions will be liquidated if price reaches them (clusters, OI build-up, observed liquidations).
+
+This is **market structure context**, not a trade signal. It shows terrain so a sovereign trading agent can judge timing, sizing, and risk with more awareness than agents that only read RSI/MACD-style public feeds.
+
+Your agent still decides. We show the terrain.
+
+### What your agent can do with this (honest scenarios)
+
+#### Scenario 1 — Wait near the cluster
+
+Price is approaching a dense liquidation zone. Your agent can wait for forced flow to print (`real_liquidations`), then reassess — **without** assuming a guaranteed reversal.
+
+#### Scenario 2 — Size relative to distance
+
+Cluster ~5% away vs ~0.5% away is a different risk parameter. Distance informs sizing or patience — it is **not** a prediction that the level will be hit.
+
+#### Scenario 3 — After real liquidations, check OI
+
+If price swept a zone and real liquidations spiked, compare with OI change. A large OI drop can mean forced flow is partly exhausted — still context, **not** an auto entry.
+
+### Glossary (short)
+
+| Term | Meaning |
+|------|---------|
+| Cluster | Zone where leveraged positions may liquidate if mark reaches it. Not a TP. |
+| Nearest vs largest | Closest to mark vs most estimated size in the ±10% window — different jobs. |
+| Real vs estimated | `real_liquidations` = observed; `liq_density` clusters = modeled. Both labeled. |
+| `magnet.score` | Directional density bias from OI / L-S / funding. **Not** a hit probability. |
+
+Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpretation_rules_v1`.
 
 ## What you get
 
@@ -29,7 +64,8 @@ Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC
 
 | We do **not** claim | What we **do** show |
 |---------------------|---------------------|
-| Generic Coinglass wrapper | Operator-shaped liq radar for agents |
+| Generic Coinglass wrapper | Operator-shaped forced-order map for agents |
+| Predictive Fuel Score / sweep classifier | Distance, size, OI, real liqs — labeled |
 | Custody of keys or funds | Agent signs own txs |
 | Trade advice / guaranteed edge | Read-only JSON context |
 | More than 3 MCP tools | **Exactly 3** · v2.7.0 |
@@ -46,6 +82,7 @@ curl -i https://hypernatt.com/api/m2m/liq-radar
 | Step | Link |
 |------|------|
 | Quickstart | [docs/quickstart.md](docs/quickstart.md) |
+| Honest interpret example | [examples/liq_radar_interpret.py](examples/liq_radar_interpret.py) |
 | Examples | [examples/](examples/) |
 | Security | [SECURITY.md](SECURITY.md) |
 | Buyer skill (use the MCP) | [skills/hypernatt-terminal/SKILL.md](skills/hypernatt-terminal/SKILL.md) |
