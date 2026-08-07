@@ -5,7 +5,7 @@ description: >-
   get_agent_manifest, get_liq_radar, swap_via_nattswap. Docs + call order only -
   no local exec/shell/files. Read-only market microstructure for crypto trading
   agents (any venue). Not trade advice. get_liq_radar = $0.001 USDC via x402.
-version: 1.3.0
+version: 1.3.1
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -35,7 +35,7 @@ metadata:
         liquidation,
         microstructure,
         market-data,
-        ai-agents,
+        swap,
       ]
     related_skills: [native-mcp, mcporter, hypernatt-liq-radar]
 ---

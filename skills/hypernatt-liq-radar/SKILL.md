@@ -6,7 +6,7 @@ description: >-
   and other whitelist assets, any venue. Exactly 3 MCP tools (v2.7.0). Docs +
   call order only - no local exec/shell/files. Read-only. Not trade advice.
   get_liq_radar = $0.001 USDC via x402.
-version: 1.0.2
+version: 1.0.3
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -35,7 +35,7 @@ metadata:
         market-data,
         x402,
         MCP,
-        ai-agents,
+        swap,
       ]
     related_skills: [native-mcp, mcporter, hypernatt-terminal]
 ---
