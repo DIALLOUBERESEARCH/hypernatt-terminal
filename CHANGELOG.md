@@ -34,7 +34,7 @@ Private monorepo history is separate (see README mirror note).
 - Title / positioning: **Liq Radar + Swap** (not BTC Decision Terminal).
 - Manifest section rename: **Liquidation radar** (was Decision Core).
 - Public paywall framing: **free + pay-per-call** first; Pass/quota demoted to power-user.
-- README: 4 badges max, solo-builder tone (F#101N).
+- README: solo-builder tone (F#101N); listing badges restored (Glama + x402-list) — credibility signals, not vanity.
 - Version **2.7.0** · Streamable HTTP · whitelist BTC ETH SOL BNB XRP HYPE ZEC.
 
 ## [2.6.0] — 2026-07
