@@ -5,7 +5,7 @@ description: >-
   get_agent_manifest, get_liq_radar, swap_via_nattswap. Docs + call order only -
   no local exec/shell/files. Read-only market microstructure for crypto trading
   agents (any venue). Not trade advice. get_liq_radar = $0.001 USDC via x402.
-version: 1.3.1
+version: 1.3.2
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -45,7 +45,7 @@ metadata:
 **What this skill is:** onboarding text for a **remote** MCP server.
 
 **What this skill is NOT:** a local bot, vault control, or a 14-tool terminal.
-Live surface = **exactly 3 tools | v2.7.0**.
+Live surface = **exactly 3 tools - v2.7.0**.
 
 ## Declared capabilities (honest)
 
@@ -66,15 +66,13 @@ Live surface = **exactly 3 tools | v2.7.0**.
 | Server card | https://hypernatt.com/.well-known/mcp/server-card.json |
 | Source | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
-| Trading-first skill | [../hypernatt-liq-radar/SKILL.md](../hypernatt-liq-radar/SKILL.md) |
+| Trading-first skill | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/skills/hypernatt-liq-radar/SKILL.md |
 
 ## Tool surface (3 only)
 
-| Tool | Cost | Role |
-|------|------|------|
-| `get_agent_manifest` | Free | Catalog + journeys |
-| `get_liq_radar` | $0.001 x402 | Forced-order / liquidation map |
-| `swap_via_nattswap` | Free at MCP (you sign) | Li.Fi route |
+1. **get_agent_manifest** - Free - Catalog + journeys
+2. **get_liq_radar** - $0.001 x402 - Forced-order / liquidation map
+3. **swap_via_nattswap** - Free at MCP (you sign) - Li.Fi route
 
 Whitelist: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 

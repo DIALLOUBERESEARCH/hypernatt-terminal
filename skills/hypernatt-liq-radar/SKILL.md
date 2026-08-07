@@ -6,7 +6,7 @@ description: >-
   and other whitelist assets, any venue. Exactly 3 MCP tools (v2.7.0). Docs +
   call order only - no local exec/shell/files. Read-only. Not trade advice.
   get_liq_radar = $0.001 USDC via x402.
-version: 1.0.3
+version: 1.0.4
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -46,7 +46,7 @@ metadata:
 **when and how** to call a **remote** MCP server.
 
 **What this skill is NOT:** a local trading bot, shell scripts, or 14 tools.
-The live MCP surface is **exactly 3 tools | v2.7.0**.
+The live MCP surface is **exactly 3 tools - v2.7.0**.
 
 ## Declared capabilities (honest)
 
@@ -62,20 +62,18 @@ The live MCP surface is **exactly 3 tools | v2.7.0**.
 
 | Resource | URL |
 |----------|-----|
-| MCP | `https://hypernatt.com/mcp/protocol` |
-| Server card | `https://hypernatt.com/.well-known/mcp/server-card.json` |
+| MCP | https://hypernatt.com/mcp/protocol |
+| Server card | https://hypernatt.com/.well-known/mcp/server-card.json |
 | Source | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
 
 ## Live tool surface (3 only)
 
-| Tool | Cost | Role |
-|------|------|------|
-| `get_agent_manifest` | Free | Catalog |
-| `get_liq_radar` | $0.001 USDC x402 | Forced-order / liquidation map |
-| `swap_via_nattswap` | Free at MCP (you sign on-chain) | Li.Fi route |
+1. **get_agent_manifest** - Free - Catalog
+2. **get_liq_radar** - $0.001 USDC x402 - Forced-order / liquidation map
+3. **swap_via_nattswap** - Free at MCP (you sign on-chain) - Li.Fi route
 
-Whitelist symbols for `get_liq_radar`: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
+Whitelist symbols for get_liq_radar: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
 ## When to use
 
@@ -110,6 +108,6 @@ not hold keys and does not harvest env secrets.
 
 ## Honest claims
 
-- Not trade advice | no custody | no performance promise
+- Not trade advice - no custody - no performance promise
 - Vault P&L on hypernatt.com is **not** this MCP's track record
 - Do not claim more than 3 tools
