@@ -1,9 +1,9 @@
 {
   "serverInfo": {
     "name": "hypernatt-terminal",
-    "title": "HyperNatt Terminal — Liq Radar + Swap for AI Agents",
+    "title": "HyperNatt Terminal - Liq Radar + Swap for AI Agents",
     "version": "2.7.0",
-    "description": "HyperNatt Terminal — agent MCP for liquidation radar + cross-chain swap. Multi-crypto get_liq_radar (whitelist BTC ETH SOL BNB XRP HYPE ZEC; omit symbol = BTC). Li.Fi swap via swap_via_nattswap. Not a generic market-data wrapper — read-only liquidation context, not trade advice. No custody.\n\nFull HyperNatt platform (vault, assistant, ecosystem): https://hypernatt.com — this MCP is one agent-facing brick.\n\nSecurity: no custody, no key access, read-only data, x402 you control, public code — verify yourself (SECURITY.md).\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: after manifest, call get_liq_radar (optional symbol). Pricing: free get_agent_manifest; get_liq_radar $0.001/call via x402 (Base + Solana). Swap free at MCP layer (gas on-chain).\n\nDocumentation: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "HyperNatt Terminal - agent MCP: multi-crypto liquidation radar + Li.Fi swap. get_liq_radar whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC). Read-only liq context, not trade advice. No custody.\n\nPlatform: https://hypernatt.com - this MCP is one agent-facing brick.\nSecurity: no custody, no keys, x402 you control, public code (SECURITY.md).\n3 tools / v2.7.0 / Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: get_liq_radar (optional symbol). SWAP: your hot wallet as fromAddress. x402 USDC pays API only.\nPricing: free get_agent_manifest; get_liq_radar $0.001/call x402 (Base + Solana). Swap free at MCP (you sign).\n\nNo wallet? npx @coinbase/payments-mcp then connect Terminal (docs.cdp.coinbase.com/agentic-wallet/mcp/welcome).\n\nDocs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
