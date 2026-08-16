@@ -99,7 +99,7 @@ tools/call get_liq_radar {"symbol":"ETH"}
 1. Ensure MCP connector URL above is configured in the agent runtime.
 2. `get_agent_manifest` (free) once per session if needed.
 3. `get_liq_radar` with optional `symbol`.
-4. Interpret distances / OI / clusters structurally - **do not invent signals**.
+4. If `cluster_grammar` is present, read it **before** `liq_radar`. Ignore `class=noise` (<3%). `class=true` (~7%+) is terrain, not an entry. Do not treat `largest_*` near mark as the hunt.
 5. Execute trades via a **separate** venue skill (CEX / DEX / perps). This skill
    does not place orders and does not instruct swaps.
 

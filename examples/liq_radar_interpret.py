@@ -71,6 +71,17 @@ SAMPLE: dict[str, Any] = {
 
 
 def interpret(payload: dict[str, Any]) -> None:
+    grammar = payload.get("cluster_grammar") or {}
+    if grammar:
+        print("cluster_grammar (read first):")
+        print(
+            f"  available={grammar.get('available')} "
+            f"hold_if={grammar.get('hold_if')} "
+            f"true_long={grammar.get('true_long')} "
+            f"true_short={grammar.get('true_short')}"
+        )
+        print("  noise <3% = bait. true ~7%+ = low-leverage stack. Not a signal.")
+
     lr = payload.get("liq_radar") or {}
     if not lr.get("available"):
         print("liq_radar.available is false - nothing to interpret.")

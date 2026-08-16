@@ -28,7 +28,7 @@ No install for the hosted MCP. In **Claude → Settings → Connectors → Add c
 
 Then ask:
 
-> Call get_agent_manifest, then get_liq_radar — where is the nearest liquidation cluster on the forced-order map? Do not treat this as a trade signal.
+> Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
 
 More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/integrations.md).
 
@@ -42,9 +42,9 @@ Your agent still decides. We show the terrain.
 
 ### What your agent can do with this (honest scenarios)
 
-#### Scenario 1 — Wait near the cluster
+#### Scenario 1 — Ignore noise; wait only near class=true
 
-Price is approaching a dense liquidation zone. Your agent can wait for forced flow to print (`real_liquidations`), then reassess — **without** assuming a guaranteed reversal.
+Ignore clusters with `class=noise` (distance < 3%). If `cluster_grammar` is present, wait only near `class=true` (low-leverage stack ~7%+). Then watch `real_liquidations` print — **without** assuming a guaranteed reversal. `class=true` is terrain, not an entry signal.
 
 #### Scenario 2 — Size relative to distance
 
@@ -59,7 +59,8 @@ If price swept a zone and real liquidations spiked, compare with OI change. A la
 | Term | Meaning |
 |------|---------|
 | Cluster | Zone where leveraged positions may liquidate if mark reaches it. Not a TP. |
-| Nearest vs largest | Closest to mark vs most estimated size in the ±10% window — different jobs. |
+| `cluster_grammar` / `class` | If present: **read this first**. `noise` = distance < 3% (ignore); `true` = ~7%+ (low-leverage stack). Not a trade signal. |
+| Nearest vs largest | `nearest_*` is a legacy alias of `largest_*` (size leader), not closest-to-mark. |
 | Real vs estimated | `real_liquidations` = observed; `liq_density` clusters = modeled. Both labeled. |
 | `magnet.score` | Directional density bias from OI / L-S / funding. **Not** a hit probability. |
 

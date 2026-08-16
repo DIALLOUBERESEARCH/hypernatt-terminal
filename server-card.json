@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal - Liq Radar + Swap for AI Agents",
     "version": "2.7.0",
-    "description": "HyperNatt Terminal - agent MCP: forced-order / liquidation map + Li.Fi swap. get_liq_radar whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC). Market structure classic public indicators do not show. Read-only context, not trade advice. No custody.\n\nPlatform: https://hypernatt.com - this MCP is one agent-facing brick.\nSecurity: no custody, no keys, x402 you control, public code (SECURITY.md).\n3 tools / v2.7.0 / Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: get_liq_radar (optional symbol). SWAP: your hot wallet as fromAddress. x402 USDC pays API only.\nPricing: free get_agent_manifest; get_liq_radar $0.001/call x402 (Base + Solana). Swap free at MCP (you sign).\n\nNo wallet? npx @coinbase/payments-mcp then connect Terminal (docs.cdp.coinbase.com/agentic-wallet/mcp/welcome).\n\nDocs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
+    "description": "HyperNatt Terminal - agent MCP: forced-order / liquidation map + Li.Fi swap. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal. get_liq_radar whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC). Read-only context, not trade advice. No custody.\n\nPlatform: https://hypernatt.com - this MCP is one agent-facing brick.\nSecurity: no custody, no keys, x402 you control, public code (SECURITY.md).\n3 tools / v2.7.0 / Streamable HTTP. Call get_agent_manifest first.\n\nLIQ RADAR: get_liq_radar (optional symbol). SWAP: your hot wallet as fromAddress. x402 USDC pays API only.\nPricing: free get_agent_manifest; get_liq_radar $0.001/call x402 (Base + Solana). Swap free at MCP (you sign).\n\nNo wallet? npx @coinbase/payments-mcp then connect Terminal (docs.cdp.coinbase.com/agentic-wallet/mcp/welcome).\n\nDocs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -43,7 +43,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "Forced-order / liquidation map — magnet bias, OI build-up, L/S ratio, clusters above/below, real liqs 1h/24h. Whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC). Market structure classic public indicators do not show. USE WHEN: terrain / timing / sizing context. NOT a trade signal or Fuel Score. RETURNS: hypernatt_liq_radar_v2. COST: $0.001 x402 (Base or Solana). Side effects: none.",
+      "description": "If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal. Also magnet, OI, L/S, clusters, real liqs. Whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit=BTC). USE WHEN: terrain / timing / sizing. NOT a trade signal. RETURNS: hypernatt_liq_radar_v2. COST: $0.001 x402 (Base or Solana). Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {

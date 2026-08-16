@@ -41,7 +41,7 @@ README 30s block: [../README.md](../README.md#quick-start-30-seconds).
 
 Example prompt:
 
-> Call get_agent_manifest, then get_liq_radar — where is the nearest liquidation cluster on the forced-order map? Do not treat this as a trade signal.
+> Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
 
 `get_agent_manifest` is free. `get_liq_radar` is **$0.001** x402 (Base + Solana)
 after any intro; or Agent Pass / swap quota.

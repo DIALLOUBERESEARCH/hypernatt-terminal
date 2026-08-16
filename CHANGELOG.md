@@ -3,6 +3,15 @@
 All notable changes to the **public** HyperNatt Terminal MCP mirror.
 Private monorepo history is separate (see README mirror note).
 
+## [2.7.1] — 2026-08-16
+
+### Changed
+- Organ first: README / quickstart / skills tell agents to read `cluster_grammar`
+  before `liq_radar`. Dropped "nearest cluster" as the first prompt (noise trap).
+- GitHub About must match live 3-tool forced-order map (not "BTC Decision Terminal").
+
+---
+
 ## [2.7.0] — 2026-08-07
 
 ### Added

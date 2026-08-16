@@ -6,7 +6,7 @@
 
 **Humans (Claude / Cursor):** add connector `https://hypernatt.com/mcp/protocol`, then ask:
 
-> Call get_agent_manifest, then get_liq_radar — where is the nearest liquidation cluster on the forced-order map? Do not treat this as a trade signal.
+> Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
 
 **Agents:** 3 tools · v2.7.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
 

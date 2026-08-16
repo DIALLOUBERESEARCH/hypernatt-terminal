@@ -395,7 +395,7 @@ export function createMcpServer() {
         {
             description: toolDescriptionFromCard(
                 "get_liq_radar",
-                "Forced-order / liquidation map — whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit symbol = BTC). Not a trade signal.",
+                "If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is bait. class=true (~7%+) is the low-leverage stack. Terrain, not a signal. Whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit=BTC).",
             ),
             inputSchema: {
                 x_payment: z
