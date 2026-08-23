@@ -8,6 +8,7 @@ import axios from "axios";
 import { verifyPaymentWithFacilitator, formatUsdLabel } from "./x402-facilitator-client.mjs";
 import { buildAccepts } from "./x402-networks.mjs";
 import { attachBuilderCodeToPaymentRequired } from "./x402-builder-code.mjs";
+import { x402PaymentRequiredError } from "./x402-buyer-copy.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -72,7 +73,7 @@ export function createDataProductX402(cfg) {
             asset: USDC_ADDRESS,
             extra: { name: "USD Coin", version: "2", decimals: USDC_DECIMALS },
             resource: MCP_RESOURCE_URL,
-            description: `Pay ${priceLabel} USDC on Base to access: ${cfg.description}`,
+            description: `Pay ${priceLabel} USDC on Base or Solana to access: ${cfg.description}`,
             mimeType: "application/json",
         };
     }
@@ -82,7 +83,7 @@ export function createDataProductX402(cfg) {
             x402Version: 2,
             error:
                 extraError ||
-                `X-PAYMENT required. Pay $${formatUsdLabel(priceUsdc)} USDC on Base (treasury ${payTo}).`,
+                x402PaymentRequiredError(formatUsdLabel(priceUsdc)),
             accepts: buildAccepts(buildPaymentRequirements()),
             mcp_hint: `Retry ${cfg.toolName} with x_payment (base64 JSON payment payload) or send X-Payment header on POST /messages.`,
         });

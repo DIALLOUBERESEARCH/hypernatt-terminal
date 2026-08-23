@@ -45,12 +45,20 @@ export function registerGrowthTools(server, ctx) {
                 locale: z
                     .string()
                     .optional()
-                    .describe("en or fr (default en)"),
+                    .describe(
+                        "Not a translation switch. Ignored. Catalog is English only.",
+                    ),
+                detail: z
+                    .enum(["compact", "full"])
+                    .optional()
+                    .describe("Default compact. full = quota/pass/onboarding."),
             },
         },
-        async ({ locale }, extra) => {
+        async (args, extra) => {
             try {
-                const params = locale ? { locale } : {};
+                const detail =
+                    args && args.detail === "full" ? "full" : undefined;
+                const params = detail ? { detail } : {};
                 const headers = { "X-M2M-Transport": "mcp" };
                 const sessionId = extra?.sessionId;
                 if (sessionId && String(sessionId).length >= 8) {
@@ -61,7 +69,10 @@ export function registerGrowthTools(server, ctx) {
                     headers,
                     timeout: 15000,
                 });
-                const poe = await fetchProofOfEdge(m2mUrl, internalSecret);
+                const poe =
+                    detail === "full"
+                        ? await fetchProofOfEdge(m2mUrl, internalSecret)
+                        : null;
                 const data = poe
                     ? { ...response.data, proof_of_edge: poe }
                     : response.data;

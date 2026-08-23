@@ -11,8 +11,10 @@ Product: `hypernatt_liq_radar_v2`. Clusters expose `largest_*_cluster` (size lea
 | Tier | Cost |
 |------|------|
 | **Credits** | **1** |
-| **Paygo** | **$0.001 USDC** / call via **x402** on **Base** + **Solana** |
+| **Paygo** | **$0.001 USDC** / call via **x402** on **Base (EIP-3009)** or **Solana (SVM exact)** |
 | **Pass / quota** | Agent Pass $5/mo or swap-earned quota |
+
+Solana is **not** "Base with another chain id". An EVM x402 client cannot pay the Solana rail. Use `@x402/svm`, set `feePayer` from `extra.feePayer` in the 402, amount = `accepts[].amount`. Full notes: [../docs/x402-pay.md](../docs/x402-pay.md).
 
 ## Symbols
 

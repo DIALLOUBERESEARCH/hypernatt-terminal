@@ -7,7 +7,7 @@ MCP v2.7.0 — the only swap MCP tool is **`swap_via_nattswap`**.
 
 ## Why this doc exists
 
-`get_liq_radar` is **read-only**: pay $0.001 x402 on Base → JSON back. Done.
+`get_liq_radar` is **read-only**: pay $0.001 x402 on **Base (EIP-3009)** or **Solana (SVM exact / `@x402/svm`)** → JSON back. An EVM client cannot pay Solana.
 
 NattSwap is **execution**: you need a wallet that signs on the **source chain**,
 native gas, token balance, then optional registration for credits.

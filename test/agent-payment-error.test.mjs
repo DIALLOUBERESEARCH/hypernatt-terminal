@@ -30,6 +30,21 @@ describe("agent-payment-error.mjs F#43N", () => {
         );
     });
 
+    it("F#136 pool OFF copy does not invent a 25 cap", () => {
+        const prev = process.env.X402_FREE_TIER_ENABLED;
+        process.env.X402_FREE_TIER_ENABLED = "false";
+        const block = buildAgentPaymentRequiredBlock({
+            reasonCode: "FREE_TIER_EXHAUSTED",
+            tool: "get_liq_radar",
+            creditsRemaining: 0,
+        });
+        assert.equal(block.daily_cap, 0);
+        assert.match(String(block.human_message_en), /No daily credit pool/);
+        assert.equal(String(block.human_message_en).includes("0/25"), false);
+        assert.equal(String(block.human_message_en).includes("25"), false);
+        process.env.X402_FREE_TIER_ENABLED = prev;
+    });
+
     it("buildAgentPaymentRequiredBlock standalone", () => {
         const block = buildAgentPaymentRequiredBlock({
             reasonCode: "PAYWALL_UNAVAILABLE",

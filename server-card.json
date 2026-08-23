@@ -30,13 +30,18 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here (free): catalog of 3 terminal tools + value_proposition_v1 + use_scenarios_v1 + glossary_v1 under agent_interpretation_rules_v1. Then call get_liq_radar for the forced-order map.",
+      "description": "Start here (free, compact): 3 tools + prices + cluster do_not + honest usage. Pass detail=full for quota/pass/onboarding. Then get_liq_radar.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "locale": {
             "type": "string",
-            "description": "en or fr (optional)"
+            "description": "Not a translation switch. Ignored. Catalog is English only."
+          },
+          "detail": {
+            "type": "string",
+            "enum": ["compact", "full"],
+            "description": "Default compact. full = quota/pass/onboarding."
           }
         }
       }
@@ -63,7 +68,7 @@
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1 + recommended_action. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + integrator fee. Side effects: MCP read-only until wallet signs.",
+      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + HyperNatt 0.5% integrator fee (Li.Fi may add its own cut — read quote.estimate.feeCosts). Side effects: MCP read-only until wallet signs.",
       "inputSchema": {
         "type": "object",
         "properties": {

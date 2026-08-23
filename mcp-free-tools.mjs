@@ -85,15 +85,17 @@ export function registerTerminalSwapTools(server, ctx) {
             const rejected = rejectInvalidSwapParams(params);
             if (rejected) return rejected;
             try {
-                const data = await fetchInternalSwapQuote(m2mUrl, internalSecret, params);
+                const quoted = await fetchInternalSwapQuote(m2mUrl, internalSecret, params);
+                const data =
+                    quoted && typeof quoted === "object" ? { ...quoted } : quoted;
+                if (data && typeof data === "object") {
+                    delete data.recommended_action;
+                }
                 const payload = {
                     ok: true,
                     source: "hypernatt-terminal",
                     data: { ...data, verification: onchainProof },
                 };
-                if (data.recommended_action) {
-                    payload.recommended_action = data.recommended_action;
-                }
                 return toolTextResult(payload);
             } catch (err) {
                 const message = err instanceof Error ? err.message : String(err);

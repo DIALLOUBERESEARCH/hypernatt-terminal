@@ -30,6 +30,20 @@ export function buyerHintFromCdpText(text) {
     if (t.includes("expired") || t.includes("timeout") || t.includes("maxtimeout")) {
         return "Paiement expire avant verify/settle — buyer doit renvoyer un payload frais.";
     }
+    if (
+        t.includes("invalid_exact_svm") ||
+        t.includes("preflight_validation") ||
+        t.includes("simulation_failed")
+    ) {
+        return (
+            "Solana x402 exact: construire une tx SPL TransferChecked avec " +
+            "feePayer = extra.feePayer du 402. Un client EVM/Base ne peut pas payer ce rail. " +
+            "Utiliser @x402/svm (docs/x402-pay.md)."
+        );
+    }
+    if (t.includes("invalid_network")) {
+        return "Reseau x402 invalide — un seul rail par payload; Solana = CAIP-2 du 402, pas un signer EVM.";
+    }
     if (t.includes("paymentpayload is invalid")) {
         return "Payload x402 mal forme — verifier version 2 + champs obligatoires CDP.";
     }

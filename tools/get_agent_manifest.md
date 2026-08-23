@@ -1,6 +1,6 @@
 # `get_agent_manifest`
 
-**Start here.** Free catalog of HyperNatt Terminal MCP tools (v2.7.0) — includes `value_proposition_v1`, `use_scenarios_v1`, and `glossary_v1` under `agent_interpretation_rules_v1`.
+**Start here.** Free compact catalog (tools, prices, cluster `do_not`, honest usage). Pass `detail=full` for quota/pass/onboarding.
 
 ## Price
 
@@ -20,7 +20,8 @@ Suggested journey: manifest → `get_liq_radar` → optional `swap_via_nattswap`
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `locale` | string | No | `en` or `fr` (default `en`) |
+| `locale` | string | No | Not a translation switch. Ignored. English only. |
+| `detail` | string | No | Default `compact`. `full` = quota/pass/onboarding. |
 
 ## Outputs
 
@@ -45,7 +46,7 @@ Accept: application/json, text/event-stream
   "method": "tools/call",
   "params": {
     "name": "get_agent_manifest",
-    "arguments": { "locale": "en" }
+    "arguments": {}
   }
 }
 ```
@@ -53,7 +54,7 @@ Accept: application/json, text/event-stream
 ## Example — REST
 
 ```bash
-curl -sS "https://hypernatt.com/api/m2m/agent/manifest?locale=en"
+curl -sS "https://hypernatt.com/api/m2m/agent/manifest"
 ```
 
 ## Notes

@@ -1,5 +1,6 @@
 /**
  * F#43N — agent-readable MCP payment errors (MCP server mirror of lib/agent-payment-error.ts).
+ * F#136 — daily_cap is 0 when the pool kill-switch is off.
  */
 
 const FREE_TOOLS_ALWAYS_WORK = [
@@ -7,12 +8,19 @@ const FREE_TOOLS_ALWAYS_WORK = [
     "swap_via_nattswap",
 ];
 
-function dailyCap() {
-    return parseInt(process.env.X402_FREE_DAILY_CREDITS || "25", 10);
+function advertisedFreeDailyCap() {
+    if (process.env.X402_FREE_TIER_ENABLED === "false") {
+        return 0;
+    }
+    const n = parseInt(process.env.X402_FREE_DAILY_CREDITS || "25", 10);
+    if (!Number.isFinite(n)) {
+        return 25;
+    }
+    return Math.min(50, Math.max(1, n));
 }
 
 function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
-    const daily = cap ?? dailyCap();
+    const daily = cap ?? advertisedFreeDailyCap();
     const rem = creditsRemaining ?? 0;
     if (reasonCode === "PAYWALL_UNAVAILABLE") {
         return (
@@ -26,6 +34,13 @@ function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
             "Connect a wallet with swap quota, Agent Pass ($5/mo), or pay $0.001 USDC per call on Base or Solana."
         );
     }
+    if (daily <= 0) {
+        return (
+            "No daily credit pool. Intro-free for this tool is already used today UTC (if it applied). " +
+            "Pay $0.001 USDC via x402 on Base or Solana. " +
+            "get_agent_manifest and swap_via_nattswap still work."
+        );
+    }
     return (
         `Free trial credits used (${rem}/${daily} pool remaining today UTC). ` +
         "get_agent_manifest and swap_via_nattswap still work. " +
@@ -34,7 +49,7 @@ function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
 }
 
 export function buildAgentPaymentRequiredBlock(input) {
-    const daily = input.dailyCap ?? dailyCap();
+    const daily = input.dailyCap ?? advertisedFreeDailyCap();
     const swapTool =
         input.tool === "swap_quote" || input.tool === "swap_via_nattswap";
     const nextSteps = swapTool

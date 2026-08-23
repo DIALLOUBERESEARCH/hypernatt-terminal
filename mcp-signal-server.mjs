@@ -83,8 +83,15 @@ const transports = new Map();
 
 bindActiveSessionCounter(() => transports.size);
 
-function freeDailyCap() {
-    return parseInt(process.env.X402_FREE_DAILY_CREDITS || "25", 10);
+function advertisedFreeDailyCap() {
+    if (process.env.X402_FREE_TIER_ENABLED === "false") {
+        return 0;
+    }
+    const n = parseInt(process.env.X402_FREE_DAILY_CREDITS || "25", 10);
+    if (!Number.isFinite(n)) {
+        return 25;
+    }
+    return Math.min(50, Math.max(1, n));
 }
 
 function paymentErrorResult(buildRequired, ctx) {
@@ -94,7 +101,7 @@ function paymentErrorResult(buildRequired, ctx) {
         reasonCode: ctx.reasonCode,
         tool: ctx.tool,
         creditsRemaining: ctx.creditsRemaining ?? 0,
-        dailyCap: ctx.dailyCap ?? freeDailyCap(),
+        dailyCap: ctx.dailyCap ?? advertisedFreeDailyCap(),
         introFreeAvailable: ctx.introFreeAvailable,
         priceUsdc: ctx.priceUsdc,
     });
@@ -402,7 +409,7 @@ export function createMcpServer() {
                     .string()
                     .optional()
                     .describe(
-                        "Base64 x402 USDC payment on Base (eip155:8453). Omit on first call to receive 402 payment instructions; retry with header after paying $0.001/call.",
+                        "Base64 x402 USDC payment. Rails: Base eip155:8453 (EIP-3009) OR Solana SVM exact (@x402/svm; not an EVM signature). Omit on first call to receive 402 accepts[]; retry after paying $0.001/call.",
                     ),
                 agent_wallet: z
                     .string()

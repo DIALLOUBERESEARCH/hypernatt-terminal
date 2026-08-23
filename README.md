@@ -71,8 +71,10 @@ Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpret
 | Tool | Price |
 |------|-------|
 | `get_agent_manifest` | Free — call first |
-| `get_liq_radar` | **$0.001** x402 (Base + Solana) |
+| `get_liq_radar` | **$0.001** x402 (Base EIP-3009 **or** Solana SVM exact) |
 | `swap_via_nattswap` | Free at MCP (you sign; gas + Li.Fi fee on-chain) |
+
+**Solana pay:** do **not** reuse an EVM/Base x402 client. Use `@x402/svm`. See [docs/x402-pay.md](docs/x402-pay.md).
 
 Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC).
 
@@ -98,6 +100,7 @@ curl -i https://hypernatt.com/api/m2m/liq-radar
 | Step | Link |
 |------|------|
 | Quickstart | [docs/quickstart.md](docs/quickstart.md) |
+| **x402 Base vs Solana** | [docs/x402-pay.md](docs/x402-pay.md) |
 | Integrations (5 clients + AgentKit) | [docs/integrations.md](docs/integrations.md) |
 | HL terrain example (read-only) | [examples/hyperliquid/read_terrain.py](examples/hyperliquid/read_terrain.py) |
 | Honest interpret example | [examples/liq_radar_interpret.py](examples/liq_radar_interpret.py) |
