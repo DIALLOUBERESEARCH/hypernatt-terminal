@@ -20,6 +20,10 @@ import {
     settleTerminalPayment,
 } from "./x402-funnel-terminal.mjs";
 import {
+    isSvmCompatEnabled,
+    preparePaymentForCdp,
+} from "./x402-svm-prepare.mjs";
+import {
     assertSessionClient,
     clientKeyFromHttpRequest,
     isSessionBindEnabled,
@@ -267,11 +271,44 @@ async function processPaidToolPayment({
     }
 
     const wallet = extractPayerWallet(paymentPayload);
-    const serverRequirements = buildReqs();
+    let cdpPayload = paymentPayload;
+    let serverRequirements = buildReqs();
+    if (isSvmCompatEnabled()) {
+        try {
+            const prep = preparePaymentForCdp(paymentPayload, serverRequirements);
+            cdpPayload = prep.payload;
+            serverRequirements = prep.serverReq;
+        } catch (err) {
+            if (err && err.name === "PayToMismatchError") {
+                const detail = String(err.message || "").slice(0, 500);
+                recordX402Event({
+                    event_type: "payment_invalid",
+                    tool,
+                    payer_wallet: wallet,
+                    agent_id: wallet,
+                    network: networkFromPayload(cdpPayload),
+                    price_usdc: priceUsdc,
+                    detail,
+                    facilitator_error: "payTo_asset_mismatch",
+                });
+                return {
+                    errorResult: paymentErrorResult(
+                        () => buildRequired(detail),
+                        {
+                            reasonCode: "PAYMENT_REQUIRED",
+                            tool,
+                            priceUsdc,
+                        },
+                    ),
+                };
+            }
+            throw err;
+        }
+    }
 
     if (isTerminalX402FunnelEnabled()) {
         const settled = await settleTerminalPayment({
-            paymentPayload,
+            paymentPayload: cdpPayload,
             serverRequirements,
         });
         if (!settled.ok) {
@@ -284,7 +321,7 @@ async function processPaidToolPayment({
                 tool,
                 payer_wallet: wallet,
                 agent_id: wallet,
-                network: networkFromPayload(paymentPayload),
+                network: networkFromPayload(cdpPayload),
                 price_usdc: priceUsdc,
                 detail,
                 facilitator_error: detail,
@@ -311,7 +348,7 @@ async function processPaidToolPayment({
             tool,
             payer_wallet: wallet,
             agent_id: wallet,
-            network: networkFromPayload(paymentPayload),
+            network: networkFromPayload(cdpPayload),
             price_usdc: priceUsdc,
         });
         recordX402Event({
@@ -319,7 +356,7 @@ async function processPaidToolPayment({
             tool,
             payer_wallet: wallet,
             agent_id: wallet,
-            network: networkFromPayload(paymentPayload),
+            network: networkFromPayload(cdpPayload),
             price_usdc: priceUsdc,
             tx_hash: settled.txHash || null,
         });
@@ -327,14 +364,14 @@ async function processPaidToolPayment({
         return { ok: true, wallet, betaBypass: false, clientKey: pre.clientKey };
     }
 
-    const verification = await verify(paymentPayload);
+    const verification = await verify(cdpPayload);
     if (!verification.isValid) {
         recordX402Event({
             event_type: "payment_invalid",
             tool,
             payer_wallet: extractPayerWallet(paymentPayload),
             agent_id: extractPayerWallet(paymentPayload),
-            network: networkFromPayload(paymentPayload),
+            network: networkFromPayload(cdpPayload),
             price_usdc: priceUsdc,
             detail: String(verification.error || "").slice(0, 500),
             facilitator_error: String(verification.error || "").slice(0, 500),
@@ -356,13 +393,15 @@ async function processPaidToolPayment({
         tool,
         payer_wallet: wallet,
         agent_id: wallet,
-        network: networkFromPayload(paymentPayload),
+        network: networkFromPayload(cdpPayload),
         price_usdc: priceUsdc,
     });
 
     settlePaymentWithFacilitator(
-        paymentPayload,
-        paymentPayload?.accepted ?? buildReqs(),
+        cdpPayload,
+        isSvmCompatEnabled()
+            ? serverRequirements
+            : (paymentPayload?.accepted ?? buildReqs()),
     ).then((result) => {
         if (result.success) {
             console.log(
@@ -373,7 +412,7 @@ async function processPaidToolPayment({
                 tool,
                 payer_wallet: wallet,
                 agent_id: wallet,
-                network: networkFromPayload(paymentPayload),
+                network: networkFromPayload(cdpPayload),
                 price_usdc: priceUsdc,
                 tx_hash: result.txHash || null,
             });

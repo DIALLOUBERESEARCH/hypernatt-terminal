@@ -95,7 +95,7 @@ curl -s https://hypernatt.com/api/m2m/agent/manifest | head
 
 ## Wallet / x402
 
-Paid calls need a USDC buyer wallet. **Base** = EIP-3009 (`@x402/evm`). **Solana** = SVM exact (`@x402/svm`) — an EVM signer cannot pay that rail. Optional helper (separate MCP, not this skill):
+Paid calls need a USDC buyer wallet. **Base** = EIP-3009 (`@x402/evm`). **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM signer cannot pay it. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](../../docs/x402-pay.md). Optional helper (separate MCP, not this skill):
 
 ```bash
 npx @coinbase/payments-mcp

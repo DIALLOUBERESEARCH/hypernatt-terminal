@@ -3,6 +3,15 @@
 All notable changes to the **public** HyperNatt Terminal MCP mirror.
 Private monorepo history is separate (see README mirror note).
 
+## [2.7.2] — 2026-08-30
+
+### Changed
+- [x402-pay.md](docs/x402-pay.md): Solana SVM rail is **live** (first `get_liq_radar`
+  settle 2026-08-29). Payload must keep `accepted.asset` = 402 mint. Retry with
+  `X-Payment` or `PAYMENT-SIGNATURE`. A Base 200 is not a Solana payment.
+- Public MCP mirror now ships SVM seller helpers (`x402-svm-hydrate.mjs`,
+  `x402-svm-ata.mjs`, `x402-svm-prepare.mjs`) so a clone matches hosted verify.
+
 ## [2.7.1] — 2026-08-16
 
 ### Changed

@@ -3,7 +3,7 @@
 [![CI](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
 [![Glama](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
-[![Version](https://img.shields.io/badge/version-2.7.0-green)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.7.2-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 [![npm audit](https://img.shields.io/badge/npm%20audit-0%20high-brightgreen)](./CHANGELOG.md)
 
@@ -74,7 +74,7 @@ Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpret
 | `get_liq_radar` | **$0.001** x402 (Base EIP-3009 **or** Solana SVM exact) |
 | `swap_via_nattswap` | Free at MCP (you sign; gas + Li.Fi fee on-chain) |
 
-**Solana pay:** do **not** reuse an EVM/Base x402 client. Use `@x402/svm`. See [docs/x402-pay.md](docs/x402-pay.md).
+**Solana pay:** rail is **live** (SVM exact). Do **not** reuse an EVM/Base x402 client. Use `@x402/svm`. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](docs/x402-pay.md).
 
 Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC).
 

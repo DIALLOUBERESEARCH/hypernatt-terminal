@@ -16,7 +16,15 @@
  *
  * CRITICAL (money): Solana addresses are base58 and CASE-SENSITIVE. Unlike EVM
  * hex, they must NEVER be lowercased (see normalizePaymentRequirements branch).
+ *
+ * F#204: when SVM-compat is on and the treasury USDC ATA is empty, Solana is
+ * omitted from accepts[] (simulation would fail). RPC errors fail-open.
  */
+
+import {
+    maybeKickSolanaAtaRefresh,
+    shouldAppendSolanaAccept,
+} from "./x402-svm-ata.mjs";
 
 const SOLANA_NETWORK =
     process.env.MIMO_SIGNAL_X402_SOLANA_NETWORK ||
@@ -55,6 +63,20 @@ export function solanaPayTo() {
 }
 
 /**
+ * Pick the server-built requirement matching the rail the buyer chose.
+ * Same law as HTTP `selectRequirementForPayload` (middleware.ts).
+ * Rebuilds server-side — never trust a buyer-echoed payTo.
+ */
+export function selectRequirementForPayload(paymentPayload, base) {
+    const p = paymentPayload;
+    const net = p?.accepted?.network ?? p?.network;
+    if (isSolanaX402Enabled() && isSolanaNetwork(net)) {
+        return buildSolanaRequirementFromBase(base);
+    }
+    return base;
+}
+
+/**
  * Derive the Solana "exact" requirement from an existing Base requirement so the
  * dollar amount is GUARANTEED identical (same atomic units). Only the rail-specific
  * fields differ (network, asset mint, payTo, feePayer extra). Base fields like
@@ -86,8 +108,9 @@ export function buildSolanaRequirementFromBase(base) {
  * only when the flag is on. Pure: given the same base + env, same output.
  */
 export function buildAccepts(baseRequirement) {
+    maybeKickSolanaAtaRefresh();
     const accepts = [baseRequirement];
-    if (isSolanaX402Enabled()) {
+    if (shouldAppendSolanaAccept()) {
         accepts.push(buildSolanaRequirementFromBase(baseRequirement));
     }
     return accepts;

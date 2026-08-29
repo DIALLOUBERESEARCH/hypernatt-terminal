@@ -9,6 +9,10 @@ import { verifyPaymentWithFacilitator, formatUsdLabel } from "./x402-facilitator
 import { buildAccepts } from "./x402-networks.mjs";
 import { attachBuilderCodeToPaymentRequired } from "./x402-builder-code.mjs";
 import { x402PaymentRequiredError } from "./x402-buyer-copy.mjs";
+import {
+    isSvmCompatEnabled,
+    preparePaymentForCdp,
+} from "./x402-svm-prepare.mjs";
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -90,10 +94,25 @@ export function createDataProductX402(cfg) {
     }
 
     async function verifyPayment(paymentPayload) {
-        return verifyPaymentWithFacilitator(
-            paymentPayload,
-            paymentPayload?.accepted ?? buildPaymentRequirements(),
-        );
+        const base = buildPaymentRequirements();
+        if (!isSvmCompatEnabled()) {
+            return verifyPaymentWithFacilitator(
+                paymentPayload,
+                paymentPayload?.accepted ?? base,
+            );
+        }
+        try {
+            const { payload, serverReq } = preparePaymentForCdp(
+                paymentPayload,
+                base,
+            );
+            return verifyPaymentWithFacilitator(payload, serverReq);
+        } catch (err) {
+            if (err && err.name === "PayToMismatchError") {
+                return { isValid: false, error: err.message };
+            }
+            throw err;
+        }
     }
 
     /**

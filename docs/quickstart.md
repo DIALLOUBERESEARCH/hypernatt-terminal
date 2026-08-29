@@ -16,7 +16,7 @@
 
 ### Wallet first (if you are not crypto-native)
 
-`get_liq_radar` returns HTTP **402** until paid in USDC ($0.001 exact). **Base** = EIP-3009. **Solana** = SVM exact (`@x402/svm`) — an EVM/Base x402 client cannot pay Solana. See [x402-pay.md](x402-pay.md). Skip seed phrases — use Coinbase Agentic Wallet:
+`get_liq_radar` returns HTTP **402** until paid in USDC ($0.001 exact). **Base** = EIP-3009. **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM/Base x402 client cannot pay Solana. A Base 200 is not a Solana payment. See [x402-pay.md](x402-pay.md). Skip seed phrases — use Coinbase Agentic Wallet:
 
 ```bash
 npx @coinbase/payments-mcp
