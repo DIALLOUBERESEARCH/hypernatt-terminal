@@ -3,9 +3,42 @@
  */
 
 export class PayToMismatchError extends Error {
-    constructor(message = "x402 SVM payTo/asset mismatch vs server") {
+    constructor(message = "x402 SVM payTo mismatch vs server") {
         super(message);
         this.name = "PayToMismatchError";
+        this.field = "payTo";
+    }
+}
+
+export class AssetMismatchError extends Error {
+    constructor(message = "x402 SVM asset mismatch vs server") {
+        super(message);
+        this.name = "AssetMismatchError";
+        this.field = "asset";
+    }
+}
+
+export class NetworkMismatchError extends Error {
+    constructor(message = "x402 SVM network mismatch vs server") {
+        super(message);
+        this.name = "NetworkMismatchError";
+        this.field = "network";
+    }
+}
+
+export class FeePayerMismatchError extends Error {
+    constructor(message = "x402 SVM feePayer mismatch vs server") {
+        super(message);
+        this.name = "FeePayerMismatchError";
+        this.field = "feePayer";
+    }
+}
+
+export class AmountMismatchError extends Error {
+    constructor(message = "x402 SVM amount mismatch vs server") {
+        super(message);
+        this.name = "AmountMismatchError";
+        this.field = "amount";
     }
 }
 
@@ -98,7 +131,7 @@ export function hydrateSvmPaymentPayload(payload, serverReq) {
         !isEmpty(accepted.asset) &&
         String(accepted.asset) !== String(serverReq.asset)
     ) {
-        throw new PayToMismatchError("x402 SVM asset mismatch vs server");
+        throw new AssetMismatchError("x402 SVM asset mismatch vs server");
     }
 
     // Fable 5 Adjustment 1 — Network: map v1 aliases ("solana", "solana-mainnet") -> CAIP-2,
@@ -115,7 +148,7 @@ export function hydrateSvmPaymentPayload(payload, serverReq) {
         } else if (netStr.startsWith("eip155:") && looksLikeSvmPayment(p)) {
             accepted.network = serverReq.network;
         } else {
-            throw new PayToMismatchError(`x402 SVM network mismatch: got "${netStr}", expected "${serverReq.network}"`);
+            throw new NetworkMismatchError(`x402 SVM network mismatch: got "${netStr}", expected "${serverReq.network}"`);
         }
     }
 
@@ -123,7 +156,7 @@ export function hydrateSvmPaymentPayload(payload, serverReq) {
     const serverFeePayer = serverReq.extra?.feePayer;
     const acceptedExtra = (accepted.extra && typeof accepted.extra === "object" ? accepted.extra : {});
     if (!isEmpty(acceptedExtra.feePayer) && !isEmpty(serverFeePayer) && String(acceptedExtra.feePayer) !== String(serverFeePayer)) {
-        throw new PayToMismatchError(`x402 SVM feePayer mismatch: got "${acceptedExtra.feePayer}", expected "${serverFeePayer}"`);
+        throw new FeePayerMismatchError(`x402 SVM feePayer mismatch: got "${acceptedExtra.feePayer}", expected "${serverFeePayer}"`);
     }
     accepted.extra = cloneExtra(accepted.extra, serverReq.extra);
 
@@ -144,8 +177,20 @@ export function hydrateSvmPaymentPayload(payload, serverReq) {
         if (!isEmpty(serverAmt)) {
             accepted.amount = String(serverAmt);
         }
-    } else if (String(accepted.amount) === "0.001" && String(serverAmt) === "1000") {
-        accepted.amount = "1000";
+    } else {
+        const clientAmtStr = String(accepted.amount).trim();
+        const serverAmtStr = String(serverAmt).trim();
+        if (clientAmtStr === serverAmtStr) {
+            accepted.amount = serverAmtStr;
+        } else if (clientAmtStr === "0.001" && serverAmtStr === "1000") {
+            // F#221 backward compatibility: client sent human-readable decimal "$0.001"
+            // where server requires 1000 atomic units. Exact match on decimal string only.
+            accepted.amount = "1000";
+        } else {
+            throw new AmountMismatchError(
+                `x402 SVM amount mismatch: client sent "${clientAmtStr}", server requires atomic units "${serverAmtStr}"`,
+            );
+        }
     }
 
     let resource = p.resource;

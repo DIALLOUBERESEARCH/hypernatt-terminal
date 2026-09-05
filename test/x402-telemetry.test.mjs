@@ -62,3 +62,16 @@ test("MCP x402-telemetry: networkFromPayload handles CAIP-2", () => {
     assert.equal(networkFromPayload({ network: "eip155:8453" }), "eip155:8453");
     assert.equal(networkFromPayload(null), null);
 });
+
+test("MCP x402-telemetry: extracts real on-chain buyer from tx 42WDNoZ9... -> 78AbHeXKepDNpLWbZDHpyNtpNPVZ5dAaMfiLB4UCytox", () => {
+    const realTxB64 =
+        "ApdZA5LYoA2BfSbAlcVGiP1zzOKW3UQKpth8mxEQALsUtooq9aodw0PG40VXF0tbbyne4oWHTAmXuEbicHmPhwa8DvysSNrtUbSLgQQt+PKCVuidjFe+gd0XsOvMakceUY1x6AUyeGX8st9mnonYaETq6+2XkCq4a/ICWjpd09oJgAIBBAizuSBx8P8HPIeY/jNUEnaSALCerLLt6l5nxnu4+JV5rFr8CC+O9ZS8ZYhhzrB6vZ6olS0TrU/a36h4g1BFqjnfV2MIL5ifI3YxiRHcwWzBCuRoufx/WqgSHKUkPljo0BzDc8unj9iBe47vMNgPWIxcpMzfgW1NzHBLhq4ZIqeR8QMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAAxvp6877brTo9ZfNqq8l0MbG75MLS9uDkfKYCA0UvXWEFSlNamSkhBk0k6HFg2jh8fDW13bySu4HkH6hAQQVEjQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCp3kTKkgbZ1WDelUXapTueJiRRaZd2ScSem7Y+ffXoTj0EBAAFAiBOAAAEAAkDAQAAAAAAAAAHBAMFAgEKDOgDAAAAAAAABgYAIDk5MGZjZDk1OTViMzRjNzRlODFmMGFhMjhmZGYxNjQ2AA==";
+    const cdpFeePayer = "D6ZhtNQ5nT9ZnTHUbqXZsTx5MH2rPFiBBggX4hY1WePM";
+    const expectedBuyer = "78AbHeXKepDNpLWbZDHpyNtpNPVZ5dAaMfiLB4UCytox";
+
+    const buyer = extractPayerWallet({
+        payload: { transaction: realTxB64 },
+        accepted: { extra: { feePayer: cdpFeePayer } },
+    });
+    assert.equal(buyer, expectedBuyer);
+});
