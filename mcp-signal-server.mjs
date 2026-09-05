@@ -24,6 +24,13 @@ import {
     preparePaymentForCdp,
 } from "./x402-svm-prepare.mjs";
 import {
+    PayToMismatchError,
+    AssetMismatchError,
+    NetworkMismatchError,
+    FeePayerMismatchError,
+    AmountMismatchError,
+} from "./x402-svm-hydrate.mjs";
+import {
     assertSessionClient,
     clientKeyFromHttpRequest,
     isSessionBindEnabled,
@@ -279,7 +286,14 @@ async function processPaidToolPayment({
             cdpPayload = prep.payload;
             serverRequirements = prep.serverReq;
         } catch (err) {
-            if (err && err.name === "PayToMismatchError") {
+            const isMismatch =
+                err instanceof PayToMismatchError ||
+                err instanceof AssetMismatchError ||
+                err instanceof NetworkMismatchError ||
+                err instanceof FeePayerMismatchError ||
+                err instanceof AmountMismatchError;
+            if (isMismatch) {
+                const field = err.field || "mismatch";
                 const detail = String(err.message || "").slice(0, 500);
                 recordX402Event({
                     event_type: "payment_invalid",
@@ -289,7 +303,7 @@ async function processPaidToolPayment({
                     network: networkFromPayload(cdpPayload),
                     price_usdc: priceUsdc,
                     detail,
-                    facilitator_error: "payTo_asset_mismatch",
+                    facilitator_error: `${field}_mismatch`,
                 });
                 return {
                     errorResult: paymentErrorResult(
