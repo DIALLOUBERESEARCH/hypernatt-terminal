@@ -3,6 +3,26 @@
 All notable changes to the **public** HyperNatt Terminal MCP mirror.
 Private monorepo history is separate (see README mirror note).
 
+## [2.7.3] — 2026-09-05
+
+### Added
+- **Solana SVM MCP `x_payment` verified in production:** Tool calls to `get_liq_radar`
+  over Streamable HTTP protocol with `x_payment` settled on-chain on Solana mainnet
+  ([5g4JePDX...](https://solscan.io/tx/5g4JePDXuqwViz7noAiPhXJTQmQNUAdYifLM417uMt79q5Y3LkL8KDW1rUB1aX8EbfagU2AXPXQvSQtgStqjAi11)).
+- **Dual-rail production hashes:** Added reference transaction hashes for REST
+  ([36FvuTpq...](https://solscan.io/tx/36FvuTpqWiSoDLrs2xVRecehCmArdqptDXB8sHTfvJQSUCs7GY7CLhHwGHYwT4eXqqcgkroYheFcy5ajrUgdJLSg))
+  and MCP to `docs/x402-pay.md`.
+
+### Fixed
+- **SVM Payment Hydration:** Added automatic mapping for legacy network aliases (`solana`,
+  `solana-mainnet` -> CAIP-2 `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`).
+- **Telemetry & Error classification:** Replaced generic mismatch errors with 5
+  granular classes (`PayToMismatchError`, `AssetMismatchError`, `NetworkMismatchError`,
+  `FeePayerMismatchError`, `AmountMismatchError`), mapped directly to `${field}_mismatch`
+  telemetry events.
+- **Robust Transaction Parser:** Deserialization of Solana VersionedTransaction (v0)
+  wire format safely extracts the second account key as buyer when feePayer is sponsored.
+
 ## [2.7.2] — 2026-08-30
 
 ### Changed
