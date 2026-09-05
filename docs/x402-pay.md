@@ -20,9 +20,11 @@ An EVM x402 client that works on Base **cannot** pay Solana. SVM `exact` require
 3. USDC mint = `accepts[].asset` (`EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`). Put the same value on the payment payload as `accepted.asset` (CDP v2). If omitted, the seller fills it from this 402; still send it.
 4. Destination = `accepts[].payTo` (HyperNatt Solana treasury).
 
-If you only have an EVM wallet, pick the **Base** accept **on purpose**. Do not retry Base after a Solana sign failure and call that a Solana payment.
+If you only have an EVM wallet (or no `@x402/svm`), pick **`accepts[0]` Base**. Do not retry Base after a Solana sign failure and call that a Solana payment.
 
-If CDP returns `invalid_exact_svm_*`, `preflight_validation_failed`, `x402V2PaymentRequirements requires 'asset'`, or `invalid_network`, the **payload** is wrong — not the 402 challenge. Rebuild with `@x402/svm` against the live 402. Keep `accepted.network` starting with `solana`.
+Solana payments embed a recent blockhash. From 402 received to settle you have about **90 seconds**. Sign in the same process. A payload that sat in a queue will fail `simulation_failed` / `BlockhashNotFound`.
+
+If CDP returns `invalid_exact_svm_*`, `preflight_validation_failed`, `x402V2PaymentRequirements requires 'asset'`, or `invalid_network`, the **payload** is wrong - not the 402 challenge. Rebuild with `@x402/svm` against the live 402. Keep `accepted.network` starting with `solana`.
 
 ## Probe
 

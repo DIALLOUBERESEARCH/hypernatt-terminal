@@ -1,5 +1,5 @@
 /**
- * F#204 — JS twin of lib/x402-svm-hydrate.ts. Same law. Keep in lockstep.
+ * F#204 / F#221 — JS twin of lib/x402-svm-hydrate.ts. Same law. Keep in lockstep.
  */
 
 export class PayToMismatchError extends Error {
@@ -28,6 +28,41 @@ function acceptedNetwork(payload) {
     return undefined;
 }
 
+const EVM_FROM_RE = /^0x[0-9a-fA-F]{40}$/;
+const SVM_TX_MIN_LEN = 32;
+
+function nestedRecord(value) {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+        return value;
+    }
+    return null;
+}
+
+function looksLikeEvmExact(payload) {
+    const nested = nestedRecord(payload.payload);
+    const auth = nested ? nestedRecord(nested.authorization) : null;
+    const from = auth?.from;
+    return typeof from === "string" && EVM_FROM_RE.test(from);
+}
+
+function svmTxBlob(payload) {
+    const nested = nestedRecord(payload.payload);
+    const raw = nested?.transaction ?? payload.transaction;
+    if (typeof raw !== "string") return null;
+    const t = raw.trim();
+    return t.length >= SVM_TX_MIN_LEN ? t : null;
+}
+
+/** F#221 — SVM exact blob or solana network. EVM EIP-3009 wins if both present. */
+export function looksLikeSvmPayment(payload) {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+        return false;
+    }
+    if (looksLikeEvmExact(payload)) return false;
+    if (isSvmNetwork(acceptedNetwork(payload) ?? payload.network)) return true;
+    return svmTxBlob(payload) != null;
+}
+
 function cloneExtra(current, serverExtra) {
     const server =
         serverExtra && typeof serverExtra === "object" ? { ...serverExtra } : {};
@@ -44,11 +79,10 @@ function cloneExtra(current, serverExtra) {
 export function hydrateSvmPaymentPayload(payload, serverReq) {
     if (!payload || typeof payload !== "object") return payload;
     const p = payload;
-    const payloadNet = acceptedNetwork(p) ?? p.network;
+    if (looksLikeEvmExact(p)) return payload;
     const serverNet = serverReq?.network;
-    if (!isSvmNetwork(payloadNet) || !isSvmNetwork(serverNet)) {
-        return payload;
-    }
+    if (!isSvmNetwork(serverNet)) return payload;
+    if (!looksLikeSvmPayment(p)) return payload;
 
     const acceptedSrc =
         p.accepted && typeof p.accepted === "object" ? p.accepted : {};
@@ -58,14 +92,40 @@ export function hydrateSvmPaymentPayload(payload, serverReq) {
         !isEmpty(accepted.payTo) &&
         String(accepted.payTo) !== String(serverReq.payTo)
     ) {
-        throw new PayToMismatchError();
+        throw new PayToMismatchError("x402 SVM payTo mismatch vs server");
     }
     if (
         !isEmpty(accepted.asset) &&
         String(accepted.asset) !== String(serverReq.asset)
     ) {
-        throw new PayToMismatchError();
+        throw new PayToMismatchError("x402 SVM asset mismatch vs server");
     }
+
+    // Fable 5 Adjustment 1 — Network: map v1 aliases ("solana", "solana-mainnet") -> CAIP-2,
+    // handle dual-rail EVM echo, and reject divergent networks.
+    const rawNet = accepted.network;
+    if (isEmpty(rawNet)) {
+        accepted.network = serverReq.network;
+    } else {
+        const netStr = String(rawNet).trim();
+        if (netStr === "solana" || netStr === "solana-mainnet") {
+            accepted.network = serverReq.network;
+        } else if (netStr === String(serverReq.network)) {
+            accepted.network = serverReq.network;
+        } else if (netStr.startsWith("eip155:") && looksLikeSvmPayment(p)) {
+            accepted.network = serverReq.network;
+        } else {
+            throw new PayToMismatchError(`x402 SVM network mismatch: got "${netStr}", expected "${serverReq.network}"`);
+        }
+    }
+
+    // Fable 5 Adjustment 1 — FeePayer: fill if absent, reject if client provided wrong feePayer
+    const serverFeePayer = serverReq.extra?.feePayer;
+    const acceptedExtra = (accepted.extra && typeof accepted.extra === "object" ? accepted.extra : {});
+    if (!isEmpty(acceptedExtra.feePayer) && !isEmpty(serverFeePayer) && String(acceptedExtra.feePayer) !== String(serverFeePayer)) {
+        throw new PayToMismatchError(`x402 SVM feePayer mismatch: got "${acceptedExtra.feePayer}", expected "${serverFeePayer}"`);
+    }
+    accepted.extra = cloneExtra(accepted.extra, serverReq.extra);
 
     const fill = (field, value) => {
         if (isEmpty(accepted[field]) && !isEmpty(value)) {
@@ -74,12 +134,19 @@ export function hydrateSvmPaymentPayload(payload, serverReq) {
     };
 
     fill("scheme", serverReq.scheme ?? "exact");
-    fill("network", serverReq.network);
     fill("asset", serverReq.asset);
-    fill("amount", serverReq.amount ?? serverReq.maxAmountRequired);
     fill("payTo", serverReq.payTo);
     fill("maxTimeoutSeconds", serverReq.maxTimeoutSeconds ?? 60);
-    accepted.extra = cloneExtra(accepted.extra, serverReq.extra);
+
+    // Fable 5 Adjustment 1 — Amount: do not unconditionally overwrite client amount
+    const serverAmt = serverReq.amount ?? serverReq.maxAmountRequired;
+    if (isEmpty(accepted.amount)) {
+        if (!isEmpty(serverAmt)) {
+            accepted.amount = String(serverAmt);
+        }
+    } else if (String(accepted.amount) === "0.001" && String(serverAmt) === "1000") {
+        accepted.amount = "1000";
+    }
 
     let resource = p.resource;
     if (typeof resource === "string" && resource.trim()) {

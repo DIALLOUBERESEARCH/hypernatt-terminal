@@ -36,9 +36,9 @@ export function buyerHintFromCdpText(text) {
         t.includes("simulation_failed")
     ) {
         return (
-            "Solana x402 exact: construire une tx SPL TransferChecked avec " +
-            "feePayer = extra.feePayer du 402. Un client EVM/Base ne peut pas payer ce rail. " +
-            "Utiliser @x402/svm (docs/x402-pay.md)."
+            "Solana x402 exact: tx SPL TransferChecked, feePayer = extra.feePayer du 402, " +
+            "signer immediat (~90s blockhash). Pas de @x402/svm -> payer accepts[0] Base. " +
+            "Un client EVM ne peut pas payer le rail Solana (docs/x402-pay.md)."
         );
     }
     if (t.includes("invalid_network")) {

@@ -21,10 +21,8 @@
  * omitted from accepts[] (simulation would fail). RPC errors fail-open.
  */
 
-import {
-    maybeKickSolanaAtaRefresh,
-    shouldAppendSolanaAccept,
-} from "./x402-svm-ata.mjs";
+import { maybeKickSolanaAtaRefresh, shouldAppendSolanaAccept } from "./x402-svm-ata.mjs";
+import { looksLikeSvmPayment } from "./x402-svm-hydrate.mjs";
 
 const SOLANA_NETWORK =
     process.env.MIMO_SIGNAL_X402_SOLANA_NETWORK ||
@@ -70,7 +68,10 @@ export function solanaPayTo() {
 export function selectRequirementForPayload(paymentPayload, base) {
     const p = paymentPayload;
     const net = p?.accepted?.network ?? p?.network;
-    if (isSolanaX402Enabled() && isSolanaNetwork(net)) {
+    if (
+        isSolanaX402Enabled() &&
+        (isSolanaNetwork(net) || looksLikeSvmPayment(paymentPayload))
+    ) {
         return buildSolanaRequirementFromBase(base);
     }
     return base;

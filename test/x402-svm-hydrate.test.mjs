@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
     hydrateSvmPaymentPayload,
+    looksLikeSvmPayment,
     PayToMismatchError,
     isSvmCompatEnabled,
 } from "../x402-svm-hydrate.mjs";
@@ -97,6 +98,43 @@ test("hydrate: payTo mismatch throws", () => {
             ),
         (err) => err instanceof PayToMismatchError,
     );
+});
+
+test("F#221 hydrate: amount 0.001 coerced to 1000", () => {
+    const out = hydrateSvmPaymentPayload(
+        {
+            accepted: {
+                network: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                amount: "0.001",
+            },
+        },
+        svmReq(),
+    );
+    assert.equal(out.accepted.amount, "1000");
+});
+
+test("F#221 looksLikeSvmPayment: Base accepted + blob", () => {
+    assert.equal(
+        looksLikeSvmPayment({
+            accepted: { network: "eip155:8453" },
+            payload: { transaction: "A".repeat(40) },
+        }),
+        true,
+    );
+});
+
+test("selectRequirementForPayload: F#221 blob + Base accepted -> Solana", () => {
+    withEnv({ MIMO_SIGNAL_X402_SOLANA_ENABLED: "true" }, () => {
+        const r = selectRequirementForPayload(
+            {
+                accepted: { network: "eip155:8453" },
+                payload: { transaction: "A".repeat(40) },
+            },
+            baseReq(),
+        );
+        assert.ok(String(r.network).startsWith("solana:"));
+        assert.equal(r.payTo, OWNER_SOLANA_PAYTO);
+    });
 });
 
 test("selectRequirementForPayload: flag ON + solana -> Solana req", () => {

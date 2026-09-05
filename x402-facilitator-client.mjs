@@ -68,6 +68,9 @@ export function normalizePaymentRequirements(req) {
     const isSvm =
         typeof req?.network === "string" &&
         req.network.trim().toLowerCase().startsWith("solana");
+    if (isSvm && !req?.extra?.feePayer) {
+        throw new Error("Missing feePayer in SVM payment requirements (extra.feePayer is required for Solana)");
+    }
     const payTo = isSvm ? String(req.payTo || "") : String(req.payTo || "").toLowerCase();
     const asset = isSvm ? String(req.asset || "") : String(req.asset || "").toLowerCase();
     return {

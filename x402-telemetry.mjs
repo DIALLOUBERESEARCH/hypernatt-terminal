@@ -6,6 +6,7 @@
  * telemetry must NEVER slow down or break a tool call.
  */
 import axios from "axios";
+import bs58 from "bs58";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -26,7 +27,82 @@ function isSolWallet(v) {
     return typeof v === "string" && SOLANA_WALLET_RE.test(v.trim());
 }
 
-export function extractPayerWallet(paymentPayload) {
+/**
+ * Extract payer wallet from a base64-encoded Solana transaction (Versioned v0 or Legacy).
+ * In Solana, accounts[0] is fee payer. If an expected fee payer (sponsor) is known
+ * and there are multiple signers, the buyer is the first non-fee-payer signer.
+ * Never throws: returns null on invalid/corrupted payloads.
+ */
+export function extractSolanaPayerFromTx(txBase64, expectedFeePayer) {
+    try {
+        if (!txBase64 || typeof txBase64 !== "string") return null;
+        const buf = Buffer.from(txBase64, "base64");
+        if (buf.length < 65) return null;
+
+        let offset = 0;
+        let numSignatures = 0;
+        let shift = 0;
+        while (true) {
+            if (offset >= buf.length) return null;
+            const b = buf[offset++];
+            numSignatures |= (b & 0x7f) << shift;
+            shift += 7;
+            if ((b & 0x80) === 0) break;
+            if (shift > 21) return null;
+        }
+
+        const sigLen = numSignatures * 64;
+        if (offset + sigLen >= buf.length) return null;
+        offset += sigLen;
+
+        if (offset >= buf.length) return null;
+        // v0 versioned message prefix (0x80 bit set)
+        if ((buf[offset] & 0x80) !== 0) {
+            offset += 1;
+        }
+
+        if (offset + 3 > buf.length) return null;
+        const numRequiredSignatures = buf[offset++];
+        // skip numReadonlySignedAccounts and numReadonlyUnsignedAccounts
+        offset += 2;
+
+        if (numRequiredSignatures === 0) return null;
+
+        let numAccounts = 0;
+        shift = 0;
+        while (true) {
+            if (offset >= buf.length) return null;
+            const b = buf[offset++];
+            numAccounts |= (b & 0x7f) << shift;
+            shift += 7;
+            if ((b & 0x80) === 0) break;
+            if (shift > 21) return null;
+        }
+
+        if (numAccounts < numRequiredSignatures) return null;
+        if (offset + numAccounts * 32 > buf.length) return null;
+
+        const encode = bs58.encode || (bs58.default && bs58.default.encode);
+        if (typeof encode !== "function") return null;
+
+        const signers = [];
+        for (let i = 0; i < numRequiredSignatures; i++) {
+            const k = buf.subarray(offset + i * 32, offset + (i + 1) * 32);
+            signers.push(encode(k));
+        }
+
+        if (signers.length === 0) return null;
+        if (expectedFeePayer && signers.length > 1) {
+            const nonFee = signers.find((s) => s !== expectedFeePayer);
+            if (nonFee && isSolWallet(nonFee)) return nonFee;
+        }
+        return isSolWallet(signers[0]) ? signers[0] : null;
+    } catch {
+        return null;
+    }
+}
+
+export function extractPayerWallet(paymentPayload, expectedFeePayer) {
     if (!paymentPayload || typeof paymentPayload !== "object") return null;
     const direct =
         paymentPayload.from || paymentPayload.payer || paymentPayload.sender;
@@ -54,6 +130,24 @@ export function extractPayerWallet(paymentPayload) {
     for (const c of cands) {
         if (isSolWallet(c)) return c;
     }
+
+    // Extract from Solana transaction blob if present (Versioned v0 or Legacy base64)
+    const feePayer =
+        expectedFeePayer ||
+        (typeof paymentPayload.accepted?.extra?.feePayer === "string" ? paymentPayload.accepted.extra.feePayer : null) ||
+        (typeof paymentPayload.extra?.feePayer === "string" ? paymentPayload.extra.feePayer : null) ||
+        (typeof nested.extra?.feePayer === "string" ? nested.extra.feePayer : null);
+
+    const txBlob =
+        (typeof nested.transaction === "string" && nested.transaction) ||
+        (typeof paymentPayload.transaction === "string" && paymentPayload.transaction) ||
+        null;
+
+    if (txBlob) {
+        const solPayer = extractSolanaPayerFromTx(txBlob, feePayer);
+        if (solPayer) return solPayer;
+    }
+
     return null;
 }
 
