@@ -30,17 +30,16 @@ site. When in doubt, reach us only through the channels above.
 
 ## Surface (truth)
 
-**6 tools · v2.8.0:** `get_agent_manifest` (free), `get_liq_radar` ($0.001 x402
-on Base + Solana), `swap_via_nattswap` (free at MCP; gas + Li.Fi fee on-chain).
+**6 tools · v2.8.0:** `get_agent_manifest` and `swap_via_nattswap` are free at MCP. `get_liq_radar`, `get_execution_quote`, `compare_execution_context` and `reconcile_execution` cost 0.001 USDC or one eligible credit per call after available daily trials. Swap gas and route fees are separate.
 
 Default path: free manifest + pay-per-call. Optional heavy use: Agent Pass
-**$5/mo** or swap-earned quota (not required).
+**$5 for 15,000 credits valid for 30 days** or eligible swap-earned credits, shared across the four paid tools (not required). Current programs are in `get_agent_manifest` with `detail=full`.
 
 ## Can this server move or drain my funds?
 
 **No.** It has no custody and never sees your keys.
 
-- **Reads are read-only** JSON context (liq radar / catalog).
+- **Data tools are read-only** JSON context: radar, catalog, execution estimates, snapshot comparisons and supplied-fill reconciliation. They submit no Hyperliquid orders.
 - **Swap is advisory**: `swap_via_nattswap` *returns* a Li.Fi quote and
   step-by-step instructions. **Your agent decides and signs its own
   transaction.** The server never holds keys and never broadcasts anything.
@@ -53,8 +52,7 @@ static API keys, no subscription lock-in.
 
 ## What data does it see / store?
 
-Only **tool-usage metadata** (wallet address if you pass one, tool name, timestamp)
-to improve the terminal. **No prompt content. Never your keys or local files.**
+The tools process the arguments you supply: symbols, intended order parameters, baselines and, for reconciliation, fill records and an account address. Baselines are retained by the calling agent for subsequent checks. Tool-usage metadata includes wallet address when supplied, tool name and timestamp. No private key is required; the remote tools do not read your local files.
 
 ## Prompt injection / tool poisoning?
 
@@ -94,8 +92,7 @@ respond to good-faith reports.
 We do **not** claim to be unhackable, bank-grade, or independently audited.
 
 We do **not** claim HyperNatt vault / platform performance pages
-(e.g. `/stats`) as **HyperNatt Terminal MCP** results. This MCP is liq radar +
-swap for agents — a separate brick from vault trading track record.
+(e.g. `/stats`) as **HyperNatt Terminal MCP** results. This MCP provides radar, execution context and swap routing for agents, separate from the vault's trading track record.
 
 We claim only what is verifiable above. If a statement here is ever contradicted
 by the code, the **code wins** — tell us.

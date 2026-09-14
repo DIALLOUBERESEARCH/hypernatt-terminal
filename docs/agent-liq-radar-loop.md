@@ -2,7 +2,7 @@
 
 Use `get_liq_radar` when you need a **forced-order / liquidation map** (magnet, OI, clusters, real liqs) on a whitelist coin — market structure that classic public indicators do not show.
 
-**MCP tools only:** `get_agent_manifest` → `get_liq_radar` → optional `swap_via_nattswap`.
+**This radar-specific journey:** `get_agent_manifest` → `get_liq_radar`. For order-size estimates, comparisons and supplied fills, see the separate [execution-context workflow](execution-context.md). A swap route is optional and independent.
 
 ## Suggested flow (agent chooses cadence)
 
@@ -21,5 +21,4 @@ Use `get_liq_radar` when you need a **forced-order / liquidation map** (magnet, 
 Sample shape: [example-responses.md](example-responses.md)  
 Interpret helper: [../examples/liq_radar_interpret.py](../examples/liq_radar_interpret.py)
 
-See also `agent_interpretation_rules_v1` on the live manifest
-(`GET https://hypernatt.com/api/m2m/agent/manifest`).
+The compact manifest has `value_proposition_v1`, `use_scenarios_v1` and `glossary_v1`. With `detail=full`, radar guidance is under `agent_interpretation_rules_v1` (`GET https://hypernatt.com/api/m2m/agent/manifest?detail=full`).

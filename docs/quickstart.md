@@ -6,25 +6,25 @@
 
 **Humans (Claude / Cursor):** add connector `https://hypernatt.com/mcp/protocol`, then ask:
 
-> Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
+> Call get_agent_manifest and choose journeys_v1 for my task. Use get_liq_radar for liquidation terrain, get_execution_quote for the costs of my intended Hyperliquid order, compare_execution_context for changes, reconcile_execution for my supplied fills, or swap_via_nattswap for a Li.Fi route. Call only what my task needs.
 
 **Agents:** 6 tools · v2.8.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
 
 **HL agent (read terrain only):** [../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py) · sovereignty: [agent-hl-sovereignty.md](agent-hl-sovereignty.md)
 
-**Why this exists:** classic public indicators do not show where leveraged liquidations stack. `get_liq_radar` is that terrain map — context for timing/sizing/risk, **not** a trade signal.
+**What this provides:** liquidation terrain, order-size execution estimates, snapshot comparison, supplied-fill reconciliation and Li.Fi routing. The agent controls its decisions and any order execution. [Tools and workflows](reference.md).
 
 Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
-### Wallet first (if you are not crypto-native)
+### Optional wallet setup for paid calls
 
-After its MCP trial slot is used, `get_liq_radar` requires payment or eligible credits ($0.001 USDC exact). Direct public REST discovery routes return HTTP **402** without a payment; use MCP for intro trials. **Base** = EIP-3009. **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM/Base x402 client cannot pay Solana. A Base 200 is not a Solana payment. See [x402-pay.md](x402-pay.md). Skip seed phrases — use Coinbase Agentic Wallet:
+After a tool/token trial slot is used, each of the four paid tools requires **0.001 USDC or one eligible credit**. Read MCP tool errors for payment requirements even when HTTP returns 200. Direct public REST discovery routes do not provide MCP intro slots. **Base** uses EIP-3009; **Solana** uses SVM exact (`@x402/svm`), not an EVM signer. See [x402-pay.md](x402-pay.md). One optional wallet integration is Coinbase Agentic Wallet:
 
 ```bash
 npx @coinbase/payments-mcp
 ```
 
-Then fund with card / Apple Pay / Google Pay and connect Terminal. Guide: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
+Follow the provider's current setup and funding options, then connect Terminal. Payment automation depends on the client and its spending authorization. Guide: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
 
 ---
 
@@ -36,15 +36,15 @@ Then fund with card / Apple Pay / Google Pay and connect Terminal. Guide: https:
 
 Honest field walkthrough: [../examples/liq_radar_interpret.py](../examples/liq_radar_interpret.py)
 
-Example `get_liq_radar` shape:
+Abbreviated example `get_liq_radar` shape (illustrative values; `product` retains a compatibility label while `payload_schema` identifies the schema):
 
 ```json
 {
   "ok": true,
-  "product": "hypernatt_liq_radar_v2",
+  "product": "hypernatt_liq_radar_v1",
+  "payload_schema": "hypernatt_liq_radar_v2",
   "symbol": "ETH",
   "binance_symbol": "ETHUSDT",
-  "provenance": { "venue": "binance_oi_hist+hyperliquid_ctx" },
   "liq_radar": { "available": true }
 }
 ```

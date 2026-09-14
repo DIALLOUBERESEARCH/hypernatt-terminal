@@ -1,7 +1,6 @@
 # HyperNatt Terminal — Integrations
 
-How to plug HyperNatt Terminal into your agent. Read-only liq context + optional
-swap playbook. No custody. Not trade advice.
+How to connect liquidation radar, Hyperliquid execution context and a Li.Fi swap playbook to your agent. No custody. Your agent controls execution.
 
 **MCP v2.8.0 — 6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`, `get_execution_quote`, `compare_execution_context`, `reconcile_execution`.
 
@@ -10,14 +9,13 @@ The three [execution-context tools](execution-context.md) use MCP and cost
 
 Two ways in:
 - **MCP:** `https://hypernatt.com/mcp/protocol`
-- **REST + x402:** `https://hypernatt.com/api/m2m/...`
+- **REST + x402:** the radar and swap-quote discovery endpoints below; the three execution-context tools use MCP.
 
 **Trading your own Hyperliquid account?** Pair this MCP with **your** HL
 agent-wallet exec tools — no vault deposit. Guide:
 [agent-hl-sovereignty.md](agent-hl-sovereignty.md).
 
-Sections marked **[verified]** run as-is. Sections marked **[reference]** point to
-each framework's own docs and were not smoke-tested here.
+Verification labels below refer to the documented connector configuration or endpoint. They do not establish end-to-end payment support in every client or version. **[reference]** sections point to the framework's own docs.
 
 ---
 
@@ -44,10 +42,9 @@ README 30s block: [../README.md](../README.md#quick-start-30-seconds).
 
 Example prompt:
 
-> Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
+> Call get_agent_manifest and choose journeys_v1 for my task: liquidation terrain, costs for my Hyperliquid order size, changes since a saved check, reconciliation of my fills, or a Li.Fi swap route. Call only the relevant tools.
 
-`get_agent_manifest` is free. `get_liq_radar` is **$0.001** x402 (Base + Solana)
-after any intro; or Agent Pass / swap quota.
+`get_agent_manifest` and MCP `swap_via_nattswap` are free. Radar and each execution-context tool cost **0.001 USDC or one eligible credit** after an available daily trial. [MCP payment errors, shared credits and trials](x402-pay.md).
 
 ---
 
@@ -61,7 +58,7 @@ curl -s https://hypernatt.com/api/m2m/agent/manifest
 curl -s "https://hypernatt.com/api/m2m/liq-radar?symbol=BTC"
 ```
 
-Once intro is used, paid reads return **HTTP 402** with x402 payment instructions.
+Direct unpaid REST discovery returns **HTTP 402**; MCP intro slots do not apply to these REST probes.
 Pay **$0.001 USDC on Base or Solana** and retry with `X-Payment` (or pass
 `agent_wallet` for swap-earned quota).
 
@@ -76,7 +73,7 @@ Optional HTTP-only (not an MCP tool): `GET /api/m2m/swap/quote` — raw Li.Fi JS
 ## 3. Coinbase AgentKit / x402 buyer (liq-radar)  [endpoint verified · SDK reference]
 
 HyperNatt endpoints speak x402 natively (402 → pay → retry). An x402-capable
-client pays $0.001 USDC on Base or Solana automatically and retries — no API keys.
+client can pay $0.001 USDC on its supported rail and retry under the operator's spending authorization — no Terminal API key.
 
 **Buyer path (forced-order map):**
 
@@ -88,11 +85,11 @@ client pays $0.001 USDC on Base or Solana automatically and retries — no API k
 ```
 
 ```bash
-# Probe (often 402 after intro):
+# Unpaid REST discovery probe (no MCP intro):
 curl -i "https://hypernatt.com/api/m2m/liq-radar?symbol=BTC"
 ```
 
-- **Verified (our side):** `GET /api/m2m/liq-radar` returns 402 after intro and
+- **Verified (our side):** unpaid `GET /api/m2m/liq-radar` returns HTTP 402 and
   accepts the `X-Payment` retry.
 - **Reference (SDK side):** wire AgentKit / CDP x402 buyer to that endpoint —
   [Coinbase AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welcome) ·
@@ -122,7 +119,7 @@ mcp_servers:
     transport: streamable-http
 ```
 
-**Sovereignty pattern (2 MCP):** keep HyperNatt for liq context + swap playbook,
+**Sovereignty pattern (2 MCP):** keep HyperNatt for radar, execution estimates, comparisons, fill reconciliation and the swap playbook;
 add a **separate** Hyperliquid execution MCP/SDK with **your** agent wallet — see
 [agent-hl-sovereignty.md](agent-hl-sovereignty.md). HyperNatt never places HL orders.
 
@@ -141,5 +138,5 @@ Skill path: [../skills/hypernatt-terminal/SKILL.md](../skills/hypernatt-terminal
 ## Notes
 
 - `get_liq_radar` is **read-only context, not a trade recommendation**.
-- Whitelist: BTC ETH SOL BNB XRP HYPE ZEC.
+- Radar and Hyperliquid execution context: BTC ETH SOL BNB XRP HYPE ZEC. Li.Fi routing has separate chain/token availability.
 - Pricing: [quickstart.md](quickstart.md) · [reference.md](reference.md).

@@ -23,7 +23,7 @@ def get(path: str) -> dict:
 
 def main() -> int:
     try:
-        manifest = get("/api/m2m/agent/manifest")
+        manifest = get("/api/m2m/agent/manifest?detail=full")
     except Exception as exc:
         print(f"[error] manifest unavailable: {exc}")
         return 1
@@ -34,6 +34,10 @@ def main() -> int:
     )
     onboarding = execution.get("wallet_onboarding_v1") or {}
     contract = execution.get("swap_execution_contract_v1") or {}
+
+    if not onboarding or not contract or not manifest.get("ecosystem", {}).get("mcp_url"):
+        print("[error] full manifest is missing swap onboarding, execution rules or MCP URL")
+        return 1
 
     print("HyperNatt swap readiness check")
     print(f"  terminal version: {manifest.get('version')}")
@@ -48,8 +52,6 @@ def main() -> int:
         print("Prerequisites:")
         for line in onboarding.get("prerequisites_en", []):
             print(f"  - {line}")
-    else:
-        print("[warn] wallet_onboarding_v1 missing from manifest — deploy F#50N?")
 
     print()
     print("Execution rules (never skip):")

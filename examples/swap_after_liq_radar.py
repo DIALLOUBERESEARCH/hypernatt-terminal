@@ -146,7 +146,7 @@ def print_readiness(label: str, data: dict) -> None:
 
 
 def run_context_reads(sid: str) -> None:
-    print("Step 1 — Terminal context (3-tool surface)")
+    print("Step 1 — Optional radar-to-swap journey (Terminal has six tools)")
     for tool, args in (
         ("get_agent_manifest", {}),
         ("get_liq_radar", {}),
@@ -156,12 +156,16 @@ def run_context_reads(sid: str) -> None:
         text = tool_text(parsed)
         label = f"{tool}{args or ''}"
         print(f"  {label}: status={st} len={len(text)}")
+        if parsed.get("result", {}).get("isError"):
+            print(f"    tool error or access requirement: {text[:300]}")
+            continue
         if tool == "get_liq_radar" and st == 200:
             try:
                 radar = json.loads(text)
                 data = radar.get("data") if isinstance(radar.get("data"), dict) else radar
                 sym = data.get("symbol") or data.get("asset")
-                largest = data.get("largest_long_cluster") or data.get("largest_short_cluster")
+                terrain = (data.get("liq_radar") or {}).get("liq_density") or {}
+                largest = terrain.get("largest_long_cluster") or terrain.get("largest_short_cluster")
                 print(f"    symbol={sym} largest_cluster_snip={str(largest)[:100]}")
             except json.JSONDecodeError:
                 pass

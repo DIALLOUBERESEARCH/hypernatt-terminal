@@ -107,7 +107,7 @@ tools/call get_liq_radar {"symbol":"ETH"}
 
 ## Payment (x402)
 
-`get_liq_radar` returns HTTP 402 without payment. Settle **$0.001 USDC exact** on **Base (EIP-3009)** or **Solana (SVM exact, live)**. Solana requires `@x402/svm` (feePayer = `extra.feePayer` from the 402, `accepted.asset` = mint). An EVM/Base x402 client cannot pay Solana. A Base 200 is not a Solana payment. The agent wallet / MCP payment client (e.g. Coinbase payments-mcp) settles USDC for the **data call** only - this skill does not hold keys.
+Use an available daily MCP trial or eligible credit first. When payment is required, MCP can return HTTP 200 with `isError: true` and payment requirements in the tool's JSON text content. Select an offered rail from `accepts[]` and retry the same call with `x_payment`: **0.001 USDC exact** on **Base (EIP-3009)** or **Solana (SVM exact)**. Solana requires `@x402/svm` (feePayer = `extra.feePayer`, `accepted.asset` = mint); an EVM/Base signer cannot pay it. The host's authorized payment client pays for the data call only. This skill holds no keys. See [payment and shared credits](../../docs/x402-pay.md).
 
 ## Honest claims
 

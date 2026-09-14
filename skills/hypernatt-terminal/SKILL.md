@@ -5,7 +5,9 @@ description: >-
   get_agent_manifest, get_liq_radar, swap_via_nattswap, get_execution_quote,
   compare_execution_context, reconcile_execution. Docs + call order only -
   no local exec/shell/files. Read-only market microstructure for crypto trading
-  agents (any venue). Not trade advice. get_liq_radar = $0.001 USDC via x402.
+  agents. Hyperliquid perpetual execution context and liquidation terrain.
+  Not trade advice. Four data tools cost $0.001 USDC/call or one eligible credit
+  after an available daily MCP trial. Manifest and MCP swap requests are free.
 version: 1.6.1
 author: DIALLOUBE-RESEARCH
 license: MIT
@@ -78,7 +80,7 @@ Live surface = **exactly 6 tools - v2.8.0**.
 5. **compare_execution_context** - $0.001 - Changes since a saved baseline
 6. **reconcile_execution** - $0.001 - Compare supplied fills with that baseline
 
-Symbols: BTC ETH SOL BNB XRP HYPE ZEC. Radar defaults to BTC; execution quotes require symbol.
+Radar and Hyperliquid perpetual execution-context symbols: BTC ETH SOL BNB XRP HYPE ZEC. Radar defaults to BTC; execution quotes require symbol. Li.Fi swaps use supported chain/token addresses and route availability, independently of these seven symbols.
 
 Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
@@ -110,7 +112,9 @@ For a Hyperliquid order, call `get_execution_quote` and save the returned baseli
 
 ## Wallet / x402
 
-Paid calls need a USDC buyer wallet. **Base** = EIP-3009 (`@x402/evm`). **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM signer cannot pay it. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](../../docs/x402-pay.md). Use the buyer wallet already configured in the host application and its payment authorization rules. If no wallet is configured, explain the available free trials and let the user choose whether to set up payments separately.
+After an available daily trial, the four data tools cost 0.001 USDC per call or one eligible credit. Optional Agent Pass and swap-earned credits cover all four; read `pass_program` and `quota_program` with `get_agent_manifest({"detail":"full"})`. These fields are absent from the compact response.
+
+For x402 payment, use a USDC buyer wallet. **Base** = EIP-3009 (`@x402/evm`). **Solana** = SVM exact (`@x402/svm`); an EVM signer cannot pay it. Inspect the MCP tool content for `accepts[]` and `isError`, even under HTTP 200; then retry with `x_payment` using an offered rail. See [payment and credits](../../docs/x402-pay.md). Use the buyer wallet already configured in the host application and its payment authorization rules. If no wallet is configured, explain the available free trials and let the user choose whether to set up payments separately.
 
 Optional wallet setup documentation for the user: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
 

@@ -153,15 +153,15 @@ MCP: https://hypernatt.com/mcp/protocol
 
 ### For non-crypto users (x402 wallet)
 
-If you do not already have a funded USDC wallet, install **Coinbase Agentic Wallet MCP** first (email/OTP + card onramp — no seed phrase):
+You can start with the daily MCP trials without setting up payments. For paid use, one optional wallet provider is **Coinbase Agentic Wallet MCP**. Follow its current setup and funding instructions; available funding methods depend on the provider and your account:
 
 ```bash
 npx @coinbase/payments-mcp
 ```
 
-Docs: [Agentic Wallet MCP](https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome). Then connect HyperNatt Terminal (`https://hypernatt.com/mcp/protocol`). Your agent can pay `get_liq_radar` ($0.001) automatically when it sees HTTP 402.
+Docs: [Agentic Wallet MCP](https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome). Then connect HyperNatt Terminal (`https://hypernatt.com/mcp/protocol`). The four paid tools — `get_liq_radar`, `get_execution_quote`, `compare_execution_context` and `reconcile_execution` — each cost **0.001 USDC per call**, or one eligible credit, after an available daily trial. An x402-capable client can handle the payment requirements and retry under your payment authorization rules. In MCP, inspect the tool response for payment requirements; do not rely only on an HTTP 402 status. See [payment and credits](docs/x402-pay.md).
 
-Optional heavy use (not required): swap-earned quota or $5/mo Agent Pass — see live `pass_program` / `quota_program` on the manifest.
+Optional: eligible swap-earned credits or an **Agent Pass at $5 for 15,000 credits valid for 30 days**, shared across the four paid tools. Call `get_agent_manifest` with `{"detail":"full"}` to read the current `pass_program` and `quota_program`; they are not included in the default compact response. Manifest and MCP swap requests remain free; on-chain swap costs are separate.
 
 ## License
 

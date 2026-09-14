@@ -5,7 +5,7 @@ Minimal recipe for builders who already pay HyperNatt x402 tools but have not ex
 
 **Read-only context is not trade advice. No custody.**
 
-MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+This guide covers the swap journey. MCP v2.8.0 has **6 tools**: [complete catalog](reference.md#mcp-tools-canonical).
 
 ---
 
@@ -14,7 +14,7 @@ MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nat
 | Requirement | Why |
 |-------------|-----|
 | **Agent hot wallet** | CDP Agentic Wallet, AgentKit, or viem `WalletClient` |
-| **USDC on Base** | x402 micropayments for `get_liq_radar` |
+| Source token balance | Amount you intend to swap; API payment balance is separate |
 | **Gas on source chain** | Ethereum/Arbitrum/etc. if bridging from there |
 | **MCP client** | Claude, Cursor, or Hermes with `https://hypernatt.com/mcp/protocol` |
 
@@ -25,7 +25,7 @@ Optional: [Coinbase Payments MCP](https://www.coinbase.com/developer-platform/di
 ## Step 0 — Check onboarding (no wallet)
 
 ```bash
-curl -s https://hypernatt.com/api/m2m/agent/manifest | jq '.sections[] | select(.name=="Execution") | .wallet_onboarding_v1'
+curl -s 'https://hypernatt.com/api/m2m/agent/manifest?detail=full' | jq '.sections[] | select(.name=="Execution") | .wallet_onboarding_v1'
 ```
 
 ---
@@ -47,11 +47,13 @@ Smithery: `npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal`
 
 ---
 
-## Step 2 — Read context (intro-free first call)
+## Step 2 — Optional liquidation context
 
 Prompt your agent:
 
-> Call `get_agent_manifest`, then `get_liq_radar` (symbol BTC or ETH). Summarize magnet / cluster context. Do not use any vault address as a swap wallet.
+> If liquidation terrain is relevant, call `get_liq_radar` for my chosen supported token. Otherwise proceed directly to the swap route. Use my signing wallet for the swap.
+
+Radar has its own daily tool/token trial and paid access. It is not a prerequisite for a free MCP swap request.
 
 ---
 
@@ -103,7 +105,7 @@ curl -s "https://hypernatt.com/api/m2m/quota/status?wallet=0xYourAgentWallet"
 | Mistake | Fix |
 |---------|-----|
 | `fromAddress` = third-party vault | Use agent wallet only |
-| Paid x402 with wallet A, swap from wallet B | Same wallet for pay + sign on Base |
+| Paid HTTP quote reports payer/fromAddress mismatch | Follow the returned EVM payer rule; free MCP routing uses your actual swap signer |
 | No ETH on Ethereum for ETH→Base bridge | Fund gas on source chain |
 | Broadcast when `can_execute: false` | Read `blockers` first |
 

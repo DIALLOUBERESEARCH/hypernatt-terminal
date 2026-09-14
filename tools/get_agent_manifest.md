@@ -28,13 +28,9 @@ Choose `journeys_v1` by intent: radar for liquidation terrain; quote → compare
 
 ## Outputs
 
-JSON manifest with:
+The default **compact** response contains `terminal`, `description`, the six-entry `tools[]`, `journeys_v1`, `trial_policy_v2` and `pricing`. Radar-specific guidance is in `value_proposition_v1`, `use_scenarios_v1` and `glossary_v1`.
 
-- `terminal` — `"hypernatt-terminal"`
-- `description` — terminal tagline
-- `agent_interpretation_rules_v1` — value prop + 3 honest scenarios + glossary
-- `sections[]` — tool groups with `name`, `role`, `price`
-- Optional live 24h usage counters
+With **`detail=full`**, read `sections[]`, `onboarding`, `pass_program`, `quota_program` and radar guidance in `agent_interpretation_rules_v1`. Both forms include `journeys_v1`. Client-specific `free_tier_status_v1` requires the same MCP client identity; anonymous REST discovery is not that client's remaining allowance. Usage counters are optional.
 
 ## Example — MCP
 
@@ -63,6 +59,6 @@ curl -sS "https://hypernatt.com/api/m2m/agent/manifest"
 ## Notes
 
 Call this before any paid tool. No x402 required.
-Agent Pass: **$5/mo**.
+Optional Agent Pass: **$5 for 15,000 credits valid for 30 days**; one credit covers any of the four paid tools. Read `detail=full` for the current program. [Payment guide](../docs/x402-pay.md).
 
 Execution workflow: [execution-context.md](../docs/execution-context.md).

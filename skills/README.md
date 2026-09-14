@@ -7,7 +7,7 @@ Optional onboarding skills for agent runtimes (Hermes Agent, OpenClaw via ClawHu
 | **hypernatt-liq-radar** | [hypernatt-liq-radar/SKILL.md](hypernatt-liq-radar/SKILL.md) | **Trading-first** — call get_liq_radar before sizing/entering a perp |
 | **hypernatt-terminal** | [hypernatt-terminal/SKILL.md](hypernatt-terminal/SKILL.md) | Full MCP onboarding (6 tools + x402 wallet) |
 
-GTM context: [../../registry/GTM_TRADING_INTENT_DISCOVERY.md](../../registry/GTM_TRADING_INTENT_DISCOVERY.md)
+Current journeys: [execution context](../docs/execution-context.md), [liquidation terrain](../docs/agent-liq-radar-loop.md), and [swap](../docs/agent-swap-demo.md).
 
 ## Install (Hermes)
 
@@ -25,7 +25,7 @@ clawhub skill publish ./skills/hypernatt-liq-radar --slug hypernatt-liq-radar --
 openclaw skills install hypernatt-liq-radar
 ```
 
-Or copy the YAML block from `SKILL.md` into `~/.hermes/config.yaml` under `mcp_servers`.
+For connector configuration, use the examples in [integrations.md](../docs/integrations.md). The YAML front matter in `SKILL.md` describes the skill; it is not an `mcp_servers` configuration.
 
 ## MCP without a skill
 

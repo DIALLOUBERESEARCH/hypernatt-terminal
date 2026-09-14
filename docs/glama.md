@@ -27,31 +27,29 @@ curl -sS http://127.0.0.1:8011/health
 
 Expected after rebuild: `"version":"2.8.0"`, `"tools":6`, `mcp_sessions_v1` on `GET /health`.
 
-## Re-sync after version bump (BLOQUANT)
+## Re-sync after a version update
 
-Glama rebuild le Docker + introspection `stdio.mjs` (`tools/list`). README seul ne suffit pas.
+The repository README and the sandbox's introspected tool catalog are separate.
 
-1. Sync monorepo -> `hypernatt-terminal` (runtime MCP + `public-repo/` + **package-lock.json**)
-2. `git push origin main`
-3. Glama admin -> **Repository** -> **Sync Server** (claim server if needed)
-4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = **6** entries:
-   `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`,
-   `get_execution_quote`, `compare_execution_context`, `reconcile_execution`
-5. Hard refresh (Ctrl+F5) page publique
+1. Publish the reviewed runtime, `public-repo/` documentation and lockfile to the public repository.
+2. In Glama **Repository**, use **Sync Server** and check the reported commit against GitHub.
+3. In **Dockerfile**, inspect the generated configuration, then build/test the intended commit. A metadata sync alone does not prove a successful build or release.
+4. Check build logs, the selected release and its introspected `tools/list`. Current v2.8.0 exposes `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`, `get_execution_quote`, `compare_execution_context`, `reconcile_execution`.
 
-## Glama Dockerfile admin (quality check) — BLOQUANT
+## Generated Dockerfile configuration
 
-Glama indexes tools via `mcp-proxy` + **stdio** (`tools/list`).
-
-**Admin → Server → Dockerfile settings**:
+For the Glama admin form that generates its own Dockerfile (as displayed on 2026-09-14):
 
 | Field | Value |
 |-------|--------|
-| Dockerfile path | `./Dockerfile` |
-| Build steps | *(leave empty — Dockerfile runs `npm ci`)* |
-| **CMD arguments** | **`["node", "stdio.mjs"]`** |
+| Build steps | `["npm ci --omit=dev"]` |
+| CMD arguments | `["mcp-proxy", "--", "node", "stdio.mjs"]` |
+| `GATEWAY_URL` | `https://hypernatt.com` |
 | Placeholder parameters | `{}` |
+| Pinned commit | A commit recognized by the synced repository; empty uses its current head |
 
-Dockerfile `CMD ["node", "server.js"]` is for **HTTP healthcheck only**; Glama admin CMD overrides introspection to stdio.
+This generated file is different from the repository's Dockerfile used in the local smoke above. Do not omit dependency installation just because the repository has a Dockerfile. Inspect the generated file to confirm the command and installation step.
 
-Prod agents use HTTP: `https://hypernatt.com/mcp/protocol`.
+`server.js` serves the HTTP MCP endpoint and health route. `stdio.mjs` is the stdio adapter used by `mcp-proxy` for sandbox introspection. Production agents connect to `https://hypernatt.com/mcp/protocol`.
+
+If the build fails before dependency installation or startup, diagnose that failing step from the logs. A successful repository sync, build and published release must each be verified; no rebuild duration is guaranteed.

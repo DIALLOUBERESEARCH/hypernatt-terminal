@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """HyperNatt Terminal - minimal free taste (stdlib only).
 
-1) Free public manifest (3-tool catalog)
-2) How to call get_liq_radar via MCP (paid $0.001 x402 after intro)
+1) Free compact public manifest (six-tool catalog)
+2) Choose liquidation, execution-context or swap journey by intent
 
 Read-only liquidation context, NOT trade advice. No custody.
 
@@ -30,22 +30,23 @@ def main() -> int:
         print(f"[error] free manifest unavailable: {exc}")
         return 1
 
-    eco = manifest.get("ecosystem", {})
-    sections = manifest.get("sections", [])
-    print(f"HyperNatt Terminal v{manifest.get('version')} - {len(sections)} sections")
-    print(f"  mcp url : {eco.get('mcp_url')}")
-    print(f"  tools   : get_agent_manifest | get_liq_radar | swap_via_nattswap")
+    tools = manifest.get("tools", [])
+    if not tools or not manifest.get("mcp_url") or not manifest.get("journeys_v1"):
+        print("[error] compact manifest is missing its catalog, MCP URL or journeys")
+        return 1
+    print(f"HyperNatt Terminal v{manifest.get('version')} - {len(tools)} tools")
+    print(f"  mcp url : {manifest['mcp_url']}")
+    print(f"  tools   : {' | '.join(tool['name'] for tool in tools)}")
     print(f"  whitelist get_liq_radar: {' '.join(WHITELIST)} (omit symbol = BTC)")
 
-    journeys = manifest.get("journeys") or manifest.get("suggested_journeys")
-    if journeys:
-        print(f"  journeys: {json.dumps(journeys)[:180]}")
+    for intent, tool in manifest["journeys_v1"].get("choose_by_intent", {}).items():
+        print(f"  {intent}: {tool}")
 
     print()
     print("Next (MCP): connect https://hypernatt.com/mcp/protocol")
     print("  1. get_agent_manifest")
-    print("  2. get_liq_radar  (optional symbol=ETH|SOL|...)")
-    print("  3. optional swap_via_nattswap with YOUR agent wallet")
+    print("  2. Choose a journey above; none requires buying an unrelated tool.")
+    print("  3. For pass/quota programs: get_agent_manifest with detail=full.")
     print()
     print("HTTP probe (expects 402 Payment Required):")
     print("  curl -i https://hypernatt.com/api/m2m/liq-radar")

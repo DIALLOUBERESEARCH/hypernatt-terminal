@@ -1,8 +1,23 @@
 # x402 payment — Base vs Solana
 
-`get_liq_radar` is **$0.001 USDC exact** on **two rails**. Pick **one** entry from the 402 `accepts[]`. Do not mix them.
+Four MCP tools cost **0.001 USDC per call** on **two rails**: `get_liq_radar`, `get_execution_quote`, `compare_execution_context` and `reconcile_execution`. Pick one supported entry from the returned `accepts[]`; do not mix networks or signing formats.
 
-**Solana rail is live and verified on REST and MCP:**
+## Trials and credits
+
+- **Daily MCP trial:** one free call per paid tool, token and client each UTC day: four tools x seven tokens = up to 28 independent slots. Read `trial_policy_v2` and `free_tier_status_v1` through the same MCP connection. The daily credit pool and intro slots are separate.
+- **Eligible credits:** one credit per call for each of the four paid tools. Pass credits and swap-earned credits are associated with an EVM wallet; pass that address as `agent_wallet`. This is separate from the choice of Base or Solana for an x402 payment.
+- **Agent Pass:** the full manifest currently advertises $5 for 15,000 credits valid for 30 days. Swap-earned credits depend on eligible completed swaps and registration. Neither option is required for pay-per-call use.
+- **Free MCP tools:** `get_agent_manifest` and `swap_via_nattswap`. Signing a swap still incurs the route's on-chain costs; API payment does not pay swap gas or trading fees.
+
+Call `get_agent_manifest` with `{"detail":"full"}`, or GET `/api/m2m/agent/manifest?detail=full`, for `pass_program` and `quota_program`. The default compact catalog omits those blocks.
+
+## MCP payment response versus HTTP 402
+
+On MCP, call the intended tool without `x_payment` first. If a trial or eligible credit covers it, no x402 payment is needed. Otherwise, payment requirements arrive in the tool result (`isError: true`, JSON text with `accepts[]`); the HTTP transport can still return 200. An x402-capable client must inspect that result, obtain the authorized payment and retry the same tool with `x_payment` (base64 JSON).
+
+Direct REST discovery calls to `/api/m2m/liq-radar` and `/api/m2m/swap/quote` return HTTP 402 when unpaid and without eligible access; they do not provide the MCP intro slots. Retry REST with `X-Payment` or `PAYMENT-SIGNATURE`. The three execution-context tools use MCP, not public REST execution endpoints. A connector or wallet installation alone does not guarantee automatic payment support in every client.
+
+**Historical `get_liq_radar` Solana payment receipts (REST and MCP):**
 - **REST settle:** [36FvuTpq...](https://solscan.io/tx/36FvuTpqWiSoDLrs2xVRecehCmArdqptDXB8sHTfvJQSUCs7GY7CLhHwGHYwT4eXqqcgkroYheFcy5ajrUgdJLSg) (2026-09-05 UTC, slot 444415694)
 - **MCP Streamable HTTP (`x_payment`) settle:** [5g4JePDX...](https://solscan.io/tx/5g4JePDXuqwViz7noAiPhXJTQmQNUAdYifLM417uMt79q5Y3LkL8KDW1rUB1aX8EbfagU2AXPXQvSQtgStqjAi11) (2026-09-05 UTC, slot 444416162)
 - Historic first settle: [42WDNoZ9...](https://solscan.io/tx/42WDNoZ9sLdrHnSBYeSr9ZDLiLJpzwx2kgR6WWYSFsXQMm1AbvhBLrzMkwi22BzagLteKoWN3gDr9Skf1UVBaDi5) (2026-08-29 UTC).
@@ -26,7 +41,7 @@ An EVM x402 client that works on Base **cannot** pay Solana. SVM `exact` require
 6. Network format: CAIP-2 (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) or legacy v1 alias (`solana`, `solana-mainnet`) accepted and auto-mapped.
 7. **Immediate signature**: Solana payments embed a recent blockhash (~90 seconds lifespan). Sign and transmit in the same execution cycle. Stale blockhashes fail `BlockhashNotFound`.
 
-If you only have an EVM wallet (or no `@x402/svm`), pick **`accepts[0]` Base**. Do not retry Base after a Solana sign failure and call that a Solana payment.
+If you only have an EVM wallet (or no `@x402/svm`), select the entry whose `network` is `eip155:8453` (Base). Do not select by array position. Do not retry Base after a Solana sign failure and call that a Solana payment.
 
 If CDP returns `invalid_exact_svm_*`, `preflight_validation_failed`, `x402V2PaymentRequirements requires 'asset'`, or `invalid_network`, the **payload** is wrong — not the 402 challenge. Rebuild with `@x402/svm` against the live 402. Keep `accepted.network` starting with `solana`.
 
@@ -38,4 +53,4 @@ curl -i https://hypernatt.com/api/m2m/liq-radar
 
 Read `accepts[]`. Pay one rail. Retry with `X-Payment` **or** `PAYMENT-SIGNATURE` (base64 JSON payload).
 
-Public MCP: `https://hypernatt.com/mcp/protocol` — call `get_agent_manifest` first, then call `get_liq_radar` with argument `x_payment`.
+Public MCP: `https://hypernatt.com/mcp/protocol` — start with `get_agent_manifest`, choose the tool for your task, and follow its returned payment requirements. Supply `x_payment` only when payment is needed.

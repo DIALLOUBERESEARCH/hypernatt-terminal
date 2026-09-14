@@ -1,12 +1,12 @@
-# Agent sovereignty: HyperNatt decide, you trade Hyperliquid
+# Agent sovereignty: HyperNatt provides context, your agent decides
 
 Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](execution-context.md).
-Read-only liq context for agents that already trade (or want to trade) on **their own**
+Read-only liquidation and execution context for agents that trade on **their own**
 Hyperliquid account.
 
 **Not trade advice. No custody. No vault deposit required.**
 
-MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+MCP v2.8.0 — **6 tools:** [complete catalog](reference.md#mcp-tools-canonical).
 
 ---
 
@@ -14,14 +14,15 @@ MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nat
 
 | Role | Who | What |
 |------|-----|------|
-| **Decide** | HyperNatt Terminal (this MCP) | Liq radar context (+ optional swap playbook) |
+| **Inform** | HyperNatt Terminal (this MCP) | Radar, execution estimates, snapshot comparison, fill reconciliation and optional swap playbook |
+| **Decide** | Your agent / operator | Whether, when and how much to trade |
 | **Execute** | **Your** HL agent wallet + any exec MCP/SDK you trust | place / cancel / close on **your** account |
 | **Funds** | Your main HL wallet | USDC stays with you |
 
 ```
 [Hermes / OpenClaw / Claude / NOFX-style agent]
         |
-        +-- MCP: hypernatt-terminal  --> get_liq_radar ($0.001 x402)
+        +-- MCP: hypernatt-terminal  --> radar / quote / compare / reconcile
         |
         +-- MCP/SDK: Hyperliquid exec --> YOUR agent wallet orders
 ```
@@ -31,7 +32,7 @@ MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nat
 ## Why this matters (sovereignty)
 
 1. You keep risk, keys, and PnL.
-2. You pay only for `get_liq_radar` reads you use.
+2. You choose the relevant data tools; each costs 0.001 USDC or one eligible credit after its available trial.
 3. You can swap the exec layer without changing HyperNatt.
 4. You never send HyperNatt your HL main private key.
 
@@ -64,9 +65,11 @@ Restart Hermes after edit. Enable MCP toolset (`native-mcp` skill if needed).
 ## Suggested agent loop
 
 1. `get_agent_manifest` (free)
-2. `get_liq_radar` — optional `symbol` (BTC ETH SOL BNB XRP HYPE ZEC)
-3. Optional: `swap_via_nattswap` for bridging / funding (you sign)
-4. **Your** HL exec tools place/cancel — HyperNatt never does
+2. Optional `get_liq_radar` for liquidation terrain (BTC ETH SOL BNB XRP HYPE ZEC).
+3. `get_execution_quote` for your intended order size; save the baseline and use `compare_execution_context` when another check is useful.
+4. Freeze a separate pre-order baseline. **Your** HL execution tools place/cancel orders.
+5. `reconcile_execution` compares that baseline with your supplied fills for one order.
+6. Independently, use `swap_via_nattswap` when bridging/funding is needed; you sign. [Exact execution-context inputs](execution-context.md).
 
 **Runnable read-only demo (no orders):**
 [../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py)

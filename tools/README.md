@@ -11,7 +11,7 @@ Per-tool reference for **hypernatt-terminal** MCP **v2.8.0** (6 tools).
 | `compare_execution_context` | Between checks | **1** ($0.001 x402) | [Execution context](../docs/execution-context.md#between-checks) |
 | `reconcile_execution` | After execution | **1** ($0.001 x402) | [Execution context](../docs/execution-context.md#after-execution) |
 
-**Whitelist `get_liq_radar`:** BTC ETH SOL BNB XRP HYPE ZEC (omit `symbol` = BTC).
+**Radar and Hyperliquid execution-context symbols:** BTC ETH SOL BNB XRP HYPE ZEC. Only radar defaults to BTC. Swap routes use Li.Fi-supported chains/tokens, subject to availability. [Shared pricing, trials and credits](../docs/x402-pay.md).
 
 **MCP endpoint:** https://hypernatt.com/mcp/protocol  
 **Quickstart:** [../docs/quickstart.md](../docs/quickstart.md)

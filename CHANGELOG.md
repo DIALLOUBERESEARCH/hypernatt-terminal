@@ -3,6 +3,12 @@
 All notable changes to the **public** HyperNatt Terminal MCP mirror.
 Private monorepo history is separate (see README mirror note).
 
+## Unreleased
+
+- Align current onboarding, payments, credits and examples with all six MCP tools and the four paid data tools.
+- Clarify compact versus full manifest fields, MCP payment errors and the separate Li.Fi swap journey.
+- Fix manifest-reading examples and add offline contract checks.
+
 ## [2.8.0] - 2026-09-14
 
 - Three public execution-context tools for all seven Terminal tokens: order-size quote, snapshot comparison, supplied-fill reconciliation. Each costs 0.001 USDC through the existing payment/credit path.

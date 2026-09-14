@@ -7,7 +7,7 @@ MCP v2.8.0 — the only swap MCP tool is **`swap_via_nattswap`**.
 
 ## Why this doc exists
 
-`get_liq_radar` is **read-only**: pay $0.001 x402 on **Base (EIP-3009)** or **Solana (SVM exact / `@x402/svm`)** → JSON back. An EVM client cannot pay Solana.
+Radar, order quotes, snapshot comparisons and fill reconciliation are **read-only data tools** at 0.001 USDC or one eligible credit per call after their daily trials. [Payments on Base or Solana](x402-pay.md) are separate from swap execution.
 
 NattSwap is **execution**: you need a wallet that signs on the **source chain**,
 native gas, token balance, then optional registration for credits.
@@ -20,7 +20,7 @@ Agents often paste **public addresses** they cannot sign. Quotes succeed but
 | Requirement | Notes |
 |-------------|--------|
 | Hot wallet you control | CDP AgentKit, viem `WalletClient`, ethers signer |
-| `fromAddress` = signer | Same wallet that pays x402 when swapping from Base |
+| `fromAddress` = signer | Wallet that signs the source-chain swap; for paid HTTP quotes, also check the returned `payer_wallet` mismatch rule |
 | Gas on source chain | x402 USDC on Base does **not** pay Ethereum/Arbitrum gas |
 | `fromToken` balance | On the source chain |
 | `execution_readiness.can_execute` | Must be `true` before broadcast |
@@ -37,7 +37,7 @@ Agents often paste **public addresses** they cannot sign. Quotes succeed but
 
 ## Step-by-step (MCP)
 
-1. **Load manifest** — `get_agent_manifest` → read `sections.Execution.wallet_onboarding_v1`.
+1. **Load full manifest** — `get_agent_manifest` with `{"detail":"full"}` → find `sections[]` entry with `name: "Execution"`, then read `wallet_onboarding_v1`.
 2. **Wallet** — create or load your agent wallet (CDP AgentKit docs).
 3. **Quote** — `swap_via_nattswap` with:
    - `fromAddress` / `toAddress` = your wallets
@@ -47,7 +47,7 @@ Agents often paste **public addresses** they cannot sign. Quotes succeed but
    Fallback: approve Li.Fi Diamond then broadcast `transactionRequest`.
 6. **Poll** — `GET /api/m2m/swap/status/:txHash?fromChain=...` (bridges: 1–30 min).
 7. **Register** — use `register_hint` from `swap_actions_v1` or `POST /api/m2m/swap/register`.
-8. **Quota** — `GET /api/m2m/quota/status` for bonus `get_liq_radar` credits.
+8. **Quota** — `GET /api/m2m/quota/status?wallet=0xYourWallet` for eligible shared credits covering radar and all three execution-context tools.
 
 ## Coinbase CDP / x402 buyer wallet
 
@@ -70,13 +70,11 @@ wallet MCP: `npx @coinbase/payments-mcp`
 
 This pays **reads only**. It does **not** place Hyperliquid orders.
 
-### Same wallet for Base swaps
+### API payer versus swap signer
 
-HyperNatt HTTP endpoints accept x402 on **Base + Solana**. If your agent already
-pays for `get_liq_radar` via CDP x402:
+MCP `swap_via_nattswap` is free and does not require a payer from an earlier radar call. Use the wallet that will sign the source-chain transaction as `fromAddress`.
 
-- Use **that same wallet** as `fromAddress` when swapping **from Base**.
-- For **Ethereum → Base** bridges, fund **ETH gas on Ethereum** separately.
+For a paid HTTP swap quote, when `execution_readiness.payer_wallet` contains an EVM payer, the current readiness check requires it to match `fromAddress`. A Solana payment wallet is not an EVM source-chain signer. Follow the returned blockers and use a valid source-chain signing wallet. For Ethereum → Base bridges, fund ETH gas on Ethereum separately.
 
 Discovery listing checklist: [cdp-bazaar-checklist.md](cdp-bazaar-checklist.md)
 
@@ -85,7 +83,7 @@ Discovery listing checklist: [cdp-bazaar-checklist.md](cdp-bazaar-checklist.md)
 | Mistake | Fix |
 |---------|-----|
 | `fromAddress` = third-party vault | Use your agent wallet |
-| Paid x402 with wallet A, `fromAddress` = wallet B | Align payer and signer |
+| HTTP quote reports EVM payer/fromAddress mismatch | Align the quote's EVM payer and signer, or use free MCP routing with your actual signer |
 | Broadcast with `can_execute: false` | Read `blockers` and `swap_execution_playbook_v1` |
 | Expect x402 USDC to pay swap gas | Gas is native on source chain |
 

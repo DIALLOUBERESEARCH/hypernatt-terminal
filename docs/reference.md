@@ -17,7 +17,7 @@ Start here: [quickstart.md](quickstart.md)
 | [`compare_execution_context`](execution-context.md#between-checks) | Same-order snapshot comparison | 1 credit / $0.001 x402 |
 | [`reconcile_execution`](execution-context.md#after-execution) | Supplied fills versus the pre-order baseline | 1 credit / $0.001 x402 |
 
-**Symbols for `get_liq_radar`:** BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
+**Radar and Hyperliquid execution-context symbols:** BTC ETH SOL BNB XRP HYPE ZEC. Only radar defaults to BTC. Swap routing follows Li.Fi chain/token availability, independently of this seven-symbol list.
 
 ---
 
@@ -48,22 +48,20 @@ npx -y @smithery/cli@latest mcp add hypernatt/hypernatt-terminal
 
 ## Pricing (at a glance)
 
-| | Intro | Agent Pass $5/mo | Paygo |
-|---|-------|------------------|-------|
-| MCP install | Yes | Yes | Yes |
-| First `get_liq_radar` call | Free (intro) | included | included |
-| Monthly credits | — | ~15,000 / 30 days | — |
-| Swap-earned credits | Yes | Yes | Yes |
+- Four paid tools: one daily MCP trial per tool/token/client, then 0.001 USDC or one eligible credit per call.
+- Optional Agent Pass: $5 for 15,000 credits valid for 30 days. Eligible swap-earned credits can also cover the four paid tools.
+- Manifest and MCP swap calls are free; gas and route fees remain separate.
 
-Paywall order: intro-free → swap quota → Agent Pass $5/mo → $0.001 USDC/credit (x402 on Base + Solana).
+Read `trial_policy_v2` and client-specific `free_tier_status_v1`; use `detail=full` for current `pass_program` and `quota_program`. See [payment transport and credits](x402-pay.md).
 
 ---
 
 ## Suggested journey
 
-1. `get_agent_manifest` (free)
-2. `get_liq_radar` (optional `symbol`)
-3. Optional `swap_via_nattswap` — you sign with your agent wallet
+1. `get_agent_manifest` (free): choose `journeys_v1` by your intent.
+2. Liquidation terrain: `get_liq_radar` with an optional `symbol`.
+3. Hyperliquid order context: `get_execution_quote` → save baseline → `compare_execution_context` when useful → `reconcile_execution` with your pre-order baseline and supplied fills.
+4. Cross-chain routing: independently use `swap_via_nattswap`; you sign with your agent wallet.
 
 Sample response: [example-responses.md](example-responses.md)
 
