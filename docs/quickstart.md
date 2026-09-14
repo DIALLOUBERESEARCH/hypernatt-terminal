@@ -8,7 +8,7 @@
 
 > Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
 
-**Agents:** 3 tools · v2.7.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
+**Agents:** 6 tools · v2.8.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
 
 **HL agent (read terrain only):** [../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py) · sovereignty: [agent-hl-sovereignty.md](agent-hl-sovereignty.md)
 
@@ -48,6 +48,10 @@ Example `get_liq_radar` shape:
 ```
 
 ---
+
+## Follow an intended Hyperliquid order
+
+Use `get_execution_quote` before the order, retain its `baseline`, then `compare_execution_context` for changes and `reconcile_execution` with your fills afterwards. Each call costs 0.001 USDC. [Exact inputs and data quality](execution-context.md).
 
 ## Connect
 

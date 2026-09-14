@@ -1,6 +1,6 @@
 /**
  * F#22 / F99N — MCP SSE + Streamable HTTP server.
- * Surface: get_agent_manifest, get_liq_radar, swap_via_nattswap (exactly 3).
+ * Surface: manifest, radar, swap, execution quote, compare, reconcile (6 tools).
  *
  * Public (nginx strips /mcp prefix):
  *   GET  /mcp/sse       -> container /sse
@@ -17,6 +17,7 @@ import { LIQ_RADAR_X402 } from "./x402-data-products.mjs";
 import { settlePaymentWithFacilitator } from "./x402-facilitator-client.mjs";
 import {
     isTerminalX402FunnelEnabled,
+    isDeliverAfterSettleEnabled,
     settleTerminalPayment,
 } from "./x402-funnel-terminal.mjs";
 import {
@@ -43,6 +44,7 @@ import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
 import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
 import { registerTerminalSwapTools } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
+import { registerExecutionContextTools } from "./execution-context-public.mjs";
 import {
     bindActiveSessionCounter,
     isStaleMcpSession,
@@ -51,7 +53,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.7.0";
+const TERMINAL_VERSION = "2.8.0";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -65,7 +67,7 @@ const PUBLIC_LIQ_RADAR_URL =
 import { toolDescriptionFromCard, getServerCard } from "./server-card-tools.mjs";
 
 const SERVER_TITLE =
-    "HyperNatt Terminal — Liq Radar + Swap for AI Agents";
+    "HyperNatt Terminal — Radar, Execution Context + Swap for AI Agents";
 
 const TERMINAL_ONCHAIN_PROOF = {
     ndatToken: {
@@ -161,7 +163,7 @@ function onToolCallRecorded({
     });
 }
 
-async function processPaidToolPayment({
+export async function processPaidToolPayment({
     tool,
     priceUsdc,
     paymentRaw,
@@ -173,12 +175,19 @@ async function processPaidToolPayment({
     verify,
     buildRequired,
     buildRequirements: buildReqs,
+    beforeCharge,
 }) {
     const headerWallet = normalizeAgentWallet(agent_wallet);
     const clientId = mcp_client_id || sessionId || null;
     const meta = clientMeta || (sessionId ? sessionClientMeta.get(sessionId) : null);
 
+    // New data products require the existing synchronous settlement gate.
+    if (beforeCharge && paymentRaw && (!isTerminalX402FunnelEnabled() || !isDeliverAfterSettleEnabled())) {
+        return { errorResult: paymentErrorResult(buildRequired, { reasonCode: "PAYWALL_UNAVAILABLE", tool, priceUsdc }) };
+    }
+
     if (headerWallet && (await checkBetaBypass(headerWallet, tool))) {
+        await beforeCharge?.();
         console.log(`[F#36N] beta bypass MCP: ${headerWallet} → ${tool}`);
         return {
             ok: true,
@@ -216,6 +225,7 @@ async function processPaidToolPayment({
     }
 
     if (!paymentRaw) {
+        await beforeCharge?.();
         const consumed = await consumePaywall({
             wallet: headerWallet,
             tool,
@@ -320,6 +330,7 @@ async function processPaidToolPayment({
         }
     }
 
+    await beforeCharge?.();
     if (isTerminalX402FunnelEnabled()) {
         const settled = await settleTerminalPayment({
             paymentPayload: cdpPayload,
@@ -448,8 +459,14 @@ export function createMcpServer() {
     };
     registerGrowthTools(server, freeCtx);
     registerTerminalSwapTools(server, freeCtx);
+    registerExecutionContextTools(server, {
+        m2mUrl: M2M_URL, internalSecret: INTERNAL_SECRET,
+        pay: processPaidToolPayment,
+        sessionPayment: (sessionId) => sessionId ? sessionPayments.get(sessionId) : undefined,
+        record: onToolCallRecorded,
+    });
 
-    // F99N — sole paid MCP tool: get_liq_radar (+ optional symbol)
+    // Existing radar payment and data path remains unchanged.
     server.registerTool(
         "get_liq_radar",
         {
@@ -791,7 +808,7 @@ export function mountMcpSignalRoutes(app) {
     });
 
     console.log(
-        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 3 tools`,
+        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 6 tools`,
     );
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,

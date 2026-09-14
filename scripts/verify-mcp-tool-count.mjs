@@ -1,5 +1,5 @@
 /**
- * Build-time gate: server-card.json must list exactly 3 terminal tools (F99N).
+ * Build-time gate: server-card.json must list exactly 6 terminal tools (F312).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -9,11 +9,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const cardPath = path.join(root, "server-card.json");
 
-const EXPECTED_COUNT = 3;
+const EXPECTED_COUNT = 6;
 const EXPECTED_TOOLS = [
     "get_agent_manifest",
     "get_liq_radar",
     "swap_via_nattswap",
+    "get_execution_quote",
+    "compare_execution_context",
+    "reconcile_execution",
 ].sort();
 
 const card = JSON.parse(fs.readFileSync(cardPath, "utf8"));

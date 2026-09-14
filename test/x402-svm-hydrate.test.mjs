@@ -241,3 +241,35 @@ test("refreshSolanaAta mock empty vs one account", async () => {
     });
     assert.equal(ok, "ok");
 });
+
+test("refreshSolanaAta: zero balance ATA (amount '0') still evaluates to 'ok'", async () => {
+    resetSolanaAtaCache();
+    const ok = await refreshSolanaAta({
+        fetchImpl: async () => ({
+            ok: true,
+            json: async () => ({
+                result: {
+                    value: [
+                        {
+                            pubkey: "6t848x33K7GPBi9PYSoZjZB5n2LvRrH3NnxKuGPBuFT1",
+                            account: {
+                                data: {
+                                    parsed: {
+                                        info: {
+                                            tokenAmount: {
+                                                amount: "0",
+                                                decimals: 6,
+                                                uiAmount: 0,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            }),
+        }),
+    });
+    assert.equal(ok, "ok");
+});

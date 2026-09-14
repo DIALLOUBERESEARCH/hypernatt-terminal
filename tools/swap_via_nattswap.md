@@ -4,7 +4,7 @@ Cross-chain swap quote via **Li.Fi** with step-by-step execution instructions fo
 
 **Free** at the MCP layer (no x402). On-chain execution costs gas plus HyperNatt integrator fee 0.5%; Li.Fi may add its own cut — read `quote.estimate.feeCosts` on the live quote.
 
-This is the **only** swap tool on the MCP surface (v2.7.0).
+This is the **only** swap tool on the MCP surface (v2.8.0).
 
 ## When to use
 

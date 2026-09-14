@@ -3,7 +3,10 @@
 How to plug HyperNatt Terminal into your agent. Read-only liq context + optional
 swap playbook. No custody. Not trade advice.
 
-**MCP v2.7.0 — 3 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+**MCP v2.8.0 — 6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`, `get_execution_quote`, `compare_execution_context`, `reconcile_execution`.
+
+The three [execution-context tools](execution-context.md) use MCP and cost
+**$0.001 USDC per call**, with the same credits and x402 rails as the radar.
 
 Two ways in:
 - **MCP:** `https://hypernatt.com/mcp/protocol`
@@ -51,7 +54,7 @@ after any intro; or Agent Pass / swap quota.
 ## 2. Zero-setup REST — no wallet  [verified]
 
 ```bash
-# Catalog (3 MCP tools, prices) — free:
+# Catalog (6 MCP tools, prices) — free:
 curl -s https://hypernatt.com/api/m2m/agent/manifest
 
 # Liq radar — first call intro-free, then HTTP 402:

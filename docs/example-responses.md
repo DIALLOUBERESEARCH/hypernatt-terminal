@@ -1,6 +1,7 @@
 # Example responses (production)
 
-Canonical MCP surface: **3 tools** (`get_agent_manifest`, `get_liq_radar`,
+Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](execution-context.md).
+Canonical MCP surface: **6 tools** (`get_agent_manifest`, `get_liq_radar`,
 `swap_via_nattswap`). Values refresh every call — structure is stable.
 
 ---

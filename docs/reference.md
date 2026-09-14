@@ -1,6 +1,6 @@
 ﻿# HyperNatt Terminal — technical reference
 
-Thin pointer. Live MCP is **v2.7.0** with **3 tools** only.
+Thin pointer. Live MCP is **v2.8.0** with **6 tools**.
 
 Start here: [quickstart.md](quickstart.md)
 
@@ -13,6 +13,9 @@ Start here: [quickstart.md](quickstart.md)
 | [`get_agent_manifest`](../tools/get_agent_manifest.md) | Catalog, pricing, journey | Free |
 | [`get_liq_radar`](../tools/get_liq_radar.md) | Liquidation radar (whitelist coins) | 1 credit / $0.001 x402 |
 | [`swap_via_nattswap`](../tools/swap_via_nattswap.md) | Li.Fi quote + agent execution playbook | Free at MCP layer |
+| [`get_execution_quote`](execution-context.md#before-an-order) | Depth, estimated VWAP, spread and separate fees | 1 credit / $0.001 x402 |
+| [`compare_execution_context`](execution-context.md#between-checks) | Same-order snapshot comparison | 1 credit / $0.001 x402 |
+| [`reconcile_execution`](execution-context.md#after-execution) | Supplied fills versus the pre-order baseline | 1 credit / $0.001 x402 |
 
 **Symbols for `get_liq_radar`:** BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
@@ -80,6 +83,7 @@ Base: `https://hypernatt.com`
 ## More guides
 
 - [integrations.md](integrations.md)
+- [execution-context.md](execution-context.md) - before, during and after; all seven Terminal tokens
 - [agent-liq-radar-loop.md](agent-liq-radar-loop.md)
 - [agent-hl-sovereignty.md](agent-hl-sovereignty.md)
 - [swap-agentkit.md](swap-agentkit.md)

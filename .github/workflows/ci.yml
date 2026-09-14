@@ -36,5 +36,5 @@ jobs:
       - name: npm audit (prod)
         run: npm audit --omit=dev --audit-level=high
 
-      - name: Verify MCP tool count (3 tools · server-card)
+      - name: Verify MCP tool count (6 tools · server-card)
         run: node scripts/verify-mcp-tool-count.mjs

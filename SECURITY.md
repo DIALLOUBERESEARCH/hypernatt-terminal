@@ -1,5 +1,6 @@
 # Security & Trust — HyperNatt Terminal
 
+Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](docs/execution-context.md).
 Connecting an unknown MCP server to your agent is a real risk. You should be
 skeptical. This page answers the questions a careful developer asks, factually.
 Machine-readable version: the `security_v1` block in `get_agent_manifest`.
@@ -29,7 +30,7 @@ site. When in doubt, reach us only through the channels above.
 
 ## Surface (truth)
 
-**3 tools · v2.7.0:** `get_agent_manifest` (free), `get_liq_radar` ($0.001 x402
+**6 tools · v2.8.0:** `get_agent_manifest` (free), `get_liq_radar` ($0.001 x402
 on Base + Solana), `swap_via_nattswap` (free at MCP; gas + Li.Fi fee on-chain).
 
 Default path: free manifest + pay-per-call. Optional heavy use: Agent Pass

@@ -25,7 +25,7 @@ docker run --rm -p 8011:8011 hypernatt-terminal
 curl -sS http://127.0.0.1:8011/health
 ```
 
-Expected after rebuild: `"version":"2.7.0"`, `"tools":3`, `mcp_sessions_v1` on `GET /health`.
+Expected after rebuild: `"version":"2.8.0"`, `"tools":6`, `mcp_sessions_v1` on `GET /health`.
 
 ## Re-sync after version bump (BLOQUANT)
 
@@ -34,8 +34,9 @@ Glama rebuild le Docker + introspection `stdio.mjs` (`tools/list`). README seul 
 1. Sync monorepo -> `hypernatt-terminal` (runtime MCP + `public-repo/` + **package-lock.json**)
 2. `git push origin main`
 3. Glama admin -> **Repository** -> **Sync Server** (claim server if needed)
-4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = **3** entries only:
-   `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`
+4. Attendre rebuild sandbox (~10-30 min). Onglet **Tools** = **6** entries:
+   `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`,
+   `get_execution_quote`, `compare_execution_context`, `reconcile_execution`
 5. Hard refresh (Ctrl+F5) page publique
 
 ## Glama Dockerfile admin (quality check) — BLOQUANT

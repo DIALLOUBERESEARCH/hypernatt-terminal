@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.DIALLOUBE-RESEARCH/hypernatt-terminal",
   "title": "hypernatt-terminal",
-  "description": "Multi-crypto liquidation radar + Li.Fi swap for AI agents; 3 tools · v2.7.0; $0.001/call via x402.",
+  "description": "Liquidation radar, Hyperliquid execution context and Li.Fi swap for AI agents. 6 tools; paid data calls 0.001 USDC via x402.",
   "repository": {
     "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
     "source": "github"
   },
-  "version": "2.7.0",
+  "version": "2.8.0",
   "remotes": [
     {
       "type": "streamable-http",

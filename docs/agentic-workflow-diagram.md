@@ -5,7 +5,11 @@
 
 > Diagram for application form. GitHub renders Mermaid below.
 
-**Live MCP v2.7.0 — 3 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+**Historical diagram scope, MCP v2.7.0 — 3 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+
+The current **v2.8.0** catalog has **6 tools**, including `get_execution_quote`,
+`compare_execution_context` and `reconcile_execution`. Their before/during/after
+workflow and shared $0.001 tariff are documented in [execution-context.md](execution-context.md).
 
 ---
 

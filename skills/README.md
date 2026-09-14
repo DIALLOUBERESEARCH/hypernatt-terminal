@@ -5,7 +5,7 @@ Optional onboarding skills for agent runtimes (Hermes Agent, OpenClaw via ClawHu
 | Skill | Path | Purpose |
 |-------|------|---------|
 | **hypernatt-liq-radar** | [hypernatt-liq-radar/SKILL.md](hypernatt-liq-radar/SKILL.md) | **Trading-first** — call get_liq_radar before sizing/entering a perp |
-| **hypernatt-terminal** | [hypernatt-terminal/SKILL.md](hypernatt-terminal/SKILL.md) | Full MCP onboarding (3 tools + x402 wallet) |
+| **hypernatt-terminal** | [hypernatt-terminal/SKILL.md](hypernatt-terminal/SKILL.md) | Full MCP onboarding (6 tools + x402 wallet) |
 
 GTM context: [../../registry/GTM_TRADING_INTENT_DISCOVERY.md](../../registry/GTM_TRADING_INTENT_DISCOVERY.md)
 

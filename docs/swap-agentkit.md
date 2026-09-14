@@ -3,7 +3,7 @@
 How to go from **quote** to **on-chain swap** to **quota credits**. HyperNatt does
 not custody your keys. You sign every transaction.
 
-MCP v2.7.0 — the only swap MCP tool is **`swap_via_nattswap`**.
+MCP v2.8.0 — the only swap MCP tool is **`swap_via_nattswap`**.
 
 ## Why this doc exists
 

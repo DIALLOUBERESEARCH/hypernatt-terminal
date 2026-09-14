@@ -1,10 +1,11 @@
 # Agent swap demo — wallet-first path
 
+Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](execution-context.md).
 Minimal recipe for builders who already pay HyperNatt x402 tools but have not executed a NattSwap yet.
 
 **Read-only context is not trade advice. No custody.**
 
-MCP v2.7.0 — **3 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
 
 ---
 

@@ -1,11 +1,12 @@
 # Agent sovereignty: HyperNatt decide, you trade Hyperliquid
 
+Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](execution-context.md).
 Read-only liq context for agents that already trade (or want to trade) on **their own**
 Hyperliquid account.
 
 **Not trade advice. No custody. No vault deposit required.**
 
-MCP v2.7.0 — **3 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
+MCP v2.8.0 — **6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`.
 
 ---
 

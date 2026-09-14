@@ -6,13 +6,16 @@
 
 **Free**
 
-## Live MCP surface (3 tools)
+## Live MCP surface (6 tools)
 
 | Tool | Role | Price |
 |------|------|-------|
 | `get_agent_manifest` | Catalog, value prop, scenarios, glossary | Free |
 | `get_liq_radar` | Forced-order / liquidation map (BTC ETH SOL BNB XRP HYPE ZEC) | 1 credit / $0.001 x402 |
 | `swap_via_nattswap` | Li.Fi quote + execution playbook | Free at MCP layer |
+| `get_execution_quote` | Order-size depth, VWAP, spread and fees | 1 credit / $0.001 x402 |
+| `compare_execution_context` | Changes since the previous baseline | 1 credit / $0.001 x402 |
+| `reconcile_execution` | Supplied fills vs pre-order estimate | 1 credit / $0.001 x402 |
 
 Suggested journey: manifest → `get_liq_radar` → optional `swap_via_nattswap`.
 
@@ -61,3 +64,5 @@ curl -sS "https://hypernatt.com/api/m2m/agent/manifest"
 
 Call this before any paid tool. No x402 required.
 Agent Pass: **$5/mo**.
+
+Execution workflow: [execution-context.md](../docs/execution-context.md).

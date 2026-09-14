@@ -1,7 +1,7 @@
 {
   "name": "natt-node-mcp",
-  "version": "2.7.0",
-  "description": "HyperNatt Terminal \u2014 3 tools v2.7.0 (manifest, liq_radar multi-crypto, swap). Full platform: https://hypernatt.com. See smithery-terminal-description.txt for canonical listing copy.",
+  "version": "2.8.0",
+  "description": "Liquidation radar, Hyperliquid execution context and Li.Fi swap for AI agents. 6 tools; paid data calls 0.001 USDC via x402.",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

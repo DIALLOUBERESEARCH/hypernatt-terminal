@@ -3,6 +3,12 @@
 All notable changes to the **public** HyperNatt Terminal MCP mirror.
 Private monorepo history is separate (see README mirror note).
 
+## [2.8.0] - 2026-09-14
+
+- Three public execution-context tools for all seven Terminal tokens: order-size quote, snapshot comparison, supplied-fill reconciliation. Each costs 0.001 USDC through the existing payment/credit path.
+- Data preparation before charging; separate delivery-age and data-quality fields.
+- Six-tool catalog and [execution workflow](docs/execution-context.md).
+
 ## [2.7.3] — 2026-09-05
 
 ### Added

@@ -1,11 +1,12 @@
 ---
 name: hypernatt-terminal
 description: >-
-  Onboarding skill for HyperNatt Terminal remote MCP (exactly 3 tools v2.7.0):
-  get_agent_manifest, get_liq_radar, swap_via_nattswap. Docs + call order only -
+  Onboarding skill for HyperNatt Terminal remote MCP (exactly 6 tools v2.8.0):
+  get_agent_manifest, get_liq_radar, swap_via_nattswap, get_execution_quote,
+  compare_execution_context, reconcile_execution. Docs + call order only -
   no local exec/shell/files. Read-only market microstructure for crypto trading
   agents (any venue). Not trade advice. get_liq_radar = $0.001 USDC via x402.
-version: 1.3.2
+version: 1.4.0
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -45,7 +46,7 @@ metadata:
 **What this skill is:** onboarding text for a **remote** MCP server.
 
 **What this skill is NOT:** a local bot, vault control, or a 14-tool terminal.
-Live surface = **exactly 3 tools - v2.7.0**.
+Live surface = **exactly 6 tools - v2.8.0**.
 
 ## Declared capabilities (honest)
 
@@ -68,11 +69,14 @@ Live surface = **exactly 3 tools - v2.7.0**.
 | Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
 | Trading-first skill | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/skills/hypernatt-liq-radar/SKILL.md |
 
-## Tool surface (3 only)
+## Tool surface (6 only)
 
 1. **get_agent_manifest** - Free - Catalog + journeys
 2. **get_liq_radar** - $0.001 x402 - Forced-order / liquidation map
 3. **swap_via_nattswap** - Free at MCP (you sign) - Li.Fi route
+4. **get_execution_quote** - $0.001 - Depth, VWAP, spread and fees for an order size
+5. **compare_execution_context** - $0.001 - Changes since a saved baseline
+6. **reconcile_execution** - $0.001 - Compare supplied fills with that baseline
 
 Whitelist: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 
@@ -85,6 +89,10 @@ curl -s https://hypernatt.com/api/m2m/agent/manifest | head
 # Paid via MCP runtime + x402 wallet (pseudo):
 # tools/call get_liq_radar  {"symbol":"ETH"}
 ```
+
+## Execution-context workflow
+
+For a Hyperliquid order, call `get_execution_quote` and save the returned baseline. Reuse it in `compare_execution_context`; after your own execution, send fills to `reconcile_execution`. These tools never submit orders. All seven symbols are supported; quantity must be a decimal string in token units. Read `delivery` and quality flags. See [execution-context.md](../../docs/execution-context.md).
 
 ## Trading-agent loop
 
@@ -108,5 +116,5 @@ This skill never asks for private keys or scrapes env secrets.
 ## Honest claims
 
 - Not trade advice - no custody - no performance promise
-- Do not advertise more than 3 MCP tools
+- Do not advertise more than 6 MCP tools
 - Vault/platform pages are not Terminal MCP P&L

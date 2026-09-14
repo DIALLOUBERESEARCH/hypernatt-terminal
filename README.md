@@ -3,11 +3,11 @@
 [![CI](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
 [![Glama](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
-[![Version](https://img.shields.io/badge/version-2.7.2-green)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.8.0-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 [![npm audit](https://img.shields.io/badge/npm%20audit-0%20high-brightgreen)](./CHANGELOG.md)
 
-**Forced-order map** for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
+**Liquidation radar and Hyperliquid execution context** for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
 
 Most agents (and most humans) only see classic public indicators. This MCP shows **where leveraged liquidations stack** — a market-structure layer those indicators do not expose. Read-only context. Your agent still decides.
 
@@ -66,6 +66,10 @@ If price swept a zone and real liquidations spiked, compare with OI change. A la
 
 Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpretation_rules_v1`.
 
+## Execution context throughout an order
+
+Estimate order-size costs before execution, compare changes against your last check, and reconcile your own fills afterwards. All seven tokens are supported. [Workflow and input examples](docs/execution-context.md).
+
 ## What you get
 
 | Tool | Price |
@@ -73,6 +77,9 @@ Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpret
 | `get_agent_manifest` | Free — call first |
 | `get_liq_radar` | **$0.001** x402 (Base EIP-3009 **or** Solana SVM exact) |
 | `swap_via_nattswap` | Free at MCP (you sign; gas + Li.Fi fee on-chain) |
+| `get_execution_quote` | **$0.001** x402, or eligible credits |
+| `compare_execution_context` | **$0.001** x402, or eligible credits |
+| `reconcile_execution` | **$0.001** x402, or eligible credits |
 
 **Solana pay:** rail is **live** (SVM exact). Do **not** reuse an EVM/Base x402 client. Use `@x402/svm`. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](docs/x402-pay.md).
 
@@ -86,7 +93,7 @@ Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC
 | Predictive Fuel Score / sweep classifier | Distance, size, OI, real liqs — labeled |
 | Custody of keys or funds | Agent signs own txs |
 | Trade advice / guaranteed edge | Read-only JSON context |
-| More than 3 MCP tools | **Exactly 3** · v2.7.0 |
+| More than 6 MCP tools | **Exactly 6** · v2.8.0 |
 | Vault / `/stats` = Terminal P&L | Separate HyperNatt vault product |
 | Independent security audit | Public code + [SECURITY.md](./SECURITY.md) |
 

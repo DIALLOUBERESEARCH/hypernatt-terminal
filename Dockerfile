@@ -11,8 +11,11 @@ COPY server.js stdio.mjs mcp-signal-server.mjs mcp-session-resilience.mjs mcp-se
     x402-settlement-cache.mjs x402-funnel-terminal.mjs \
     x402-svm-hydrate.mjs x402-svm-ata.mjs x402-svm-prepare.mjs \
     server-card-tools.mjs server-card.json server.json ./
+COPY execution-context-public.mjs execution-context-catalog.mjs ./
+COPY rd/execution-context/schemas.mjs ./rd/execution-context/schemas.mjs
 COPY scripts/verify-mcp-tool-count.mjs ./scripts/verify-mcp-tool-count.mjs
 RUN node scripts/verify-mcp-tool-count.mjs
+RUN node --input-type=module -e "import {createMcpServer} from './mcp-signal-server.mjs'; await createMcpServer().close()"
 
 ENV NODE_ENV=production
 ENV MCP_PORT=8011

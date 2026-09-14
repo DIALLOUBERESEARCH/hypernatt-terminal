@@ -13,6 +13,7 @@ const pkg = require("./package.json");
 const serverCard = require("./server-card.json");
 
 const app = express();
+app.use(["/protocol", "/messages"], express.json({ limit: "2mb" }));
 app.use(express.json());
 
 const MCP_PORT = parseInt(process.env.MCP_PORT || "8011");
@@ -87,6 +88,9 @@ const MCP_TOOL_NAMES = new Set([
     "get_agent_manifest",
     "get_liq_radar",
     "swap_via_nattswap",
+    "get_execution_quote",
+    "compare_execution_context",
+    "reconcile_execution",
 ]);
 
 function terminalToolsFromCard() {

@@ -115,10 +115,13 @@ export async function refreshSolanaAta(opts = {}) {
         if (!Array.isArray(value)) {
             return state;
         }
+        // F#204 audit: Tests on-chain existence of the ATA account (value.length === 0 means account does not exist).
+        // NEVER tests tokenAmount.amount === "0". A swept treasury with 0 USDC balance retains its initialized ATA
+        // on-chain (rent-exempt) and evaluates to "ok", keeping the Solana rail active in accepts[].
         const next = value.length === 0 ? "empty" : "ok";
         if (next === "empty") {
             console.error(
-                "[F#204] Solana USDC ATA empty on payTo — omitting Solana from accepts[] until owner sends SPL USDC",
+                "[F#204] Solana USDC ATA not found on payTo — omitting Solana from accepts[] until owner creates/initializes ATA",
             );
         }
         state = next;
