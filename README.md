@@ -9,7 +9,7 @@
 
 **Liquidation radar and Hyperliquid execution context** for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
 
-Most agents (and most humans) only see classic public indicators. This MCP shows **where leveraged liquidations stack** — a market-structure layer those indicators do not expose. Read-only context. Your agent still decides.
+Understand **liquidation terrain**, estimate **execution costs for your order size**, compare conditions with your last check, and reconcile your own fills afterwards. For cross-chain swaps, request a **Li.Fi route** that your agent signs. Your agent chooses the task and controls execution.
 
 Built by one person. Code is public. Backend is private. No custody. Not trade advice.
 
@@ -34,13 +34,23 @@ More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/in
 
 ## What HyperNatt Terminal gives your agent
 
+Start with **`get_agent_manifest`** (free), then choose the tools your task needs through `journeys_v1`:
+
+- **Understand the market:** `get_liq_radar` provides liquidation clusters, open-interest context and observed liquidations.
+- **Assess a Hyperliquid perpetual order:** `get_execution_quote` estimates its visible execution conditions; `compare_execution_context` measures changes since a saved check; `reconcile_execution` compares your supplied fills with your pre-order estimate.
+- **Find a cross-chain swap route:** `swap_via_nattswap` requests a Li.Fi route for your source/destination chains and tokens. Your agent signs the transaction.
+
+Radar and execution context support **BTC, ETH, SOL, BNB, XRP, HYPE and ZEC**. Cross-chain swaps use the chains and tokens supported by Li.Fi, subject to route availability; they are not limited to those seven symbols. The radar is optional for the execution-cost workflow.
+
+## Liquidation terrain — `get_liq_radar`
+
 A map of **forced orders**: where leveraged positions will be liquidated if price reaches them (clusters, OI build-up, observed liquidations).
 
 This is **market structure context**, not a trade signal. It shows terrain so a sovereign trading agent can judge timing, sizing, and risk with more awareness than agents that only read RSI/MACD-style public feeds.
 
 Your agent still decides. We show the terrain.
 
-### What your agent can do with this (honest scenarios)
+### Radar scenarios
 
 #### Scenario 1 — Ignore noise; wait only near class=true
 
@@ -54,7 +64,7 @@ Cluster ~5% away vs ~0.5% away is a different risk parameter. Distance informs s
 
 If price swept a zone and real liquidations spiked, compare with OI change. A large OI drop can mean forced flow is partly exhausted — still context, **not** an auto entry.
 
-### Glossary (short)
+### Radar glossary
 
 | Term | Meaning |
 |------|---------|
@@ -64,11 +74,29 @@ If price swept a zone and real liquidations spiked, compare with OI change. A la
 | Real vs estimated | `real_liquidations` = observed; `liq_density` clusters = modeled. Both labeled. |
 | `magnet.score` | Directional density bias from OI / L-S / funding. **Not** a hit probability. |
 
-Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpretation_rules_v1`.
+The radar glossary and scenarios also ship on `get_agent_manifest` → `agent_interpretation_rules_v1`. Use `journeys_v1` for the execution-context and swap workflows.
 
 ## Execution context throughout an order
 
-Estimate order-size costs before execution, compare changes against your last check, and reconcile your own fills afterwards. All seven tokens are supported. [Workflow and input examples](docs/execution-context.md).
+### Before the order — `get_execution_quote`
+
+**“For a buy of 0.1 ETH, what execution conditions are visible now?”** Supply the symbol, side and quantity in token units. Read the available book depth, estimated volume-weighted average price (VWAP), spread, depth cost and separate exchange/builder fees. Unknown fees remain unknown; insufficient visible depth does not imply a full fill. Save the returned `baseline` object unchanged in your agent's state.
+
+### At the next check — `compare_execution_context`
+
+**“For that same order, what changed since my last check?”** Supply the saved baseline to compare visible liquidity, estimated costs and data quality against a new snapshot. Use the returned baseline for the next check. Your agent chooses when to check again; this compares snapshots rather than tracking every intervening event. Keep a separate `pre_order_baseline` immediately before your own execution.
+
+### After execution — `reconcile_execution`
+
+**“How did my actual fills compare with my pre-order estimate?”** Supply that pre-order baseline and your fills for one order. The tool separates price and fee differences at the quantity actually executed. It does not fetch your account's fills or verify caller-supplied records, and it does not infer that latency caused a price difference.
+
+These three tools provide read-only context for **Hyperliquid perpetual orders**. They do not submit orders. Check the returned data-quality and freshness indicators before using an estimate. [Workflow, input examples and field definitions](docs/execution-context.md).
+
+## Cross-chain swaps — `swap_via_nattswap`
+
+**“What route is available to swap my token on one chain for a token on another?”** Supply the source/destination chains and tokens, amount and wallet addresses. Review the Li.Fi route, costs and execution readiness; your agent signs with its own wallet. This is a separate workflow from a Hyperliquid perpetual execution quote. [Swap inputs and execution steps](tools/swap_via_nattswap.md).
+
+## Trial and pricing
 
 Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
