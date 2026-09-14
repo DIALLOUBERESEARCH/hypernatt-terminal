@@ -5,6 +5,8 @@ Each call costs **0.001 USDC**, like `get_liq_radar`, through the existing x402
 Base/Solana payment or eligible credits. Use `https://hypernatt.com/mcp/protocol`.
 Call `get_agent_manifest` first; use `tools/list` for the complete input schemas.
 
+Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
+
 ## Before an order
 
 Call `get_execution_quote` with a side and a quantity in token units:
@@ -24,6 +26,8 @@ know the rates, with `source: "caller_assumption"` or `"account_rate_supplied"`,
 `rate` as a decimal fraction string and `as_of_ms` in UTC milliseconds. For
 example, `"0.00045"` means 4.5 basis points. Zero fees must be explicit.
 The Terminal API price is separate from estimated trading costs.
+
+The returned baseline contains metadata for the requested token only; the complete observed book and timing remain available. Earlier full-metadata baselines are still accepted.
 
 Save the returned **`baseline` object unchanged** in your agent's own state.
 

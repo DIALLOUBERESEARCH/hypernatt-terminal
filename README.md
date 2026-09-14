@@ -15,7 +15,7 @@ Built by one person. Code is public. Backend is private. No custody. Not trade a
 
 Full HyperNatt platform (vault, assistant): https://hypernatt.com — this repo is one agent-facing brick.
 
-> Public mirror synced from a private monorepo. History here is mirror commits.
+> Public runtime and docs are synced from the monorepo. Repository: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal.
 
 ## Quick start (30 seconds)
 
@@ -28,7 +28,7 @@ No install for the hosted MCP. In **Claude → Settings → Connectors → Add c
 
 Then ask:
 
-> Call get_agent_manifest, then get_liq_radar. If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal.
+> Call get_agent_manifest and choose journeys_v1 for my task. For an ETH buy of 0.1 ETH, estimate execution costs with get_execution_quote. Keep the baseline so we can compare later and reconcile my own fills after execution.
 
 More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/integrations.md).
 
@@ -69,6 +69,8 @@ Live glossary + scenarios also ship on `get_agent_manifest` → `agent_interpret
 ## Execution context throughout an order
 
 Estimate order-size costs before execution, compare changes against your last check, and reconcile your own fills afterwards. All seven tokens are supported. [Workflow and input examples](docs/execution-context.md).
+
+Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
 ## What you get
 

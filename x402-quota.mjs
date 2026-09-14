@@ -50,6 +50,7 @@ export async function checkQuotaBypass(wallet, tool) {
 export async function checkPaywallPrecheck({
     wallet,
     tool,
+    symbol,
     mcpClientId,
     hasPayment,
     ip,
@@ -58,6 +59,7 @@ export async function checkPaywallPrecheck({
     const data = await internalPost("/api/m2m/internal/paywall/precheck", {
         wallet: wallet || undefined,
         tool,
+        symbol,
         mcp_client_id: mcpClientId || undefined,
         has_payment: Boolean(hasPayment),
         ip: ip || undefined,
@@ -83,6 +85,7 @@ export async function checkPaywallPrecheck({
 export async function consumePaywall({
     wallet,
     tool,
+    symbol,
     clientKey,
     signalPayload,
     ip,
@@ -92,6 +95,7 @@ export async function consumePaywall({
     const data = await internalPost("/api/m2m/internal/paywall/consume", {
         wallet: wallet || undefined,
         tool,
+        symbol,
         client_key: clientKey || undefined,
         signal_payload: signalPayload || undefined,
         transport: "mcp",

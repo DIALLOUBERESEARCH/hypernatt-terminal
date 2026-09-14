@@ -6,7 +6,17 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { registerExecutionContextTools, withDeliveryQuality } from '../execution-context-public.mjs';
 import { EXECUTION_CONTEXT_NAMES } from '../execution-context-catalog.mjs';
-import { createMcpServer } from '../mcp-signal-server.mjs';
+import { createMcpServer, mountMcpSignalRoutes } from '../mcp-signal-server.mjs';
+
+test('info discovery advertises the same six tools and daily intro policy',()=>{
+  const routes=new Map();
+  const app={get:(path,handler)=>routes.set(path,handler),post:()=>{},all:()=>{}};
+  mountMcpSignalRoutes(app);
+  let info; routes.get('/signal/info')({}, {json:(value)=>{info=value;}});
+  assert.equal(info.tools.length,6);
+  for(const name of EXECUTION_CONTEXT_NAMES) assert.ok(info.tools.includes(name));
+  assert.equal(info.trial_policy_v2.maximum_daily_intro_calls,28);
+});
 
 test('production MCP factory exposes exactly the six advertised tools',async()=>{
   const server=createMcpServer();const client=new Client({name:'factory-test',version:'1'});
@@ -15,6 +25,12 @@ test('production MCP factory exposes exactly the six advertised tools',async()=>
     await server.connect(b);await client.connect(a);
     const {tools}=await client.listTools();
     assert.deepEqual(tools.map(t=>t.name).sort(),['get_agent_manifest','get_liq_radar','swap_via_nattswap',...EXECUTION_CONTEXT_NAMES].sort());
+    const symbols=['BTC','ETH','SOL','BNB','XRP','HYPE','ZEC'];
+    assert.deepEqual(tools.find(t=>t.name==='get_liq_radar').inputSchema.properties.symbol.enum,symbols);
+    const card=JSON.parse(fs.readFileSync(new URL('../server-card.json',import.meta.url),'utf8'));
+    assert.deepEqual(card.tools.find(t=>t.name==='get_liq_radar').inputSchema.properties.symbol.enum,symbols);
+    const invalid=await client.callTool({name:'get_liq_radar',arguments:{symbol:'DOGE'}});
+    assert.equal(invalid.isError,true);
   } finally {await client.close();await server.close();}
 });
 

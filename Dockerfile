@@ -12,6 +12,7 @@ COPY server.js stdio.mjs mcp-signal-server.mjs mcp-session-resilience.mjs mcp-se
     x402-svm-hydrate.mjs x402-svm-ata.mjs x402-svm-prepare.mjs \
     server-card-tools.mjs server-card.json server.json ./
 COPY execution-context-public.mjs execution-context-catalog.mjs ./
+COPY terminal-trial-policy.mjs ./
 COPY rd/execution-context/schemas.mjs ./rd/execution-context/schemas.mjs
 COPY scripts/verify-mcp-tool-count.mjs ./scripts/verify-mcp-tool-count.mjs
 RUN node scripts/verify-mcp-tool-count.mjs

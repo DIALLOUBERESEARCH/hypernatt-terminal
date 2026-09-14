@@ -57,7 +57,7 @@ after any intro; or Agent Pass / swap quota.
 # Catalog (6 MCP tools, prices) — free:
 curl -s https://hypernatt.com/api/m2m/agent/manifest
 
-# Liq radar — first call intro-free, then HTTP 402:
+# Public REST radar — HTTP 402 discovery; use MCP for the daily per-token intro:
 curl -s "https://hypernatt.com/api/m2m/liq-radar?symbol=BTC"
 ```
 

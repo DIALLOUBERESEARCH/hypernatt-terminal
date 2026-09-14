@@ -6,7 +6,7 @@ description: >-
   and other whitelist assets, any venue. Docs + call order only - no local
   exec/shell/files. This skill covers market-data tools only (manifest +
   liq radar). Not trade advice. get_liq_radar = $0.001 USDC via x402.
-version: 1.0.5
+version: 1.0.6
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -66,7 +66,7 @@ order execution. It does **not** instruct the agent to move funds.
 | Server card | https://hypernatt.com/.well-known/mcp/server-card.json |
 | Source | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal |
 | Security | https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/blob/main/SECURITY.md |
-| Full 3-tool onboarding | related skill `hypernatt-terminal` |
+| Full 6-tool onboarding | related skill `hypernatt-terminal` |
 
 ## Tools this skill uses (market-data only)
 
@@ -78,6 +78,8 @@ Whitelist symbols for get_liq_radar: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC).
 The same MCP host also exposes `swap_via_nattswap`. That path can move funds
 (agent signs on-chain). **Do not use swap under this skill** - use related
 skill `hypernatt-terminal` if bridging/funding is required.
+
+Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
 ## When to use
 

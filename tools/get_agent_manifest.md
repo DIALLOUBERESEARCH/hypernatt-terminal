@@ -17,7 +17,7 @@
 | `compare_execution_context` | Changes since the previous baseline | 1 credit / $0.001 x402 |
 | `reconcile_execution` | Supplied fills vs pre-order estimate | 1 credit / $0.001 x402 |
 
-Suggested journey: manifest → `get_liq_radar` → optional `swap_via_nattswap`.
+Choose `journeys_v1` by intent: radar for liquidation terrain; quote → compare → reconcile for your Hyperliquid order; swap for a Li.Fi route. Compact and full include the same actionable journey and baseline handoff.
 
 ## Inputs
 

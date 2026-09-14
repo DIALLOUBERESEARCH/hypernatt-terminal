@@ -1,8 +1,8 @@
 {
   "name": "hypernatt-terminal",
-  "displayName": "HyperNatt Terminal — Forced-order Map + Swap for AI Agents",
+  "displayName": "HyperNatt Terminal - Radar, Execution Context + Swap for AI Agents",
   "homepage": "https://hypernatt.com",
-  "description": "HyperNatt Terminal — agent MCP: forced-order / liquidation map + Li.Fi swap. get_liq_radar whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC). Market structure classic public indicators do not show. Read-only context, not trade advice. No custody.\n\nPlatform: https://hypernatt.com — this MCP is one agent-facing brick.\n\n3 tools · v2.7.0 · Streamable HTTP. Call get_agent_manifest first (value prop + scenarios + glossary).\n\nPricing: free get_agent_manifest; get_liq_radar $0.001/call x402 (Base + Solana). Swap free at MCP layer.\n\nNo wallet? npx @coinbase/payments-mcp then connect Terminal.\n\nDocs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
+  "description": "HyperNatt Terminal: liquidation radar, Hyperliquid execution context and Li.Fi cross-chain swap for AI agents. BTC ETH SOL BNB XRP HYPE ZEC. Before an order: estimate depth, VWAP, spread and fees for its size. Between checks: compare liquidity and costs with the previous baseline. After execution: reconcile supplied fills. Read-only data, no custody or order submission. 6 tools, v2.8.0; call get_agent_manifest first. Radar and each execution-context call cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal.",
   "url": "https://hypernatt.com/mcp/protocol",
   "repository": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal"
 }

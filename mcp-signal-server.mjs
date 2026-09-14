@@ -41,10 +41,12 @@ import {
 import { extractPayerWallet, networkFromPayload, recordX402Event } from "./x402-telemetry.mjs";
 import { checkBetaBypass, recordBetaPostCall } from "./x402-beta.mjs";
 import { checkPaywallPrecheck, consumePaywall } from "./x402-quota.mjs";
+import { TRIAL_SYMBOLS, terminalTrialPolicy } from "./terminal-trial-policy.mjs";
 import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
 import { registerTerminalSwapTools } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
 import { registerExecutionContextTools } from "./execution-context-public.mjs";
+import { EXECUTION_CONTEXT_NAMES } from "./execution-context-catalog.mjs";
 import {
     bindActiveSessionCounter,
     isStaleMcpSession,
@@ -113,6 +115,7 @@ function paymentErrorResult(buildRequired, ctx) {
     const enriched = enrichPaymentRequiredPayload(base, {
         reasonCode: ctx.reasonCode,
         tool: ctx.tool,
+        symbol: ctx.symbol,
         creditsRemaining: ctx.creditsRemaining ?? 0,
         dailyCap: ctx.dailyCap ?? advertisedFreeDailyCap(),
         introFreeAvailable: ctx.introFreeAvailable,
@@ -165,6 +168,7 @@ function onToolCallRecorded({
 
 export async function processPaidToolPayment({
     tool,
+    symbol,
     priceUsdc,
     paymentRaw,
     agent_wallet,
@@ -200,6 +204,7 @@ export async function processPaidToolPayment({
     const pre = await checkPaywallPrecheck({
         wallet: headerWallet,
         tool,
+        symbol,
         mcpClientId: clientId,
         hasPayment: Boolean(paymentRaw),
         ip: meta?.ip,
@@ -218,6 +223,7 @@ export async function processPaidToolPayment({
                     ? "PAYWALL_UNAVAILABLE"
                     : "FREE_TIER_EXHAUSTED",
                 tool,
+                symbol,
                 creditsRemaining: 0,
                 priceUsdc,
             }),
@@ -229,6 +235,7 @@ export async function processPaidToolPayment({
         const consumed = await consumePaywall({
             wallet: headerWallet,
             tool,
+            symbol,
             clientKey: pre.clientKey,
             mcpClientId: clientId,
             ip: meta?.ip,
@@ -259,6 +266,7 @@ export async function processPaidToolPayment({
                     ? "PAYWALL_UNAVAILABLE"
                     : "FREE_TIER_EXHAUSTED",
                 tool,
+                symbol,
                 creditsRemaining: 0,
                 priceUsdc,
             }),
@@ -488,7 +496,7 @@ export function createMcpServer() {
                         "Optional EVM wallet (0x + 40 hex). Skips x402 when swap-earned quota balance covers this tool's credit weight.",
                     ),
                 symbol: z
-                    .string()
+                    .enum(TRIAL_SYMBOLS)
                     .optional()
                     .describe(
                         "Optional crypto symbol (BTC ETH SOL BNB XRP HYPE ZEC). Default BTC when omitted.",
@@ -503,6 +511,7 @@ export function createMcpServer() {
 
             const payment = await processPaidToolPayment({
                 tool: "get_liq_radar",
+                symbol: symbol ?? "BTC",
                 priceUsdc: LIQ_RADAR_X402.priceUsdc,
                 paymentRaw,
                 agent_wallet,
@@ -642,7 +651,9 @@ export function mountMcpSignalRoutes(app) {
                 "get_agent_manifest",
                 "get_liq_radar",
                 "swap_via_nattswap",
+                ...EXECUTION_CONTEXT_NAMES,
             ],
+            trial_policy_v2: terminalTrialPolicy(),
             transports: {
                 sse: "/mcp/sse",
                 messages: "/mcp/messages",
@@ -660,7 +671,7 @@ export function mountMcpSignalRoutes(app) {
             homepage: "https://hypernatt.com",
             ecosystem_note:
                 "HyperNatt platform at hypernatt.com; hypernatt-terminal MCP is one agent integration brick. Vault pages are not Terminal MCP P&L.",
-            products: ["hypernatt_liq_radar_v1"],
+            products: ["hypernatt_liq_radar_v1", "hypernatt_execution_context_v1"],
         });
     });
 

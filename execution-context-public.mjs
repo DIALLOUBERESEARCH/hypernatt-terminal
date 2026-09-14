@@ -59,6 +59,7 @@ export function registerExecutionContextTools(server, ctx) {
       try {
         const payment = await ctx.pay({
           tool: name, priceUsdc: product.priceUsdc,
+          symbol: operation === 'quote' ? args.symbol : args.baseline.request.symbol,
           paymentRaw: x_payment || ctx.sessionPayment?.(extra.sessionId), agent_wallet,
           sessionId: extra.sessionId, parse: product.parsePaymentHeader, verify: product.verifyPayment,
           buildRequired: product.buildPaymentRequired, buildRequirements: product.buildPaymentRequirements,

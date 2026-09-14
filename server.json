@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.DIALLOUBE-RESEARCH/hypernatt-terminal",
   "title": "hypernatt-terminal",
-  "description": "Liquidation radar, Hyperliquid execution context and Li.Fi swap for AI agents. 6 tools; paid data calls 0.001 USDC via x402.",
+  "description": "Liquidation radar, execution context and Li.Fi swaps for AI agents. 6 MCP tools; x402 payments.",
   "repository": {
     "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
     "source": "github"

@@ -14,9 +14,11 @@
 
 **Why this exists:** classic public indicators do not show where leveraged liquidations stack. `get_liq_radar` is that terrain map — context for timing/sizing/risk, **not** a trade signal.
 
+Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
+
 ### Wallet first (if you are not crypto-native)
 
-`get_liq_radar` returns HTTP **402** until paid in USDC ($0.001 exact). **Base** = EIP-3009. **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM/Base x402 client cannot pay Solana. A Base 200 is not a Solana payment. See [x402-pay.md](x402-pay.md). Skip seed phrases — use Coinbase Agentic Wallet:
+After its MCP trial slot is used, `get_liq_radar` requires payment or eligible credits ($0.001 USDC exact). Direct public REST discovery routes return HTTP **402** without a payment; use MCP for intro trials. **Base** = EIP-3009. **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM/Base x402 client cannot pay Solana. A Base 200 is not a Solana payment. See [x402-pay.md](x402-pay.md). Skip seed phrases — use Coinbase Agentic Wallet:
 
 ```bash
 npx @coinbase/payments-mcp
@@ -26,9 +28,9 @@ Then fund with card / Apple Pay / Google Pay and connect Terminal. Guide: https:
 
 ---
 
-## Star path (F#99N)
+## Liquidation terrain path
 
-1. **`get_agent_manifest`** (free) — catalog + `agent_interpretation_rules_v1` (value prop, scenarios, glossary)
+1. **`get_agent_manifest`** (free) — choose `journeys_v1` by intent; compact includes argument examples, quality checks and baseline handoff. This path is for liquidation terrain.
 2. **`get_liq_radar`** ($0.001) — optional `symbol` among BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC)
 3. Optional **`swap_via_nattswap`** — Li.Fi route; you sign
 

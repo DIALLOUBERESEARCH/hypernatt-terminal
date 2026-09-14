@@ -3,6 +3,8 @@
  * F#136 — daily_cap is 0 when the pool kill-switch is off.
  */
 
+import { terminalTrialPolicy, trialSymbol } from "./terminal-trial-policy.mjs";
+
 const FREE_TOOLS_ALWAYS_WORK = [
     "get_agent_manifest",
     "swap_via_nattswap",
@@ -36,7 +38,7 @@ function humanMessage({ reasonCode, tool, creditsRemaining, dailyCap: cap }) {
     }
     if (daily <= 0) {
         return (
-            "No daily credit pool. Intro-free for this tool is already used today UTC (if it applied). " +
+            "No daily credit pool. No intro slot is available for this tool and requested symbol today (or intro access is unavailable). Inspect trial_policy_v2 and remaining slots with get_agent_manifest on this MCP connection. " +
             "Pay $0.001 USDC via x402 on Base or Solana. " +
             "get_agent_manifest and swap_via_nattswap still work."
         );
@@ -60,7 +62,7 @@ export function buildAgentPaymentRequiredBlock(input) {
               "After on-chain swap: POST /api/m2m/swap/register for quota credits",
           ]
         : [
-              "Call get_agent_manifest for live free_tier_status_v1 and pricing",
+              "Call get_agent_manifest on the SAME MCP connection for trial_policy_v2, per-symbol free_tier_status_v1 and pricing. Zero daily_cap is the separate pool, not a global trial count.",
               "Register a NattSwap to earn bonus credits",
               "Retry tomorrow UTC or pass x_payment for paygo",
           ];
@@ -69,6 +71,8 @@ export function buildAgentPaymentRequiredBlock(input) {
         reason_code: input.reasonCode,
         human_message_en: humanMessage({ ...input, dailyCap: daily }),
         tool: input.tool,
+        requested_symbol: trialSymbol(input.tool, input.symbol),
+        trial_policy_v2: terminalTrialPolicy(),
         credits_remaining: input.creditsRemaining ?? 0,
         daily_cap: daily,
         intro_free_available: input.introFreeAvailable ?? {},

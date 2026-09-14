@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal - Radar, Execution Context + Swap for AI Agents",
     "version": "2.8.0",
-    "description": "HyperNatt Terminal: liquidation radar, Hyperliquid execution context and Li.Fi cross-chain swap for AI agents. BTC ETH SOL BNB XRP HYPE ZEC. Before an order: estimate depth, VWAP, spread and fees for its size. Between checks: compare liquidity and costs with the previous baseline. After execution: reconcile supplied fills. Read-only data, no custody or order submission. 6 tools, v2.8.0; call get_agent_manifest first. Radar and each execution-context call cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal."
+    "description": "HyperNatt Terminal: liquidation radar, Hyperliquid execution context and Li.Fi cross-chain swap for AI agents. BTC ETH SOL BNB XRP HYPE ZEC. Before an order: estimate depth, VWAP, spread and fees for its size. Between checks: compare liquidity and costs with the previous baseline. After execution: reconcile supplied fills. Read-only data, no custody or order submission. 6 tools, v2.8.0; call get_agent_manifest first. Radar and each execution-context call cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance. Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal."
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -30,7 +30,7 @@
   "tools": [
     {
       "name": "get_agent_manifest",
-      "description": "Start here (free, compact): 6 tools + prices + cluster do_not + honest usage. Pass detail=full for quota/pass/onboarding. Then get_liq_radar.",
+      "description": "Start here (free): 6 tools, prices, daily per-tool/per-token trial status and intent-based journeys. Choose liquidation radar, order-size quote, baseline comparison, fill reconciliation or Li.Fi swap. Compact includes arguments and baseline handoff; detail=full adds quota/pass/onboarding.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -64,7 +64,16 @@
           },
           "symbol": {
             "type": "string",
-            "description": "Optional crypto symbol (BTC ETH SOL BNB XRP HYPE ZEC). Default BTC when omitted."
+            "description": "Optional crypto symbol (BTC ETH SOL BNB XRP HYPE ZEC). Default BTC when omitted.",
+            "enum": [
+              "BTC",
+              "ETH",
+              "SOL",
+              "BNB",
+              "XRP",
+              "HYPE",
+              "ZEC"
+            ]
           }
         }
       }

@@ -39,7 +39,7 @@ export function registerGrowthTools(server, ctx) {
         {
             description: toolDescriptionFromCard(
                 "get_agent_manifest",
-                "Start here (free): catalog + value_proposition_v1 + scenarios + glossary. Then get_liq_radar.",
+                "Start here (free): six tools, prices, daily tool/token trial status and intent-based journeys. Choose radar, order quote, baseline comparison, fill reconciliation or swap.",
             ),
             inputSchema: {
                 locale: z
