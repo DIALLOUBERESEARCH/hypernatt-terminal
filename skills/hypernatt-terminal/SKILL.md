@@ -6,7 +6,7 @@ description: >-
   compare_execution_context, reconcile_execution. Docs + call order only -
   no local exec/shell/files. Read-only market microstructure for crypto trading
   agents (any venue). Not trade advice. get_liq_radar = $0.001 USDC via x402.
-version: 1.6.0
+version: 1.6.1
 author: DIALLOUBE-RESEARCH
 license: MIT
 homepage: https://hypernatt.com
@@ -84,12 +84,16 @@ Daily MCP trial: one free call per paid tool and per token per client each UTC d
 
 ## Example
 
-```bash
-# Free catalog
-curl -s https://hypernatt.com/api/m2m/agent/manifest | head
+Use the connected remote MCP tool interface (no shell command):
 
-# Paid via MCP runtime + x402 wallet (pseudo):
-# tools/call get_liq_radar  {"symbol":"ETH"}
+```json
+{"name":"get_agent_manifest","arguments":{}}
+```
+
+Then, if liquidation terrain is the requested task:
+
+```json
+{"name":"get_liq_radar","arguments":{"symbol":"ETH"}}
 ```
 
 ## Execution-context workflow
@@ -106,13 +110,11 @@ For a Hyperliquid order, call `get_execution_quote` and save the returned baseli
 
 ## Wallet / x402
 
-Paid calls need a USDC buyer wallet. **Base** = EIP-3009 (`@x402/evm`). **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM signer cannot pay it. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](../../docs/x402-pay.md). Optional helper (separate MCP, not this skill):
+Paid calls need a USDC buyer wallet. **Base** = EIP-3009 (`@x402/evm`). **Solana** = SVM exact (`@x402/svm`) — live rail; an EVM signer cannot pay it. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](../../docs/x402-pay.md). Use the buyer wallet already configured in the host application and its payment authorization rules. If no wallet is configured, explain the available free trials and let the user choose whether to set up payments separately.
 
-```bash
-npx @coinbase/payments-mcp
-```
+Optional wallet setup documentation for the user: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
 
-Docs: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome
+This remote-only onboarding skill does not install or launch local software, create wallets, or change the host configuration.
 
 This skill never asks for private keys or scrapes env secrets.
 
