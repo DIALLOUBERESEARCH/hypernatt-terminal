@@ -46,6 +46,24 @@ Honest structural walkthrough: [../examples/liq_radar_interpret.py](../examples/
 - `liq_radar` block (redacted — no HLP vault leak)
 - Read-only market context — **not** a trade signal
 
+### Observed liquidation clusters
+
+`liq_radar.real_liquidations.recent_clusters_1h` groups observed **Bybit**
+liquidations by side and price bucket. Each row exposes:
+
+- `price`: the base-size-weighted mean of the source bankruptcy prices;
+  `price_method`: `size_weighted_bankruptcy_price`.
+- `price_min` / `price_max`: the minimum and maximum observed source prices.
+- `bucket_low` / `bucket_high`: grouping bounds, lower-inclusive and
+  upper-exclusive (currently $100 wide). A lower bound of zero is valid;
+  it is **not** the group's representative price.
+- `size_btc`: legacy name for the requested coin's base-asset quantity,
+  displayed to three decimals; `count`: number of observed events.
+
+These are historical bankruptcy-price aggregates, not Hyperliquid fills,
+executable order prices, or predicted liquidation levels. The weighted mean
+uses unrounded quantities. Modeled clusters in `liq_density` are separate.
+
 ## Try it
 
 ```bash
