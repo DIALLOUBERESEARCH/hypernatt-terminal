@@ -1,6 +1,6 @@
 # `get_native_depth`
 
-Operator-filmed native REF depth for a **BTC or ETH** size. Not the public 20-level vitrine.
+Recorded liquidity, wall history and aggressor flow for a **BTC or ETH** size. REF is 20 levels; aggregated views span wider prices at coarser precision.
 
 ## Price
 

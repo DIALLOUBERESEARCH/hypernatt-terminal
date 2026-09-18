@@ -21,8 +21,8 @@ const card = JSON.parse(fs.readFileSync(cardPath, "utf8"));
 const names = (card.tools || []).map((t) => t.name).sort();
 const version = card.serverInfo?.version || "unknown";
 
-if (version !== "2.9.0") {
-    console.error(`[verify-mcp-tool-count] FAIL: version ${version}, expected 2.9.0`);
+if (version !== "2.9.1") {
+    console.error(`[verify-mcp-tool-count] FAIL: version ${version}, expected 2.9.1`);
     process.exit(1);
 }
 

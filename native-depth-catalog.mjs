@@ -1,10 +1,10 @@
-// F#377: public native depth catalog. BTC/ETH only. No public 20-level book.
+// F#379: recorded liquidity, wall history and observed flow. BTC/ETH only.
 export const NATIVE_DEPTH_PRICE_USDC = 0.001;
 export const NATIVE_DEPTH_TOOL = {
   name: "get_native_depth",
   operation: "quote",
   description:
-    "For a BTC or ETH Hyperliquid size, walk the operator-filmed native REF book (not the public 20-level vitrine). Reports filled, remaining, vitrine-cap counterfactual on the SAME snapshot, optional 30s/300s wall delta. Read-only; not a trade signal; no order.",
+    "BTC/ETH perpetual market context: four simultaneous recorded liquidity views (REF, M2, M5, AGG4), size coverage, fixed-price wall changes and observed aggressor buy/sell flow over 30s or 300s. Aggregated views see wider price ranges at coarser precision; never add their overlapping volumes. Combine with liquidation radar. Read agent_readout and quality first. No strategy signal, full-book claim or fill guarantee.",
 };
 export const NATIVE_DEPTH_NAMES = [NATIVE_DEPTH_TOOL.name];
 export const NATIVE_DEPTH_HTTP_PREFIX = "/api/m2m/native-depth";

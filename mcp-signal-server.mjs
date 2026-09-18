@@ -55,7 +55,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.9.0";
+const TERMINAL_VERSION = "2.9.1";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =

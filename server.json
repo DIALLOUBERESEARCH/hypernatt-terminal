@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.DIALLOUBE-RESEARCH/hypernatt-terminal",
   "title": "hypernatt-terminal",
-  "description": "Liquidation radar, native BTC/ETH REF depth and Li.Fi swaps for AI agents. 4 MCP tools; x402 payments.",
+  "description": "Liquidation radar, recorded BTC/ETH liquidity, wall history and flow and Li.Fi swaps for AI agents. 4 MCP tools; x402 payments.",
   "repository": {
     "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
     "source": "github"
   },
-  "version": "2.9.0",
+  "version": "2.9.1",
   "remotes": [
     {
       "type": "streamable-http",

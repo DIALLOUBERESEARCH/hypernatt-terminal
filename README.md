@@ -3,13 +3,13 @@
 [![CI](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
 [![Glama](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
-[![Version](https://img.shields.io/badge/version-2.9.0-green)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.9.1-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 [![npm audit](https://img.shields.io/badge/npm%20audit-0%20high-brightgreen)](./CHANGELOG.md)
 
-**Liquidation radar** (7 tokens) and **operator-filmed native REF depth** (BTC and ETH) for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
+**Liquidation radar** (7 tokens) and **recorded liquidity, wall history and aggressor flow** (BTC and ETH) for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
 
-Understand **liquidation terrain**, then ask whether a BTC or ETH size is **feasible on the filmed book** (not the public 20-level vitrine). For cross-chain swaps, request a **Li.Fi route** that your agent signs. Your agent chooses the task and controls execution.
+Understand **liquidation terrain**, then ask whether a BTC or ETH size is **feasible on the filmed book** (REF plus separate aggregated views and recorded history). For cross-chain swaps, request a **Li.Fi route** that your agent signs. Your agent chooses the task and controls execution.
 
 Built by one person. Code is public. Backend is private. No custody. Not trade advice.
 
@@ -28,7 +28,7 @@ No install for the hosted MCP. In **Claude → Settings → Connectors → Add c
 
 Then ask:
 
-> Call get_agent_manifest and choose journeys_v1 for my task. Use get_liq_radar for liquidation terrain. For an ETH buy of 0.1 ETH, walk filmed native REF depth with get_native_depth. Use swap_via_nattswap for a Li.Fi route.
+> Call get_agent_manifest and choose journeys_v1 for my task. Use get_liq_radar for liquidation terrain. For an ETH buy of 0.1 ETH, walk filmed recorded liquidity context with get_native_depth. Use swap_via_nattswap for a Li.Fi route.
 
 More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/integrations.md).
 
@@ -37,7 +37,7 @@ More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/in
 Start with **`get_agent_manifest`** (free), then choose the tools your task needs through `journeys_v1`:
 
 - **Understand the market:** `get_liq_radar` provides liquidation clusters, open-interest context and observed liquidations (BTC ETH SOL BNB XRP HYPE ZEC).
-- **Walk filmed depth:** `get_native_depth` reports fill, remaining and a vitrine-cap counterfactual on the **same** BTC or ETH snapshot.
+- **Walk filmed depth:** `get_native_depth` reports fill, remaining and four simultaneous views, fixed-price wall history and observed aggressor flow.
 - **Find a cross-chain swap route:** `swap_via_nattswap` requests a Li.Fi route for your source/destination chains and tokens. Your agent signs the transaction.
 
 Radar covers **seven** tokens. Native depth is **BTC and ETH only**. Cross-chain swaps use the chains and tokens supported by Li.Fi, subject to route availability. Neither paid tool requires the other.
@@ -78,7 +78,7 @@ The radar glossary and scenarios also ship on `get_agent_manifest` → `agent_in
 
 ## Native REF depth — `get_native_depth`
 
-**“For a buy of 0.1 ETH, how far does the filmed book walk?”** Supply `symbol` (`BTC` or `ETH`), `side` and `quantity_base`. The tool walks the operator-filmed REF book (not the public 20-level vitrine). Read `filled`, `remaining`, `vwap`, and the `vitrine_cap_20` counterfactual on the **same** snapshot. Optional `lookback_s` 30 or 300 reports wall-size delta. This is size feasibility, not a trade signal. No orders. [Guide](docs/native-depth.md).
+**“Where is liquidity, is it changing, and what flow is meeting it?”** Supply `symbol` (`BTC` or `ETH`), `side`, `quantity_base`, and `lookback_s` (30 or 300). Read `agent_readout`, then `liquidity_map` for four simultaneous price granularities, size coverage and changes at fixed wall prices; `trade_flow` shows observed aggressor buying/selling. Check history coverage and freshness. Never sum overlapping views. These facts complement radar terrain without disclosing a strategy or guaranteeing a fill. [Guide](docs/native-depth.md).
 
 ## Cross-chain swaps — `swap_via_nattswap`
 
@@ -109,7 +109,7 @@ Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC
 | Predictive Fuel Score / sweep classifier | Distance, size, OI, real liqs — labeled |
 | Custody of keys or funds | Agent signs own txs |
 | Trade advice / guaranteed edge | Read-only JSON context |
-| More than 4 MCP tools | **Exactly 4** · v2.9.0 |
+| More than 4 MCP tools | **Exactly 4** · v2.9.1 |
 | Vault / `/stats` = Terminal P&L | Separate HyperNatt vault product |
 | Independent security audit | Public code + [SECURITY.md](./SECURITY.md) |
 

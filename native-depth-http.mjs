@@ -98,7 +98,7 @@ export function createNativeDepthHttpRouter(ctx, deps = {}) {
       if (out.isError || !receipt) {
         if (body?.accepts) return challenge(res, body.error);
         const code = body?.error || 'native_depth_unavailable';
-        const status = code === 'unsupported_symbol' || code === 'invalid_request' ? 400 : 502;
+        const status = code === 'unsupported_symbol' || code === 'invalid_request' ? 400 : 503;
         return res.status(status).json({ ok: false, error: code });
       }
       res.set('PAYMENT-RESPONSE', encode(receipt));

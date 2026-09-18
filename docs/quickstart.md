@@ -8,11 +8,11 @@
 
 > Call get_agent_manifest and choose journeys_v1 for my task. Use get_liq_radar for liquidation terrain, get_native_depth for filmed BTC/ETH size feasibility, or swap_via_nattswap for a Li.Fi route. Call only what my task needs.
 
-**Agents:** 4 tools · v2.9.0. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
+**Agents:** 4 tools · v2.9.1. **Smithery:** https://smithery.ai/servers/hypernatt/hypernatt-terminal
 
 **HL agent (read terrain only):** [../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py) · sovereignty: [agent-hl-sovereignty.md](agent-hl-sovereignty.md)
 
-**What this provides:** liquidation terrain, operator-filmed native REF depth for BTC/ETH, and Li.Fi routing. The agent controls its decisions and any order execution. [Tools and workflows](reference.md).
+**What this provides:** liquidation terrain, recorded liquidity, wall history and aggressor flow for BTC/ETH, and Li.Fi routing. The agent controls its decisions and any order execution. [Tools and workflows](reference.md).
 
 Daily MCP trial: one free call per paid tool and eligible token each UTC day: radar x 7 plus native BTC/ETH, up to 9 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
@@ -51,7 +51,7 @@ Abbreviated example `get_liq_radar` shape (illustrative values; `product` retain
 
 ---
 
-## Filmed native REF depth
+## Recorded liquidity, wall history and aggressor flow
 
 Use `get_native_depth` with `symbol` (`BTC` or `ETH`), `side` and `quantity_base`. Each call costs 0.001 USDC. [Exact inputs](native-depth.md).
 

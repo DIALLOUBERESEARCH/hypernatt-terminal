@@ -13,7 +13,7 @@
 | `get_agent_manifest` | Catalog, value prop, scenarios, glossary | Free |
 | `get_liq_radar` | Forced-order / liquidation map (BTC ETH SOL BNB XRP HYPE ZEC) | 1 credit / $0.001 x402 |
 | `swap_via_nattswap` | Li.Fi quote + execution playbook | Free at MCP layer |
-| `get_native_depth` | Filmed native REF depth for a BTC or ETH size | 1 credit / $0.001 x402 |
+| `get_native_depth` | Recorded liquidity, wall history and aggressor flow for a BTC or ETH size | 1 credit / $0.001 x402 |
 
 Choose `journeys_v1` by intent: radar for liquidation terrain; native depth for filmed BTC/ETH size feasibility; swap for a Li.Fi route. Compact and full include the same actionable journey.
 

@@ -5,10 +5,18 @@ Private monorepo history is separate (see README mirror note).
 
 ## Unreleased
 
+## [2.9.1] - 2026-09-18
+
+- Replace the synthetic native-depth source with bounded read-only recorder data.
+- Four simultaneous REF/M2/M5/AGG4 views, fixed-price wall history and observed aggressor flow over 30s/300s.
+- REF remains 20 levels; coarse views cover wider price ranges without double counting.
+- Reject stale/synthetic preparations before charging; expose delivery expiration.
+- No strategy, new collector, order submission or price change.
+
 ## [2.9.0] - 2026-09-18
 
 - Public catalog is four tools: `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`, `get_native_depth`.
-- `get_native_depth` walks operator-filmed REF depth for BTC and ETH only (not the public 20-level vitrine).
+- Introduced `get_native_depth` for BTC/ETH. Its initial fixture source and inaccurate full-depth description are corrected in 2.9.1.
 - Daily MCP trial: radar x 7 tokens plus native BTC/ETH, up to 9 independent trials.
 - Historical public 20-level execution-context trio is no longer listed.
 

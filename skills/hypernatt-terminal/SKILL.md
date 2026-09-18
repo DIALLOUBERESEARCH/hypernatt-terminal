@@ -1,11 +1,11 @@
 ---
 name: hypernatt-terminal
 description: >-
-  Onboarding skill for HyperNatt Terminal remote MCP (exactly 4 tools v2.9.0):
+  Onboarding skill for HyperNatt Terminal remote MCP (exactly 4 tools v2.9.1):
   get_agent_manifest, get_liq_radar, swap_via_nattswap, get_native_depth.
   Docs + call order only - no local exec/shell/files. Read-only market
   microstructure for crypto trading agents. Liquidation radar (7 tokens) and
-  operator-filmed native REF depth (BTC ETH). Not trade advice. Two data tools
+  recorded liquidity, wall history and aggressor flow (BTC ETH). Not trade advice. Two data tools
   cost $0.001 USDC/call or one eligible credit after an available daily MCP
   trial. Manifest and MCP swap requests are free.
 version: 1.7.0
@@ -48,7 +48,7 @@ metadata:
 **What this skill is:** onboarding text for a **remote** MCP server.
 
 **What this skill is NOT:** a local bot, vault control, or a 14-tool terminal.
-Live surface = **exactly 4 tools - v2.9.0**.
+Live surface = **exactly 4 tools - v2.9.1**.
 
 ## Declared capabilities (honest)
 
@@ -76,7 +76,7 @@ Live surface = **exactly 4 tools - v2.9.0**.
 1. **get_agent_manifest** - Free - Catalog + journeys
 2. **get_liq_radar** - $0.001 x402 - Forced-order / liquidation map (7 tokens)
 3. **swap_via_nattswap** - Free at MCP (you sign) - Li.Fi route
-4. **get_native_depth** - $0.001 - Filmed native REF depth for a BTC or ETH size
+4. **get_native_depth** - $0.001 - Recorded liquidity, wall history and aggressor flow for a BTC or ETH size
 
 Radar symbols: BTC ETH SOL BNB XRP HYPE ZEC (omit = BTC). Native depth: BTC ETH only. Li.Fi swaps use supported chain/token addresses independently of these lists.
 
@@ -98,13 +98,13 @@ Then, if liquidation terrain is the requested task:
 
 ## Native-depth workflow
 
-For a BTC or ETH size, call `get_native_depth` with `symbol`, `side`, `quantity_base`. Optional `lookback_s` is 30 or 300. This walks the operator-filmed REF book, not the public 20-level vitrine. `not_a_signal` is always true. See [native-depth.md](../../docs/native-depth.md).
+For a BTC or ETH size, call `get_native_depth` with `symbol`, `side`, `quantity_base`. Optional `lookback_s` is 30 or 300. This compares four simultaneous recorded liquidity views and their history. `not_a_signal` is always true. See [native-depth.md](../../docs/native-depth.md).
 
 ## Trading-agent loop
 
 1. Connect and call `get_agent_manifest` (free); choose `journeys_v1` by intent.
 2. For liquidation terrain, use `get_liq_radar`. For filmed BTC/ETH size feasibility, use `get_native_depth`. Neither path requires buying the other.
-3. Read `filled` / `remaining` / `vitrine_cap_20` on the same snapshot. Do not treat remaining size as a fill guarantee.
+3. Read `agent_readout`, `liquidity_map.views` and `trade_flow`. Compare fixed-price wall changes and observed aggressor flow with radar terrain. Check coverage and freshness; never sum overlapping views or infer a strategy signal.
 4. Use `swap_via_nattswap` separately for a Li.Fi route. You sign your own transaction. No mandatory paid polling.
 
 ## Wallet / x402

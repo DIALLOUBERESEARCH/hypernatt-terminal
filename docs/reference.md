@@ -1,6 +1,6 @@
 ﻿# HyperNatt Terminal — technical reference
 
-Thin pointer. Live MCP is **v2.9.0** with **4 tools**.
+Thin pointer. Live MCP is **v2.9.1** with **4 tools**.
 
 Start here: [quickstart.md](quickstart.md)
 
@@ -13,7 +13,7 @@ Start here: [quickstart.md](quickstart.md)
 | [`get_agent_manifest`](../tools/get_agent_manifest.md) | Catalog, pricing, journey | Free |
 | [`get_liq_radar`](../tools/get_liq_radar.md) | Liquidation radar (whitelist coins) | 1 credit / $0.001 x402 |
 | [`swap_via_nattswap`](../tools/swap_via_nattswap.md) | Li.Fi quote + agent execution playbook | Free at MCP layer |
-| [`get_native_depth`](native-depth.md) | Filmed native REF depth for a BTC or ETH size | 1 credit / $0.001 x402 |
+| [`get_native_depth`](native-depth.md) | Recorded liquidity, wall history and aggressor flow for a BTC or ETH size | 1 credit / $0.001 x402 |
 
 **Radar symbols:** BTC ETH SOL BNB XRP HYPE ZEC. Only radar defaults to BTC. **Native depth:** BTC ETH only. Swap routing follows Li.Fi chain/token availability, independently of this seven-symbol list.
 

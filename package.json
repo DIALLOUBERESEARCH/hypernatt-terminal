@@ -1,7 +1,7 @@
 {
   "name": "natt-node-mcp",
-  "version": "2.9.0",
-  "description": "Liquidation radar, native BTC/ETH REF depth and Li.Fi swap for AI agents. 4 tools; paid data calls 0.001 USDC via x402.",
+  "version": "2.9.1",
+  "description": "Liquidation radar, recorded BTC/ETH liquidity, wall history and flow and Li.Fi swap for AI agents. 4 tools; paid data calls 0.001 USDC via x402.",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

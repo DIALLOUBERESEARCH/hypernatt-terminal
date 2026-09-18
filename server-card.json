@@ -2,8 +2,8 @@
   "serverInfo": {
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal - Radar, Native Depth + Swap for AI Agents",
-    "version": "2.9.0",
-    "description": "HyperNatt Terminal: liquidation radar (7 tokens), operator-filmed native REF depth for BTC and ETH, and Li.Fi cross-chain swap for AI agents. Radar whitelist BTC ETH SOL BNB XRP HYPE ZEC. Native depth is BTC and ETH only. get_native_depth walks the filmed book (not the public 20-level vitrine) for a size and reports fill, remaining, vitrine-cap counterfactual on the SAME snapshot, optional 30s/300s wall delta. Read-only data, not a trade signal, no custody or order submission. 4 tools, v2.9.0; call get_agent_manifest first. Radar and native-depth calls cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Daily MCP trial: radar 7 tokens + native BTC/ETH = up to 9 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection. A zero daily_cap is the separate credit pool, not the intro allowance. Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal."
+    "version": "2.9.1",
+    "description": "HyperNatt Terminal: liquidation radar (7 tokens), recorded liquidity, wall history and aggressor flow for BTC and ETH, and Li.Fi cross-chain swap for AI agents. Radar whitelist BTC ETH SOL BNB XRP HYPE ZEC. Native depth is BTC and ETH only. get_native_depth walks the filmed book (REF plus separate aggregated views and recorded history) for a size and reports fill, remaining, four separate liquidity views, fixed-price wall changes and observed aggressor flow over 30s/300s. Read-only data, not a trade signal, no custody or order submission. 4 tools, v2.9.1; call get_agent_manifest first. Radar and native-depth calls cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Daily MCP trial: radar 7 tokens + native BTC/ETH = up to 9 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection. A zero daily_cap is the separate credit pool, not the intro allowance. Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal."
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -20,12 +20,12 @@
     "status_url": "https://hypernatt.com/api/m2m/pass/status",
     "agent_pass_usd": 5,
     "agent_pass_credits": 15000,
-    "note": "Default: pay-per-call $0.001 via x402. Optional Agent Pass $5/mo (~15,000 credits) for heavy use \u2014 not required."
+    "note": "Default: pay-per-call $0.001 via x402. Optional Agent Pass $5/mo (~15,000 credits) for heavy use — not required."
   },
   "quota_program": {
     "status_url": "https://hypernatt.com/api/m2m/quota/status",
     "balance_url": "https://hypernatt.com/api/m2m/quota/balance",
-    "note": "Optional bonus credits from swap volume. Status: GET /api/m2m/quota/status \u00b7 balance: GET /api/m2m/quota/balance?wallet=0x\u2026"
+    "note": "Optional bonus credits from swap volume. Status: GET /api/m2m/quota/status · balance: GET /api/m2m/quota/balance?wallet=0x…"
   },
   "tools": [
     {
@@ -51,7 +51,7 @@
     },
     {
       "name": "get_liq_radar",
-      "description": "If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait \u2014 ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal. Also magnet, OI, L/S, clusters, real liqs. Whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit=BTC). USE WHEN: terrain / timing / sizing. NOT a trade signal. RETURNS: hypernatt_liq_radar_v2. COST: $0.001 x402 (Base or Solana). Side effects: none.",
+      "description": "If cluster_grammar is present, read it before liq_radar. class=noise (<3%) is high-leverage bait — ignore. class=true (~7%+) is the low-leverage stack. Terrain, not a signal. Also magnet, OI, L/S, clusters, real liqs. Whitelist BTC ETH SOL BNB XRP HYPE ZEC (omit=BTC). USE WHEN: terrain / timing / sizing. NOT a trade signal. RETURNS: hypernatt_liq_radar_v2. COST: $0.001 x402 (Base or Solana). Side effects: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -60,7 +60,7 @@
           },
           "agent_wallet": {
             "type": "string",
-            "description": "EVM wallet 0x\u2026 \u2014 quota bypass when balance covers tool weight."
+            "description": "EVM wallet 0x… — quota bypass when balance covers tool weight."
           },
           "symbol": {
             "type": "string",
@@ -80,7 +80,7 @@
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + HyperNatt 0.5% integrator fee (Li.Fi may add its own cut \u2014 read quote.estimate.feeCosts). Side effects: MCP read-only until wallet signs.",
+      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + HyperNatt 0.5% integrator fee (Li.Fi may add its own cut — read quote.estimate.feeCosts). Side effects: MCP read-only until wallet signs.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -128,7 +128,7 @@
     },
     {
       "name": "get_native_depth",
-      "description": "For a BTC or ETH Hyperliquid size, walk the operator-filmed native REF book (not the public 20-level vitrine). Reports filled, remaining, vitrine-cap counterfactual on the SAME snapshot, optional 30s/300s wall delta. Read-only; not a trade signal; no order. Price: 0.001 USDC/call via existing x402 Base/Solana or eligible credits.",
+      "description": "BTC/ETH perpetual market context: four simultaneous recorded liquidity views (REF, M2, M5, AGG4), size coverage, fixed-price wall changes and observed aggressor buy/sell flow over 30s or 300s. Aggregated views see wider price ranges at coarser precision; never add their overlapping volumes. Combine with liquidation radar. Read agent_readout and quality first. No strategy signal, full-book claim or fill guarantee. Price: 0.001 USDC/call via existing x402 Base/Solana or eligible credits.",
       "inputSchema": {
         "type": "object",
         "additionalProperties": false,
@@ -165,7 +165,7 @@
               30,
               300
             ],
-            "description": "Optional wall lookback in seconds."
+            "description": "Fixed-price wall history and observed flow window, 30 or 300 seconds; default 300."
           },
           "x_payment": {
             "type": "string",
