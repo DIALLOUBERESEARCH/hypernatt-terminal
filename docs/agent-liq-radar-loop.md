@@ -2,7 +2,7 @@
 
 Use `get_liq_radar` when you need a **forced-order / liquidation map** (magnet, OI, clusters, real liqs) on a whitelist coin — market structure that classic public indicators do not show.
 
-**This radar-specific journey:** `get_agent_manifest` → `get_liq_radar`. For order-size estimates, comparisons and supplied fills, see the separate [execution-context workflow](execution-context.md). A swap route is optional and independent.
+**This radar-specific journey:** `get_agent_manifest` → `get_liq_radar`. For filmed BTC/ETH size feasibility, see [native-depth.md](native-depth.md). A swap route is optional and independent.
 
 ## Suggested flow (agent chooses cadence)
 

@@ -1,11 +1,11 @@
 # Agent swap demo — wallet-first path
 
-Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](execution-context.md).
+Native depth: `get_native_depth` (0.001 USDC). [Guide](native-depth.md).
 Minimal recipe for builders who already pay HyperNatt x402 tools but have not executed a NattSwap yet.
 
 **Read-only context is not trade advice. No custody.**
 
-This guide covers the swap journey. MCP v2.8.0 has **6 tools**: [complete catalog](reference.md#mcp-tools-canonical).
+This guide covers the swap journey. MCP v2.9.0 has **4 tools**: [complete catalog](reference.md#mcp-tools-canonical).
 
 ---
 

@@ -76,7 +76,7 @@ export function createDataProductX402(cfg) {
             maxTimeoutSeconds: 60,
             asset: USDC_ADDRESS,
             extra: { name: "USD Coin", version: "2", decimals: USDC_DECIMALS },
-            resource: MCP_RESOURCE_URL,
+            resource: cfg.resourceUrl || MCP_RESOURCE_URL,
             description: `Pay ${priceLabel} USDC on Base or Solana to access: ${cfg.description}`,
             mimeType: "application/json",
         };

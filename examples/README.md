@@ -9,7 +9,7 @@
 | [swap_after_liq_radar.py](swap_after_liq_radar.py) | None | **manifest → liq_radar → swap quote** ; `--compare-vault` shows vault blocked |
 | [cdp_swap_execute.mjs](cdp_swap_execute.mjs) | `npm install` in this folder | CDP EVM wallet + MCP swap ; `--dry-run` / `--execute` (VPS keys) |
 
-Start with `get_agent_manifest`, then choose the requested journey: liquidation terrain, Hyperliquid order-size quote → baseline comparison → supplied-fill reconciliation, or an independent Li.Fi swap. The swap examples below cover one optional path, not the whole Terminal. See [execution-context.md](../docs/execution-context.md) for the three execution-context tools and input examples.
+Start with `get_agent_manifest`, then choose the requested journey: liquidation terrain, filmed BTC/ETH native depth, or an independent Li.Fi swap. The swap examples below cover one optional path, not the whole Terminal. See [native-depth.md](../docs/native-depth.md).
 
 Four data tools share the 0.001 USDC/call tariff, eligible credits and daily per-tool/per-token trials. Manifest and MCP swap requests are free; signing a swap incurs separate on-chain costs. See [payment and credits](../docs/x402-pay.md).
 

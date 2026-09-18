@@ -1,11 +1,11 @@
 # x402 payment — Base vs Solana
 
-Four MCP tools cost **0.001 USDC per call** on **two rails**: `get_liq_radar`, `get_execution_quote`, `compare_execution_context` and `reconcile_execution`. Pick one supported entry from the returned `accepts[]`; do not mix networks or signing formats.
+Two MCP tools cost **0.001 USDC per call** on **two rails**: `get_liq_radar` and `get_native_depth`. Pick one supported entry from the returned `accepts[]`; do not mix networks or signing formats.
 
 ## Trials and credits
 
-- **Daily MCP trial:** one free call per paid tool, token and client each UTC day: four tools x seven tokens = up to 28 independent slots. Read `trial_policy_v2` and `free_tier_status_v1` through the same MCP connection. The daily credit pool and intro slots are separate.
-- **Eligible credits:** one credit per call for each of the four paid tools. Pass credits and swap-earned credits are associated with an EVM wallet; pass that address as `agent_wallet`. This is separate from the choice of Base or Solana for an x402 payment.
+- **Daily MCP trial:** one free call per paid tool, eligible token and client each UTC day: radar x 7 tokens plus native BTC/ETH = up to 9 independent slots. Read `trial_policy_v2` and `free_tier_status_v1` through the same MCP connection. The daily credit pool and intro slots are separate.
+- **Eligible credits:** one credit per call for each paid tool. Pass credits and swap-earned credits are associated with an EVM wallet; pass that address as `agent_wallet`. This is separate from the choice of Base or Solana for an x402 payment.
 - **Agent Pass:** the full manifest currently advertises $5 for 15,000 credits valid for 30 days. Swap-earned credits depend on eligible completed swaps and registration. Neither option is required for pay-per-call use.
 - **Free MCP tools:** `get_agent_manifest` and `swap_via_nattswap`. Signing a swap still incurs the route's on-chain costs; API payment does not pay swap gas or trading fees.
 
@@ -15,7 +15,7 @@ Call `get_agent_manifest` with `{"detail":"full"}`, or GET `/api/m2m/agent/manif
 
 On MCP, call the intended tool without `x_payment` first. If a trial or eligible credit covers it, no x402 payment is needed. Otherwise, payment requirements arrive in the tool result (`isError: true`, JSON text with `accepts[]`); the HTTP transport can still return 200. An x402-capable client must inspect that result, obtain the authorized payment and retry the same tool with `x_payment` (base64 JSON).
 
-Direct REST discovery calls to `/api/m2m/liq-radar` and `/api/m2m/swap/quote` return HTTP 402 when unpaid and without eligible access; they do not provide the MCP intro slots. Retry REST with `X-Payment` or `PAYMENT-SIGNATURE`. The three execution-context tools use MCP, not public REST execution endpoints. A connector or wallet installation alone does not guarantee automatic payment support in every client.
+Direct REST discovery calls to `/api/m2m/liq-radar` and `/api/m2m/swap/quote` return HTTP 402 when unpaid and without eligible access; they do not provide the MCP intro slots. Retry REST with `X-Payment` or `PAYMENT-SIGNATURE`. Native depth is also available as MCP and as `GET /api/m2m/native-depth/quote`. A connector or wallet installation alone does not guarantee automatic payment support in every client.
 
 **Historical `get_liq_radar` Solana payment receipts (REST and MCP):**
 - **REST settle:** [36FvuTpq...](https://solscan.io/tx/36FvuTpqWiSoDLrs2xVRecehCmArdqptDXB8sHTfvJQSUCs7GY7CLhHwGHYwT4eXqqcgkroYheFcy5ajrUgdJLSg) (2026-09-05 UTC, slot 444415694)

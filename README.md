@@ -3,13 +3,13 @@
 [![CI](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
 [![Glama](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
-[![Version](https://img.shields.io/badge/version-2.8.0-green)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.9.0-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 [![npm audit](https://img.shields.io/badge/npm%20audit-0%20high-brightgreen)](./CHANGELOG.md)
 
-**Liquidation radar and Hyperliquid execution context** for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
+**Liquidation radar** (7 tokens) and **operator-filmed native REF depth** (BTC and ETH) for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
 
-Understand **liquidation terrain**, estimate **execution costs for your order size**, compare conditions with your last check, and reconcile your own fills afterwards. For cross-chain swaps, request a **Li.Fi route** that your agent signs. Your agent chooses the task and controls execution.
+Understand **liquidation terrain**, then ask whether a BTC or ETH size is **feasible on the filmed book** (not the public 20-level vitrine). For cross-chain swaps, request a **Li.Fi route** that your agent signs. Your agent chooses the task and controls execution.
 
 Built by one person. Code is public. Backend is private. No custody. Not trade advice.
 
@@ -28,7 +28,7 @@ No install for the hosted MCP. In **Claude → Settings → Connectors → Add c
 
 Then ask:
 
-> Call get_agent_manifest and choose journeys_v1 for my task. For an ETH buy of 0.1 ETH, estimate execution costs with get_execution_quote. Keep the baseline so we can compare later and reconcile my own fills after execution.
+> Call get_agent_manifest and choose journeys_v1 for my task. Use get_liq_radar for liquidation terrain. For an ETH buy of 0.1 ETH, walk filmed native REF depth with get_native_depth. Use swap_via_nattswap for a Li.Fi route.
 
 More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/integrations.md).
 
@@ -36,11 +36,11 @@ More clients (Cursor / Cline / Codex / Windsurf): [docs/integrations.md](docs/in
 
 Start with **`get_agent_manifest`** (free), then choose the tools your task needs through `journeys_v1`:
 
-- **Understand the market:** `get_liq_radar` provides liquidation clusters, open-interest context and observed liquidations.
-- **Assess a Hyperliquid perpetual order:** `get_execution_quote` estimates its visible execution conditions; `compare_execution_context` measures changes since a saved check; `reconcile_execution` compares your supplied fills with your pre-order estimate.
+- **Understand the market:** `get_liq_radar` provides liquidation clusters, open-interest context and observed liquidations (BTC ETH SOL BNB XRP HYPE ZEC).
+- **Walk filmed depth:** `get_native_depth` reports fill, remaining and a vitrine-cap counterfactual on the **same** BTC or ETH snapshot.
 - **Find a cross-chain swap route:** `swap_via_nattswap` requests a Li.Fi route for your source/destination chains and tokens. Your agent signs the transaction.
 
-Radar and execution context support **BTC, ETH, SOL, BNB, XRP, HYPE and ZEC**. Cross-chain swaps use the chains and tokens supported by Li.Fi, subject to route availability; they are not limited to those seven symbols. The radar is optional for the execution-cost workflow.
+Radar covers **seven** tokens. Native depth is **BTC and ETH only**. Cross-chain swaps use the chains and tokens supported by Li.Fi, subject to route availability. Neither paid tool requires the other.
 
 ## Liquidation terrain — `get_liq_radar`
 
@@ -74,31 +74,19 @@ If price swept a zone and real liquidations spiked, compare with OI change. A la
 | Real vs estimated | `real_liquidations` = observed; `liq_density` clusters = modeled. Both labeled. |
 | `magnet.score` | Directional density bias from OI / L-S / funding. **Not** a hit probability. |
 
-The radar glossary and scenarios also ship on `get_agent_manifest` → `agent_interpretation_rules_v1`. Use `journeys_v1` for the execution-context and swap workflows.
+The radar glossary and scenarios also ship on `get_agent_manifest` → `agent_interpretation_rules_v1`. Use `journeys_v1` for native-depth and swap workflows.
 
-## Execution context throughout an order
+## Native REF depth — `get_native_depth`
 
-### Before the order — `get_execution_quote`
-
-**“For a buy of 0.1 ETH, what execution conditions are visible now?”** Supply the symbol, side and quantity in token units. Read the available book depth, estimated volume-weighted average price (VWAP), spread, depth cost and separate exchange/builder fees. Unknown fees remain unknown; insufficient visible depth does not imply a full fill. Save the returned `baseline` object unchanged in your agent's state.
-
-### At the next check — `compare_execution_context`
-
-**“For that same order, what changed since my last check?”** Supply the saved baseline to compare visible liquidity, estimated costs and data quality against a new snapshot. Use the returned baseline for the next check. Your agent chooses when to check again; this compares snapshots rather than tracking every intervening event. Keep a separate `pre_order_baseline` immediately before your own execution.
-
-### After execution — `reconcile_execution`
-
-**“How did my actual fills compare with my pre-order estimate?”** Supply that pre-order baseline and your fills for one order. The tool separates price and fee differences at the quantity actually executed. It does not fetch your account's fills or verify caller-supplied records, and it does not infer that latency caused a price difference.
-
-These three tools provide read-only context for **Hyperliquid perpetual orders**. They do not submit orders. Check the returned data-quality and freshness indicators before using an estimate. [Workflow, input examples and field definitions](docs/execution-context.md).
+**“For a buy of 0.1 ETH, how far does the filmed book walk?”** Supply `symbol` (`BTC` or `ETH`), `side` and `quantity_base`. The tool walks the operator-filmed REF book (not the public 20-level vitrine). Read `filled`, `remaining`, `vwap`, and the `vitrine_cap_20` counterfactual on the **same** snapshot. Optional `lookback_s` 30 or 300 reports wall-size delta. This is size feasibility, not a trade signal. No orders. [Guide](docs/native-depth.md).
 
 ## Cross-chain swaps — `swap_via_nattswap`
 
-**“What route is available to swap my token on one chain for a token on another?”** Supply the source/destination chains and tokens, amount and wallet addresses. Review the Li.Fi route, costs and execution readiness; your agent signs with its own wallet. This is a separate workflow from a Hyperliquid perpetual execution quote. [Swap inputs and execution steps](tools/swap_via_nattswap.md).
+**“What route is available to swap my token on one chain for a token on another?”** Supply the source/destination chains and tokens, amount and wallet addresses. Review the Li.Fi route, costs and execution readiness; your agent signs with its own wallet. This is a separate workflow from native BTC/ETH depth. [Swap inputs and execution steps](tools/swap_via_nattswap.md).
 
 ## Trial and pricing
 
-Daily MCP trial: one free call per paid tool and per token per client each UTC day. Four tools x seven tokens = up to 28 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
+Daily MCP trial: one free call per paid tool and eligible token each UTC day: radar x 7 tokens plus native BTC/ETH, up to 9 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection for current availability. A zero daily_cap is the separate credit pool, not the intro allowance.
 
 ## What you get
 
@@ -107,13 +95,11 @@ Daily MCP trial: one free call per paid tool and per token per client each UTC d
 | `get_agent_manifest` | Free — call first |
 | `get_liq_radar` | **$0.001** x402 (Base EIP-3009 **or** Solana SVM exact) |
 | `swap_via_nattswap` | Free at MCP (you sign; gas + Li.Fi fee on-chain) |
-| `get_execution_quote` | **$0.001** x402, or eligible credits |
-| `compare_execution_context` | **$0.001** x402, or eligible credits |
-| `reconcile_execution` | **$0.001** x402, or eligible credits |
+| `get_native_depth` | **$0.001** x402, or eligible credits |
 
 **Solana pay:** rail is **live** (SVM exact). Do **not** reuse an EVM/Base x402 client. Use `@x402/svm`. A Base HTTP 200 is not a Solana payment. See [docs/x402-pay.md](docs/x402-pay.md).
 
-Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC).
+Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC). `get_native_depth`: **BTC ETH only**.
 
 ### What we do NOT claim
 
@@ -123,7 +109,7 @@ Whitelist `get_liq_radar`: **BTC ETH SOL BNB XRP HYPE ZEC** (omit `symbol` = BTC
 | Predictive Fuel Score / sweep classifier | Distance, size, OI, real liqs — labeled |
 | Custody of keys or funds | Agent signs own txs |
 | Trade advice / guaranteed edge | Read-only JSON context |
-| More than 6 MCP tools | **Exactly 6** · v2.8.0 |
+| More than 4 MCP tools | **Exactly 4** · v2.9.0 |
 | Vault / `/stats` = Terminal P&L | Separate HyperNatt vault product |
 | Independent security audit | Public code + [SECURITY.md](./SECURITY.md) |
 
@@ -159,9 +145,9 @@ You can start with the daily MCP trials without setting up payments. For paid us
 npx @coinbase/payments-mcp
 ```
 
-Docs: [Agentic Wallet MCP](https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome). Then connect HyperNatt Terminal (`https://hypernatt.com/mcp/protocol`). The four paid tools — `get_liq_radar`, `get_execution_quote`, `compare_execution_context` and `reconcile_execution` — each cost **0.001 USDC per call**, or one eligible credit, after an available daily trial. An x402-capable client can handle the payment requirements and retry under your payment authorization rules. In MCP, inspect the tool response for payment requirements; do not rely only on an HTTP 402 status. See [payment and credits](docs/x402-pay.md).
+Docs: [Agentic Wallet MCP](https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome). Then connect HyperNatt Terminal (`https://hypernatt.com/mcp/protocol`). The two paid tools — `get_liq_radar` and `get_native_depth` — each cost **0.001 USDC per call**, or one eligible credit, after an available daily trial. An x402-capable client can handle the payment requirements and retry under your payment authorization rules. In MCP, inspect the tool response for payment requirements; do not rely only on an HTTP 402 status. See [payment and credits](docs/x402-pay.md).
 
-Optional: eligible swap-earned credits or an **Agent Pass at $5 for 15,000 credits valid for 30 days**, shared across the four paid tools. Call `get_agent_manifest` with `{"detail":"full"}` to read the current `pass_program` and `quota_program`; they are not included in the default compact response. Manifest and MCP swap requests remain free; on-chain swap costs are separate.
+Optional: eligible swap-earned credits or an **Agent Pass at $5 for 15,000 credits valid for 30 days**, shared across the paid tools. Call `get_agent_manifest` with `{"detail":"full"}` to read the current `pass_program` and `quota_program`; they are not included in the default compact response. Manifest and MCP swap requests remain free; on-chain swap costs are separate.
 
 ## License
 

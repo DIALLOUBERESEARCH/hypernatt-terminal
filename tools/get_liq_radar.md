@@ -44,6 +44,7 @@ Honest structural walkthrough: [../examples/liq_radar_interpret.py](../examples/
 - `product`: compatibility label (currently `hypernatt_liq_radar_v1`)
 - `payload_schema`: `hypernatt_liq_radar_v2`
 - `symbol` / `binance_symbol` / `provenance`
+- `qty_unit`: the requested coin (ETH when `symbol=ETH`). Quantity is that coin's base size.
 - `liq_radar` block (redacted — no HLP vault leak)
 - Read-only market context — **not** a trade signal
 
@@ -58,7 +59,9 @@ liquidations by side and price bucket. Each row exposes:
 - `bucket_low` / `bucket_high`: grouping bounds, lower-inclusive and
   upper-exclusive (currently $100 wide). A lower bound of zero is valid;
   it is **not** the group's representative price.
-- `size_btc`: legacy name for the requested coin's base-asset quantity,
+- `size` / `qty`: honest names for that quantity; `qty_unit` repeats the coin.
+- `size_btc` / `qty_btc` / `long_liq_btc` / `short_liq_btc` / `net_btc`:
+  legacy names for the same numbers (not Bitcoin unless `symbol=BTC`),
   displayed to three decimals; `count`: number of observed events.
 
 These are historical bankruptcy-price aggregates, not Hyperliquid fills,

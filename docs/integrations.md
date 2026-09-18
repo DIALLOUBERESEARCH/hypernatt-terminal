@@ -1,15 +1,15 @@
 # HyperNatt Terminal — Integrations
 
-How to connect liquidation radar, Hyperliquid execution context and a Li.Fi swap playbook to your agent. No custody. Your agent controls execution.
+How to connect liquidation radar, native BTC/ETH REF depth and a Li.Fi swap playbook to your agent. No custody. Your agent controls execution.
 
-**MCP v2.8.0 — 6 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`, `get_execution_quote`, `compare_execution_context`, `reconcile_execution`.
+**MCP v2.9.0 — 4 tools:** `get_agent_manifest`, `get_liq_radar`, `swap_via_nattswap`, `get_native_depth`.
 
-The three [execution-context tools](execution-context.md) use MCP and cost
+[`get_native_depth`](native-depth.md) uses MCP (and HTTP `/api/m2m/native-depth/quote`) and costs
 **$0.001 USDC per call**, with the same credits and x402 rails as the radar.
 
 Two ways in:
 - **MCP:** `https://hypernatt.com/mcp/protocol`
-- **REST + x402:** the radar and swap-quote discovery endpoints below; the three execution-context tools use MCP.
+- **REST + x402:** radar, native-depth and swap-quote discovery endpoints below.
 
 **Trading your own Hyperliquid account?** Pair this MCP with **your** HL
 agent-wallet exec tools — no vault deposit. Guide:
@@ -44,7 +44,7 @@ Example prompt:
 
 > Call get_agent_manifest and choose journeys_v1 for my task: liquidation terrain, costs for my Hyperliquid order size, changes since a saved check, reconciliation of my fills, or a Li.Fi swap route. Call only the relevant tools.
 
-`get_agent_manifest` and MCP `swap_via_nattswap` are free. Radar and each execution-context tool cost **0.001 USDC or one eligible credit** after an available daily trial. [MCP payment errors, shared credits and trials](x402-pay.md).
+`get_agent_manifest` and MCP `swap_via_nattswap` are free. Radar and native depth cost **0.001 USDC or one eligible credit** after an available daily trial. [MCP payment errors, shared credits and trials](x402-pay.md).
 
 ---
 

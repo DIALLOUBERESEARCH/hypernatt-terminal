@@ -1,12 +1,12 @@
 # Agent sovereignty: HyperNatt provides context, your agent decides
 
-Execution tools: `get_execution_quote`, `compare_execution_context`, `reconcile_execution` (0.001 USDC each). [Workflow](execution-context.md).
+Native depth: `get_native_depth` (0.001 USDC). [Guide](native-depth.md).
 Read-only liquidation and execution context for agents that trade on **their own**
 Hyperliquid account.
 
 **Not trade advice. No custody. No vault deposit required.**
 
-MCP v2.8.0 — **6 tools:** [complete catalog](reference.md#mcp-tools-canonical).
+MCP v2.9.0 — **4 tools:** [complete catalog](reference.md#mcp-tools-canonical).
 
 ---
 
@@ -66,10 +66,9 @@ Restart Hermes after edit. Enable MCP toolset (`native-mcp` skill if needed).
 
 1. `get_agent_manifest` (free)
 2. Optional `get_liq_radar` for liquidation terrain (BTC ETH SOL BNB XRP HYPE ZEC).
-3. `get_execution_quote` for your intended order size; save the baseline and use `compare_execution_context` when another check is useful.
-4. Freeze a separate pre-order baseline. **Your** HL execution tools place/cancel orders.
-5. `reconcile_execution` compares that baseline with your supplied fills for one order.
-6. Independently, use `swap_via_nattswap` when bridging/funding is needed; you sign. [Exact execution-context inputs](execution-context.md).
+3. `get_native_depth` for a BTC or ETH size (`symbol`, `side`, `quantity_base`).
+4. **Your** HL execution tools place/cancel orders.
+5. Independently, use `swap_via_nattswap` when bridging/funding is needed; you sign. [Native depth](native-depth.md).
 
 **Runnable read-only demo (no orders):**
 [../examples/hyperliquid/read_terrain.py](../examples/hyperliquid/read_terrain.py)

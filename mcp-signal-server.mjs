@@ -1,6 +1,6 @@
 /**
  * F#22 / F99N — MCP SSE + Streamable HTTP server.
- * Surface: manifest, radar, swap, execution quote, compare, reconcile (6 tools).
+ * Surface: manifest, radar, swap, native depth (CANON_4).
  *
  * Public (nginx strips /mcp prefix):
  *   GET  /mcp/sse       -> container /sse
@@ -45,8 +45,8 @@ import { TRIAL_SYMBOLS, terminalTrialPolicy } from "./terminal-trial-policy.mjs"
 import { enrichPaymentRequiredPayload } from "./agent-payment-error.mjs";
 import { registerTerminalSwapTools } from "./mcp-free-tools.mjs";
 import { registerGrowthTools } from "./mcp-growth-tools.mjs";
-import { registerExecutionContextTools } from "./execution-context-public.mjs";
-import { EXECUTION_CONTEXT_NAMES } from "./execution-context-catalog.mjs";
+import { registerNativeDepthTool } from "./native-depth-public.mjs";
+import { NATIVE_DEPTH_NAMES } from "./native-depth-catalog.mjs";
 import {
     bindActiveSessionCounter,
     isStaleMcpSession,
@@ -55,7 +55,7 @@ import {
     respondStaleSession,
 } from "./mcp-session-resilience.mjs";
 
-const TERMINAL_VERSION = "2.8.0";
+const TERMINAL_VERSION = "2.9.0";
 
 const M2M_URL = process.env.M2M_SERVICE_URL || "http://m2m-service:8010";
 const INTERNAL_SECRET =
@@ -69,7 +69,7 @@ const PUBLIC_LIQ_RADAR_URL =
 import { toolDescriptionFromCard, getServerCard } from "./server-card-tools.mjs";
 
 const SERVER_TITLE =
-    "HyperNatt Terminal — Radar, Execution Context + Swap for AI Agents";
+    "HyperNatt Terminal — Radar, Native Depth + Swap for AI Agents";
 
 const TERMINAL_ONCHAIN_PROOF = {
     ndatToken: {
@@ -467,7 +467,7 @@ export function createMcpServer() {
     };
     registerGrowthTools(server, freeCtx);
     registerTerminalSwapTools(server, freeCtx);
-    registerExecutionContextTools(server, {
+    registerNativeDepthTool(server, {
         m2mUrl: M2M_URL, internalSecret: INTERNAL_SECRET,
         pay: processPaidToolPayment,
         sessionPayment: (sessionId) => sessionId ? sessionPayments.get(sessionId) : undefined,
@@ -651,7 +651,7 @@ export function mountMcpSignalRoutes(app) {
                 "get_agent_manifest",
                 "get_liq_radar",
                 "swap_via_nattswap",
-                ...EXECUTION_CONTEXT_NAMES,
+                ...NATIVE_DEPTH_NAMES,
             ],
             trial_policy_v2: terminalTrialPolicy(),
             transports: {
@@ -671,7 +671,7 @@ export function mountMcpSignalRoutes(app) {
             homepage: "https://hypernatt.com",
             ecosystem_note:
                 "HyperNatt platform at hypernatt.com; hypernatt-terminal MCP is one agent integration brick. Vault pages are not Terminal MCP P&L.",
-            products: ["hypernatt_liq_radar_v1", "hypernatt_execution_context_v1"],
+            products: ["hypernatt_liq_radar_v1", "hypernatt_native_depth_v1"],
         });
     });
 
@@ -819,7 +819,7 @@ export function mountMcpSignalRoutes(app) {
     });
 
     console.log(
-        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 6 tools`,
+        `[MCP Terminal] hypernatt-terminal v${TERMINAL_VERSION} — 4 tools`,
     );
     console.log(
         `[MCP Terminal] x402 get_liq_radar @ $${LIQ_RADAR_X402.priceUsdc} → ${LIQ_RADAR_X402.payTo}`,

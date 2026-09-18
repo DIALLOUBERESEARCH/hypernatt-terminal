@@ -13,6 +13,9 @@ const pkg = require("./package.json");
 const serverCard = require("./server-card.json");
 
 const app = express();
+// Dedicated REST router precedes the default JSON parser so unpaid probes get402.
+const nativeHttp = express.Router();
+app.use('/api/m2m/native-depth', nativeHttp);
 app.use(["/protocol", "/messages"], express.json({ limit: "2mb" }));
 app.use(express.json());
 
@@ -88,9 +91,7 @@ const MCP_TOOL_NAMES = new Set([
     "get_agent_manifest",
     "get_liq_radar",
     "swap_via_nattswap",
-    "get_execution_quote",
-    "compare_execution_context",
-    "reconcile_execution",
+    "get_native_depth",
 ]);
 
 function terminalToolsFromCard() {
@@ -355,6 +356,8 @@ app.post("/tools/get_contracts", (_req, res) => {
 // ==================== START ====================
 
 (async () => {
+    const { createNativeDepthHttpRouter } = await import('./native-depth-http.mjs');
+    nativeHttp.use(createNativeDepthHttpRouter({ m2mUrl: M2M_URL, internalSecret: INTERNAL_SECRET }));
     try {
         const { mountMcpSignalRoutes } = await import("./mcp-signal-server.mjs");
         mountMcpSignalRoutes(app);

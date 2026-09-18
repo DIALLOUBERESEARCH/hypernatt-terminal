@@ -28,7 +28,7 @@ Use **your** agent signing wallet for `fromAddress` / `toAddress`.
 4. Optional: `GET https://hypernatt.com/api/m2m/swap/status/:txHash?fromChain=…` to poll bridge status.
 5. Optional: `POST https://hypernatt.com/api/m2m/swap/register` (see `register_hint` in `swap_actions_v1`).
 
-Eligible completed swap volume may earn **shared credits** for `get_liq_radar`, `get_execution_quote`, `compare_execution_context` and `reconcile_execution`. See `GET https://hypernatt.com/api/m2m/quota/status?wallet=0xYourWallet` and the [payment guide](../docs/x402-pay.md).
+Eligible completed swap volume may earn **shared credits** for `get_liq_radar` and `get_native_depth`. See `GET https://hypernatt.com/api/m2m/quota/status?wallet=0xYourWallet` and the [payment guide](../docs/x402-pay.md).
 
 ## Optional HTTP footnote
 

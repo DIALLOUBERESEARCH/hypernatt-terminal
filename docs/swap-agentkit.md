@@ -47,7 +47,7 @@ Agents often paste **public addresses** they cannot sign. Quotes succeed but
    Fallback: approve Li.Fi Diamond then broadcast `transactionRequest`.
 6. **Poll** — `GET /api/m2m/swap/status/:txHash?fromChain=...` (bridges: 1–30 min).
 7. **Register** — use `register_hint` from `swap_actions_v1` or `POST /api/m2m/swap/register`.
-8. **Quota** — `GET /api/m2m/quota/status?wallet=0xYourWallet` for eligible shared credits covering radar and all three execution-context tools.
+8. **Quota** — `GET /api/m2m/quota/status?wallet=0xYourWallet` for eligible shared credits covering radar and native depth.
 
 ## Coinbase CDP / x402 buyer wallet
 
