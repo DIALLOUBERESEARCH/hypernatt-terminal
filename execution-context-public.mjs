@@ -21,10 +21,38 @@ export function withDeliveryQuality(payload, now = Date.now()) {
   const quality = payload.result?.quality ?? payload.result?.after?.quality ?? payload.result?.baseline_quality;
   const bookTime = payload.baseline?.observation?.book?.time;
   const age = Number.isSafeInteger(bookTime) ? now - bookTime : null;
-  return { ...payload, delivery: {
+  const withinMaxAge = age !== null && age >= -250 && age <= 5000;
+  const clockAttested = quality?.clock_status === 'synchronized';
+  const current = payload.result?.after ?? payload.result;
+  const historical = quality?.evaluation_mode !== 'live';
+  const available = current?.estimate != null && Array.isArray(quality?.limitations) && quality.limitations.length === 0;
+  const snapshotStatus = historical ? 'historical' : !available ? 'unavailable'
+    : !withinMaxAge ? 'outside_age_window' : clockAttested ? 'recent_clock_attested' : 'recent_clock_unattested';
+  const warnings = [...(quality?.limitations ?? [])];
+  if (!clockAttested) warnings.push('clock_not_attested_age_is_indicative');
+  if (historical) warnings.push('historical_comparison_not_current_market');
+  else if (!withinMaxAge) warnings.push('refresh_snapshot_before_using_current_market_estimate');
+  if (current?.fee_status?.total_unavailable_reason) warnings.push(current.fee_status.total_unavailable_reason);
+  if (payload.result?.fee_gap_unavailable_reason) warnings.push(payload.result.fee_gap_unavailable_reason);
+  if (current?.estimate && !current.estimate.full_size_estimate) warnings.push('requested_size_not_fully_covered');
+  if (payload.result?.fixed_anchor_bands?.some(b => !b.bid_complete_both || !b.ask_complete_both)) warnings.push('incomplete_band_deltas_unavailable');
+  warnings.push('visible_book_estimate_not_a_fill_guarantee');
+  return { agent_readout: {
+    phase: payload.result?.phase ?? null,
+    snapshot_status: snapshotStatus,
+    source_age_signed_ms: age,
+    within_max_age: withinMaxAge,
+    clock_attested: clockAttested,
+    full_order_vwap: current?.estimate?.full_order_vwap ?? null,
+    full_size_estimate: current?.estimate?.full_size_estimate ?? null,
+    fee_status: current?.fee_status?.status ?? 'unknown',
+    comparison_status: payload.result?.comparison_status ?? null,
+    warnings,
+  }, ...payload, delivery: {
     delivered_at_ms: now, source_age_signed_ms: age,
+    within_max_age: withinMaxAge, clock_attested: clockAttested,
     data_usable_at_delivery: Boolean(quality?.usable_now && quality.clock_status === 'synchronized' && quality.evaluation_mode === 'live' && age !== null && age >= -250 && age <= 5000),
-    note: 'Data quality only, not order eligibility or a recommendation. Costs use the recorded snapshot; settlement can add delay.',
+    note: 'Read agent_readout first. within_max_age is an indicative timestamp check, independent of clock attestation. Legacy data_usable_at_delivery remains the strict certified-fresh check, not a general usability gate. No order eligibility or fill guarantee; settlement can add delay.',
   } };
 }
 
@@ -33,6 +61,7 @@ export function registerExecutionContextTools(server, ctx) {
     const product = createDataProductX402({
       toolName: name, description, priceEnv: 'LIQ_RADAR_X402_PRICE_USDC',
       payToEnv: 'MIMO_SIGNAL_X402_PAYTO', internalPath: `/api/m2m/internal/execution-context/${operation}`,
+      resourceUrl: ctx.resourceUrlForOperation?.(operation),
     });
     server.registerTool(name, {
       description: `${description} Price: 0.001 USDC/call via existing x402 Base/Solana or eligible credits.`,

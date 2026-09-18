@@ -107,7 +107,7 @@ For a Hyperliquid order, call `get_execution_quote` and save the returned baseli
 1. Connect and call `get_agent_manifest` (free); choose `journeys_v1` by intent.
 2. For liquidation terrain, use `get_liq_radar`. For Hyperliquid order costs, use `get_execution_quote` with `symbol`, `side`, `quantity_base`. Neither path requires buying the other.
 3. Keep the returned `baseline` unchanged. Compare against it when another check is useful; keep the next baseline. Freeze a separate `pre_order_baseline` before your own execution.
-4. After your own execution, call `reconcile_execution` with that pre-order baseline and `fills_dataset` for one order. Read quality and delivery flags throughout.
+4. After your own execution, call `reconcile_execution` with that pre-order baseline and `fills_dataset` for one order. Read `agent_readout` first throughout: indicative age and clock attestation are separate. Legacy `usable_now`/`data_usable_at_delivery` are strict certification flags, not blanket usability gates. Refresh outside-age-window data; inspect size coverage, missing fees and warnings. Null band deltas mean incomplete coverage, not disappearing liquidity.
 5. Use `swap_via_nattswap` separately for a Li.Fi route. You sign your own transaction. No mandatory paid polling.
 
 ## Wallet / x402

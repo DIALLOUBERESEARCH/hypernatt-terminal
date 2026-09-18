@@ -5,6 +5,9 @@ Private monorepo history is separate (see README mirror note).
 
 ## Unreleased
 
+- F376: execution responses lead with `agent_readout`; indicative recency is separate from clock attestation. Legacy certified-fresh flags keep their strict meaning.
+- Explicit missing-fee status and reconciliation reasons; incomplete fixed-band depth deltas are null instead of misleading liquidity changes.
+
 - Align current onboarding, payments, credits and examples with all six MCP tools and the four paid data tools.
 - Clarify compact versus full manifest fields, MCP payment errors and the separate Li.Fi swap journey.
 - Fix manifest-reading examples and add offline contract checks.

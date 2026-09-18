@@ -57,3 +57,29 @@ test('public delivery time preserves source and never promotes an unknown clock'
     assert.equal(out.baseline.observation.book.time,time);
   }
 });
+
+test('F376 summary separates indicative age, clock proof, replay, coverage and fees',()=>{
+  const time=1789394000000;
+  const base={baseline:{observation:{book:{time}}},result:{phase:'before',quality:{usable_now:false,evaluation_mode:'live',clock_status:'unknown',limitations:[]},estimate:{full_order_vwap:'102',full_size_estimate:true},fee_status:{status:'partial',total_unavailable_reason:'missing_builder_fee'}}};
+  for(const age of [-251,-250,500,5000,5001]) {
+    const out=withDeliveryQuality(base,time+age);
+    assert.equal(out.agent_readout.within_max_age,age>=-250&&age<=5000);
+    assert.equal(out.agent_readout.snapshot_status,age>=-250&&age<=5000?'recent_clock_unattested':'outside_age_window');
+    assert.equal(out.agent_readout.clock_attested,false);
+    assert.equal(out.delivery.data_usable_at_delivery,false);
+    assert.equal(Object.keys(out)[0],'agent_readout');
+    assert.ok(out.agent_readout.warnings.includes('missing_builder_fee'));
+  }
+  const partial=structuredClone(base); partial.result.estimate.full_size_estimate=false;partial.result.estimate.full_order_vwap=null;
+  assert.ok(withDeliveryQuality(partial,time).agent_readout.warnings.includes('requested_size_not_fully_covered'));
+  const replay=structuredClone(base);replay.result.quality.evaluation_mode='historical';
+  assert.equal(withDeliveryQuality(replay,time).agent_readout.snapshot_status,'historical');
+  const bad=structuredClone(base);bad.result.quality.limitations=['metadata_stale'];
+  assert.equal(withDeliveryQuality(bad,time).agent_readout.snapshot_status,'unavailable');
+  assert.equal(withDeliveryQuality({},time).agent_readout.within_max_age,false);
+  const comparison={...base,result:{phase:'during',after:base.result,fixed_anchor_bands:[{bid_complete_both:false,ask_complete_both:true}]}};
+  assert.equal(withDeliveryQuality(comparison,time).agent_readout.full_order_vwap,'102');
+  assert.ok(withDeliveryQuality(comparison,time).agent_readout.warnings.includes('incomplete_band_deltas_unavailable'));
+  const reconciled={result:{phase:'after',baseline_quality:replay.result.quality,fee_status:{status:'complete'},comparison_status:'comparable_observed_quantity'}};
+  assert.equal(withDeliveryQuality(reconciled,time).agent_readout.snapshot_status,'historical');
+});

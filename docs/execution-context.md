@@ -27,6 +27,13 @@ know the rates, with `source: "caller_assumption"` or `"account_rate_supplied"`,
 example, `"0.00045"` means 4.5 basis points. Zero fees must be explicit.
 The Terminal API price is separate from estimated trading costs.
 
+`result.fee_status` reports `complete`, `partial` or `unknown`, lists missing
+rates and explains unavailable totals. Each supplied fee component is computed
+independently. For no builder fee, explicitly supply a zero builder rate; omission
+means unknown, never zero. Reconciliation explains a null fee gap with
+`result.fee_gap_unavailable_reason` (missing rates, non-USDC actual fees, no fills
+or an unavailable/insufficient baseline).
+
 The returned baseline contains metadata for the requested token only; the complete observed book and timing remain available. Earlier full-metadata baselines are still accepted.
 
 Save the returned **`baseline` object unchanged** in your agent's own state.
@@ -41,6 +48,11 @@ assumptions. Read `result.snapshot_changes`, `result.deltas` and the `before` /
 `refreshed` means the book is identical but observation time advanced. This is a
 comparison of snapshots, not a stream that captures every intervening event.
 Choose your polling cadence for your workflow; each call has the same price.
+
+Fixed-anchor band deltas are null unless that side's full band is visible in both
+snapshots; `*_delta_unavailable_reason` explains incomplete coverage. Null does
+not mean liquidity disappeared. Whole visible-book deltas still describe only
+the returned levels, whose price range can change between snapshots.
 
 ## After execution
 
@@ -69,12 +81,25 @@ describe latency; it cannot prove that latency caused a price difference.
 
 ## Read the data quality
 
-Numbers use decimal strings. Timestamps use UTC Unix milliseconds. Check
-`result.quality` (or `result.after.quality`) plus `delivery` before relying on
-current data. `delivery.source_age_signed_ms` includes time spent settling the API
-payment. An unknown clock, stale data or caller-supplied historical observation
-cannot become `data_usable_at_delivery: true`. This flag describes data quality,
-not order eligibility. The service currently reports clock uncertainty explicitly.
+Read the top-level **`agent_readout` first** on both MCP and HTTP responses.
+It summarizes phase, snapshot status, signed age, age-window check, clock
+attestation, full-order VWAP, size coverage, fee status, comparison status and warnings.
+Numbers use decimal strings; timestamps use UTC Unix milliseconds.
+
+- `recent_clock_unattested`: a live, available book has a signed age between
+  -250 and 5000 ms at delivery, but clock synchronization is unproven. Its
+  estimate can be inspected with that uncertainty; recency is indicative.
+- `recent_clock_attested`: the same age check with synchronization evidence.
+- `outside_age_window`: refresh before using it as a current market estimate.
+- `unavailable`: the current estimate or required data is unavailable.
+- `historical`: replay or reconciliation, never a live market indication.
+
+`delivery.within_max_age` is the timestamp check, including payment delay.
+`delivery.clock_attested` is a separate statement; the public source currently
+reports it false. Legacy `usable_now` and `data_usable_at_delivery` retain their
+strict certified-fresh meaning for compatibility. Do not use them as a blanket
+instruction to discard an indicative estimate. Neither a recent timestamp nor
+clock evidence proves order eligibility, adequate depth or a guaranteed fill.
 
 Baselines are caller-owned and unsigned. An optional `observation` is for replay
 and is always treated as historical. Reconciliation is a historical comparison.
@@ -82,6 +107,26 @@ These tools submit no orders and check neither your margin nor your account
 permissions. Visible depth and cost estimates do not guarantee a fill.
 
 ## Payment and errors
+
+### HTTP APIs and x402scan
+
+The same three computations are available individually as JSON HTTP APIs:
+
+- `POST https://hypernatt.com/api/m2m/execution-context/quote`
+- `POST https://hypernatt.com/api/m2m/execution-context/compare`
+- `POST https://hypernatt.com/api/m2m/execution-context/reconcile`
+
+Send the tool arguments directly as the JSON body (no JSON-RPC envelope).
+HTTP calls are strictly pay-per-call at 0.001 USDC. First call without a payment
+to get HTTP 402 and the `PAYMENT-REQUIRED` header; retry with `PAYMENT-SIGNATURE`
+or `X-Payment`. A successful response includes `PAYMENT-RESPONSE`. MCP daily
+trials and credits remain available through MCP, not these HTTP routes.
+Use the exact `baseline` from quote for compare/reconcile; no account keys needed.
+The [OpenAPI catalog](https://hypernatt.com/openapi.json) contains the full schemas.
+For x402scan, register `https://hypernatt.com` and its six HTTP resources;
+`/mcp/protocol` remains the connection address for MCP clients.
+
+### MCP payment
 
 Omit `x_payment` initially to discover access requirements; eligible intro/pass/
 quota rules are the same as the radar. When payment is needed, pick a rail from
