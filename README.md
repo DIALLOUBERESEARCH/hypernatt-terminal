@@ -1,7 +1,7 @@
 # HyperNatt Terminal
 
 [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal)
-[![Glama](https://glama.ai/mcp/servers/DIALLOUBERESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBERESEARCH/hypernatt-terminal)
+[![Glama](https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
 [![Version](https://img.shields.io/badge/version-2.9.1-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
