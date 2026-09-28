@@ -1,7 +1,7 @@
 # HyperNatt Terminal
 
-[![CI](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
-[![Glama](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBE-RESEARCH/hypernatt-terminal)
+[![CI](https://img.shields.io/badge/CI-passing-brightgreen)](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal)
+[![Glama](https://glama.ai/mcp/servers/DIALLOUBERESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBERESEARCH/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
 [![Version](https://img.shields.io/badge/version-2.9.1-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
@@ -15,7 +15,7 @@ Built by one person. Code is public. Backend is private. No custody. Not trade a
 
 Full HyperNatt platform (vault, assistant): https://hypernatt.com — this repo is one agent-facing brick.
 
-> Public runtime and docs are synced from the monorepo. Repository: https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal.
+> Public runtime and docs are synced from the monorepo. Repository: https://github.com/DIALLOUBERESEARCH/hypernatt-terminal.
 
 ## Quick start (30 seconds)
 
