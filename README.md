@@ -1,11 +1,11 @@
 # HyperNatt Terminal
 
-[![CI](https://img.shields.io/badge/CI-passing-brightgreen)](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal)
+[![CI](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
 [![Glama](https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
 [![Version](https://img.shields.io/badge/version-2.9.1-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
-[![npm audit](https://img.shields.io/badge/npm%20audit-0%20high-brightgreen)](./CHANGELOG.md)
+[Security notes](./SECURITY.md)
 
 **Liquidation radar** (7 tokens) and **recorded liquidity, wall history and aggressor flow** (BTC and ETH) for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
 

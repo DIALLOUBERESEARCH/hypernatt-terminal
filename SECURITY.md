@@ -74,13 +74,13 @@ not sufficient** — not a claim of unhackability.
 
 ## How do I verify all this?
 
-- **Read the source** — https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal
+- **Read the source** — https://github.com/DIALLOUBERESEARCH/hypernatt-terminal
 - **Free catalog** — `curl -s https://hypernatt.com/api/m2m/agent/manifest`
 - **Real 402** — `curl -i https://hypernatt.com/api/m2m/liq-radar`
 - **Networks** — `curl -s https://hypernatt.com/.well-known/x402`
-- **Optional operator vault** (Hyperliquid) — proves a live vault exists; **not**
-  Terminal MCP P&L:
-  https://app.hyperliquid.xyz/vaults/0x04e2eb302fe9ff23a9d1f2455084af624737a6d8
+- **Current vault interface** — https://hypernatt.com/vault
+  HyperEVM contracts and HyperCore trading belong to the separate vault product.
+  This link is not evidence of Terminal MCP performance or an independent audit.
 
 ## Reporting a vulnerability
 
