@@ -131,7 +131,6 @@ curl -i https://hypernatt.com/api/m2m/liq-radar
 | Examples | [examples/](examples/) |
 | Security | [SECURITY.md](SECURITY.md) |
 | Buyer skill (use the MCP) | [skills/hypernatt-terminal/SKILL.md](skills/hypernatt-terminal/SKILL.md) |
-| Seller skill (x402 hardening) | [solana-x402-seller-security-skill](https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill) |
 | Tests | [test/](test/) — `npm test` |
 | Changelog | [CHANGELOG.md](CHANGELOG.md) |
 

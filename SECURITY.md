@@ -16,17 +16,18 @@ legitimate. Verify anything claiming to be HyperNatt against this list.
 **Only these channels are official:**
 
 - Website: https://hypernatt.com
-- Code (GitHub org): https://github.com/DIALLOUBE-RESEARCH
+- Public code: https://github.com/DIALLOUBERESEARCH
 - MCP server: https://hypernatt.com/mcp/protocol
 - Telegram bot: https://t.me/hypernatt_bot
 - Contact: contact@hypernatt.com
 
-**What does NOT exist today:** HyperNatt has **no official X/Twitter account**
-and runs **no ICO, presale, airdrop, or public token sale**. NDAT is an
-internal reward for vault depositors, not a public token offering. Any X
-account, token sale, or "official" presence not listed above is **not
-HyperNatt** — even if it copies our name, branding, or links back to this
-site. When in doubt, reach us only through the channels above.
+NATT, vault shares and Terminal usage credits are different instruments.
+NATT rewards from vault trades are currently disabled. The swap reward and
+claim circuit remains under qualification; a swap or an MCP credit is not by
+itself proof of a NATT entitlement. See the [current documentation](https://hypernatt.com/docs)
+for product status and contract identities. A matching token name, logo or link
+does not establish authenticity. Contact us through the channels above when
+verification is unclear.
 
 ## Surface (truth)
 
@@ -63,14 +64,9 @@ are **advisory for your agent to evaluate**, not commands the server executes.
 
 ## Seller-side x402 hardening (builders / auditors)
 
-Buyer trust (this page) is not the same as **seller** payment hardening.
-The open skill below maps 2026 x402 Security Invariants to defenses used by this
-multi-rail seller, with a zero-dependency heuristic checker:
-
-https://github.com/DIALLOUBE-RESEARCH/solana-x402-seller-security-skill
-
-It marks LIVE / PARTIAL / CHECKER honestly. A clean checker report is **necessary,
-not sufficient** — not a claim of unhackability.
+Seller payment verification must be assessed against the current source and
+tests in this repository. A test or automated checker is not an independent
+security audit and cannot establish that a system is unhackable.
 
 ## How do I verify all this?
 
