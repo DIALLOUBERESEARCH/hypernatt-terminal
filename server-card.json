@@ -3,7 +3,7 @@
     "name": "hypernatt-terminal",
     "title": "HyperNatt Terminal - Radar, Native Depth + Swap for AI Agents",
     "version": "2.9.1",
-    "description": "HyperNatt Terminal: liquidation radar (7 tokens), recorded liquidity, wall history and aggressor flow for BTC and ETH, and Li.Fi cross-chain swap for AI agents. Radar whitelist BTC ETH SOL BNB XRP HYPE ZEC. Native depth is BTC and ETH only. get_native_depth walks the filmed book (REF plus separate aggregated views and recorded history) for a size and reports fill, remaining, four separate liquidity views, fixed-price wall changes and observed aggressor flow over 30s/300s. Read-only data, not a trade signal, no custody or order submission. 4 tools, v2.9.1; call get_agent_manifest first. Radar and native-depth calls cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Daily MCP trial: radar 7 tokens + native BTC/ETH = up to 9 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection. A zero daily_cap is the separate credit pool, not the intro allowance. Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBE-RESEARCH/hypernatt-terminal."
+    "description": "HyperNatt Terminal: liquidation radar (7 tokens), recorded liquidity, wall history and aggressor flow for BTC and ETH, and Li.Fi cross-chain swap for AI agents. Radar whitelist BTC ETH SOL BNB XRP HYPE ZEC. Native depth is BTC and ETH only. get_native_depth walks the filmed book (REF plus separate aggregated views and recorded history) for a size and reports fill, remaining, four separate liquidity views, fixed-price wall changes and observed aggressor flow over 30s/300s. Read-only data, not a trade signal, no custody or order submission. 4 tools, v2.9.1; call get_agent_manifest first. Radar and native-depth calls cost 0.001 USDC via x402 Base/Solana or eligible credits; manifest and MCP swap quote are free (on-chain swap fees apply). Daily MCP trial: radar 7 tokens + native BTC/ETH = up to 9 independent trials; then 0.001 USDC per call. Read trial_policy_v2 and free_tier_status_v1 on the same MCP connection. A zero daily_cap is the separate credit pool, not the intro allowance. Full platform: https://hypernatt.com. Docs: github.com/DIALLOUBERESEARCH/hypernatt-terminal."
   },
   "ecosystem": {
     "homepage": "https://hypernatt.com",
@@ -80,7 +80,7 @@
     },
     {
       "name": "swap_via_nattswap",
-      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + HyperNatt 0.5% integrator fee (Li.Fi may add its own cut — read quote.estimate.feeCosts). Side effects: MCP read-only until wallet signs.",
+      "description": "Cross-chain token swap powered by Li.Fi across 70+ chains incl. Hyperliquid. USE WHEN: bridge, fund gas, treasury routing, or rebalance. RETURNS: Li.Fi route + execution_readiness + swap_actions_v1. Prefer signing swap_actions_v1 in order. MCP free; on-chain swap costs gas + HyperNatt 0.25% integrator fee (Li.Fi may add its own cut — read quote.estimate.feeCosts). Side effects: MCP read-only until wallet signs.",
       "inputSchema": {
         "type": "object",
         "properties": {

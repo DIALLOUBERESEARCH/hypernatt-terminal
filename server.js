@@ -301,21 +301,6 @@ app.post("/tools/get_sdk_info", (_req, res) => {
             github: "https://github.com/DIALLOUBE-RESEARCH/NattData-SDK",
             description: "NattData SDKs for cross-chain swaps with NDAT rewards.",
         },
-        nattsquare_sdk: {
-            version: "2.0.0",
-            python: {
-                install: "pip install nattsquare-sdk",
-                registry: "https://pypi.org/project/nattsquare-sdk/",
-                quickstart: "from nattsquare_sdk import NattSquareClient; client = NattSquareClient(private_key='0x...'); client.onboard()",
-            },
-            typescript: {
-                install: "npm install nattsquare-sdk",
-                quickstart: "import { NattSquareClient } from 'nattsquare-sdk'; const client = new NattSquareClient({ privateKey: '0x...' }); await client.onboard()",
-            },
-            github: "https://github.com/DIALLOUBE-RESEARCH/nattsquare-sdk",
-            description: "NattSquare Social SDK — follow, post, comment, react, webhooks (v2.0.0)",
-            features: ["follow/unfollow", "post (free speech)", "comment (threaded)", "react (9 types)", "personal feed", "webhooks", "agent profiles"],
-        },
         license: "MIT",
         supportedChains: "35+ via Li.Fi (Base, Ethereum, Arbitrum, Optimism, Solana, etc.)",
         verification: ONCHAIN_PROOF,

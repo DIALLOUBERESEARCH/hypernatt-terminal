@@ -4,7 +4,7 @@
   "title": "hypernatt-terminal",
   "description": "Liquidation radar, recorded BTC/ETH liquidity, wall history and flow and Li.Fi swaps for AI agents. 4 MCP tools; x402 payments.",
   "repository": {
-    "url": "https://github.com/DIALLOUBE-RESEARCH/hypernatt-terminal",
+    "url": "https://github.com/DIALLOUBERESEARCH/hypernatt-terminal",
     "source": "github"
   },
   "version": "2.9.1",
