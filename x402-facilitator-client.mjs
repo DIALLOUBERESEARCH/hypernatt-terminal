@@ -97,15 +97,6 @@ export async function verifyPaymentWithFacilitator(
     paymentPayload,
     paymentRequirements,
 ) {
-    const sim = paymentPayload;
-    if (
-        sim &&
-        typeof sim.receipt === "string" &&
-        sim.receipt.startsWith("X402-VRP-")
-    ) {
-        return { isValid: true };
-    }
-
     if (!process.env.CDP_API_KEY_ID || !process.env.CDP_API_KEY_SECRET) {
         return {
             isValid: false,
@@ -150,15 +141,6 @@ export async function settlePaymentWithFacilitator(
     paymentPayload,
     paymentRequirements,
 ) {
-    const sim = paymentPayload;
-    if (
-        sim &&
-        typeof sim.receipt === "string" &&
-        sim.receipt.startsWith("X402-VRP-")
-    ) {
-        return { success: true, simulated: true };
-    }
-
     if (!process.env.CDP_API_KEY_ID || !process.env.CDP_API_KEY_SECRET) {
         return { success: false, error: "CDP_API_KEY_ID/SECRET missing" };
     }

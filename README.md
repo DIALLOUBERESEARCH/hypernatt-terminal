@@ -1,11 +1,21 @@
 # HyperNatt Terminal
 
 [![CI](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/DIALLOUBERESEARCH/hypernatt-terminal/actions/workflows/ci.yml)
-[![Glama](https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/connectors/com.hypernatt/hypernatt-terminal)
+[![Glama](https://glama.ai/mcp/servers/DIALLOUBERESEARCH/hypernatt-terminal/badges/score.svg)](https://glama.ai/mcp/servers/DIALLOUBERESEARCH/hypernatt-terminal)
 [![x402-list](https://x402-list.com/badge/hypernatt-terminal.svg?data=uptime)](https://x402-list.com/services/hypernatt-terminal?utm_source=badge&utm_medium=referral&utm_campaign=embed)
 [![Version](https://img.shields.io/badge/version-2.9.1-green)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)
 [Security notes](./SECURITY.md)
+
+<p align="center">
+  <sub>Research and development by</sub><br />
+  <a href="https://github.com/DIALLOUBERESEARCH">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://hypernatt.com/brand/dialloube/logo-horizontal-blanc.svg" />
+      <img src="https://hypernatt.com/brand/dialloube/logo-horizontal-bleu.svg" alt="DIALLOUBE-RESEARCH" height="18" />
+    </picture>
+  </a>
+</p>
 
 **Liquidation radar** (7 tokens) and **recorded liquidity, wall history and aggressor flow** (BTC and ETH) for AI agents + **Li.Fi** cross-chain swap. Pay-per-call via x402.
 
